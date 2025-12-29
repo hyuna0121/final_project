@@ -15443,19 +15443,78 @@ html:not(.layout-footer-fixed) .content-wrapper {
 }
 @media (max-width: 1199.98px) {
   .layout-menu {
+    width: 80px !important;
     position: fixed !important;
     top: 0 !important;
-    height: 100% !important;
+    bottom: 0 !important;
     left: 0 !important;
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-    transform: translate3d(-100%, 0, 0);
-    will-change: transform, -webkit-transform;
-  }
-  .layout-menu-expanded .layout-menu {
+    margin: 0 !important;
     transform: translate3d(0, 0, 0) !important;
   }
 
+	
+  /* 메뉴 텍스트 숨김 */
+  .layout-menu .menu-text,
+  .layout-menu .menu-header-text,
+  .layout-menu .menu-link > div,
+  .layout-menu .app-brand-text {
+    display: none !important;
+  }
+  /* 아이콘 보임 */
+  .menu-vertical, .menu-vertical .menu-block, .menu-vertical .menu-inner > .menu-item, .menu-vertical .menu-inner > .menu-header {
+    width: 5.25rem;
+  }
+  .layout-menu,
+  .layout-menu .menu-inner,
+  .layout-menu .menu-vertical {
+    overflow: visible !important;
+  }
+  .layout-menu .menu-sub {
+    height: 0 !important;              /* ✅ 공간을 0으로 고정해서 아래 메뉴 안 밀림 */
+    overflow: hidden !important;       /* ✅ 아코디언 레이아웃 차단 */
+    transition: none !important;       /* ✅ 애니메이션 제거 */
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* 클릭시 하단 메뉴바 보임 */
+  .menu-item.open{
+    position: relative !important;
+    height: 40px !important;              /* ✅ 공간을 0으로 고정해서 아래 메뉴 안 밀림 */
+  }
+  .menu-item.open > .menu-sub {
+    height: auto !important;           /* ✅ 팝업 자체는 내용만큼 */
+    overflow: visible !important;
+
+    position: absolute !important;
+    top: 0 !important;
+    left: 80px !important;             /* sidebar width */
+
+    min-width: 190px;
+    background: #fff;
+    border-radius: 8px;
+    padding: 0.5rem 0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 99999 !important;
+
+    display: block !important;
+  }
+  .menu-item.open .menu-sub .menu-link>div {
+    display: inline-block !important;
+    font-size: 10px;
+  } 
+  /* 애니메이션 없앰 */
+  .menu-item.menu-item-animating {
+  transition: none !important;
+  }
+  /* 기호 없앰 */
+  .menu-toggle::after {
+  display: none;
+  }
+  
+  .layout-menu-expanded .layout-menu {
+    transform: translate3d(0, 0, 0) !important;
+  }
   .layout-menu-expanded body {
     overflow: hidden;
   }
