@@ -1,5 +1,7 @@
 ## properties
 application.properties
+application-dev.properties
+
 
 HELP.md
 target/
