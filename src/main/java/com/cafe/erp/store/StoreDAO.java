@@ -8,5 +8,9 @@ import org.apache.ibatis.annotations.Mapper;
 public interface StoreDAO { 
 	
 	public List<StoreDTO> list() throws Exception;
+
+	public int add(StoreDTO storeDTO) throws Exception;
+	
+	public int countStoreId(String id) throws Exception;
 	
 }

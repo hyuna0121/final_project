@@ -44,6 +44,8 @@
     <link rel="stylesheet" href="/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
 
     <link rel="stylesheet" href="/vendor/libs/apex-charts/apex-charts.css" />
+    
+    <link rel="stylesheet" href="/css/store/main.css">
 
     <!-- Page CSS -->
 
@@ -53,6 +55,10 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="/js/config.js"></script>
+    
+    <!-- kakao -->
+	<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&libraries=services"></script>
   </head>
 
   <body>
@@ -73,47 +79,35 @@
 
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
+              
+			    <div class="col-12">
+                    <ul class="nav nav-pills-custom" role="tablist">
+                        <li class="nav-item">
+                            <button type="button" class="nav-link active" id="btn-store" onclick="loadTab('store', this)">
+                                <i class="bx bx-store me-1"></i> 가맹점 정보 </button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" id="btn-contract" onclick="loadTab('contract', this)">
+                                <i class="bx bx-file me-1"></i> 계약 기록 </button>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="nav-link" id="btn-evaluation" onclick="loadTab('evaluation', this)">
+                                <i class="bx bx-clipboard me-1"></i> 평가 현황 </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div id="tab-content-area">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
 			  	
-                <div class="table-responsive">
-	              <table class="table table-hover table-striped">
-	              
-	                <thead>
-	                  <tr>
-	                    <th width="5%">ID</th>
-	                    <th class="sortable" onclick="toggleSort(this, 'store_name')">
-	                      가맹점명 <i class="bx bx-sort-alt-2 sort-icon"></i>
-	                    </th>
-	                    <th class="sortable" onclick="toggleSort(this, 'store_address')">
-	                      주소 <i class="bx bx-sort-alt-2 sort-icon"></i>
-	                    </th>
-	                    <th class="sortable" onclick="toggleSort(this, 'operation_status')">
-	                      운영 상태 <i class="bx bx-sort-alt-2 sort-icon"></i>
-	                    </th>
-	                    <th class="sortable" onclick="toggleSort(this, 'open_time')">
-	                      운영 시간 <i class="bx bx-sort-alt-2 sort-icon"></i>
-	                    </th>
-                        <th>관리</th>
-                      </tr>
-	                </thead>
-	                
-	                <tbody>
-	                  <c:forEach items="${list}" var="dto">
-	                      <tr>
-	                          <td>${dto.storeId}</td>
-	                          <td><span class="fw-bold text-primary">${dto.storeName}</span></td>
-	                          <td>${dto.storeAddress}</td>
-	                          <td><span class="badge bg-label-success">${dto.storeStatus}</span></td>
-	                          <td>${dto.storeStartTime} ~ ${dto.storeCloseTime}</td>
-	                          <td>
-	                              <button class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></button>
-	                          </td>
-	                      </tr>
-	                  </c:forEach>
-	                </tbody>
-	              </table>
 	          </div>
 			  	
-              </div>
+     
             </div>
             <!-- / Content -->
 
@@ -132,7 +126,7 @@
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
     <!-- / Layout wrapper -->
-
+    
 
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
@@ -155,5 +149,7 @@
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
+    
+    <script type="text/javascript" src="/js/store/main.js"></script>
   </body>
 </html>

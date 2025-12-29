@@ -8,5 +8,14 @@
 	<select id="list" resultType="StoreDTO">
 		SELECT * FROM store ORDER BY store_id
 	</select>
+
+	<select id="countStoreId" parameterType="String">
+		SELECT COUNT(store_id) FROM store WHERE store_id LIKE '${id}%'
+	</select>
+	
+	<insert id="add" parameterType="storeDTO">
+		INSERT INTO store 
+		VALUE(#{storeId}, #{storeName}, #{memberId}, #{storeAddress}, #{storeLatitude}, #{storeLongitude}, "오픈 준비", null, null, now(), now(), #{storeZonecode});
+	</insert>
 	
 </mapper>

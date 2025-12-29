@@ -16,6 +16,7 @@ public class StoreDTO {
 	private String storeName;
 	private Integer memberId;
 	private String storeAddress;
+	private Integer storeZonecode;
 	private Double storeLatitude;
 	private Double storeLongitude;
 	private String storeStatus;
