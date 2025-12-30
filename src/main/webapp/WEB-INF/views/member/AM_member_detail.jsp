@@ -30,6 +30,9 @@
         <c:import url="/WEB-INF/views/template/aside.jsp"></c:import>
 
         <div class="layout-page">
+        
+        <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
+        
             <div class="content-wrapper">
                 <div class="container-xxl flex-grow-1 container-p-y">
                     
@@ -45,17 +48,30 @@
                                     <div class="d-flex align-items-start align-items-sm-center gap-4">
                                         <img src="/assets/img/avatars/1.png" alt="user-avatar" class="d-block rounded" height="100" width="100" />
                                         <div class="button-wrapper">
-                                            <h3 class="mb-1 text-primary fw-bold">김철수 (대리)</h3>
-                                            <p class="text-muted mb-2">개발팀 / 백엔드 파트</p>
-                                            
+                                            <h3 class="mb-1 text-primary fw-bold">${dto.memName}</h3>
                                             <div class="d-flex align-items-center gap-2 mb-3">
-                                                <span class="badge bg-label-success"><i class='bx bxs-circle me-1' style="font-size: 8px;"></i> 정상 근무</span>
-                                                <span class="badge bg-label-primary">재직 (Active)</span>
+                                            	<c:choose>
+                                            		<c:when test="${dto.memIsActive}">
+		                                                <span class="badge bg-label-success"><i class='bx bxs-circle me-1' style="font-size: 8px;"></i> 정상 근무</span>
+		                                                <span class="badge bg-label-primary">재직 (Active)</span>                                            		
+                                            		</c:when>
+		                                                <c:otherwise>
+													        <span class="badge bg-label-secondary">
+													            <i class='bx bxs-circle me-1' style="font-size: 8px;"></i> 퇴직
+													        </span>
+													        <span class="badge bg-label-danger">퇴직 (Inactive)</span> 
+													    </c:otherwise>                                       		
+                                            	</c:choose>
                                             </div>
 
-                                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="alert('비밀번호 초기화 메일을 발송했습니다.')">
-                                                <i class="bx bx-reset me-1"></i> 비밀번호 초기화
-                                            </button>
+                                            <a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm" onclick="alert('비밀번호 초기화 메일을 발송했습니다.')">
+											    <i class="bx bx-reset me-1"></i> 비밀번호 초기화
+											</a>
+											
+											<a href="javascript:void(0);" class="btn btn-danger me-2" onclick="InActive()">
+											    퇴직
+											</a>
+									
                                         </div>
                                     </div>
                                 </div>
@@ -83,48 +99,223 @@
                                 <div class="tab-content shadow-sm p-4 bg-white rounded">
                                     
                                     <div class="tab-pane fade show active" id="navs-basic-info" role="tabpanel">
-                                        <form id="formAccountSettings" onsubmit="return false">
-                                            <div class="row">
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="empId" class="form-label">사번</label>
-                                                    <input class="form-control" type="text" id="empId" value="124001" readonly />
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label for="email" class="form-label">이메일</label>
-                                                    <input class="form-control" type="text" id="email" value="cs.kim@company.com" />
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label class="form-label">부서</label>
-                                                    <select class="form-select">
-                                                        <option value="D001" selected>개발팀</option>
-                                                        <option value="D002">영업팀</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label class="form-label">직급</label>
-                                                    <select class="form-select">
-                                                        <option value="R002" selected>대리</option>
-                                                        <option value="R003">과장</option>
-                                                    </select>
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label class="form-label">입사일</label>
-                                                    <input class="form-control" type="date" value="2024-01-02" />
-                                                </div>
-                                                <div class="mb-3 col-md-6">
-                                                    <label class="form-label">연락처</label>
-                                                    <input type="text" class="form-control" value="010-1234-5678" />
-                                                </div>
-                                            </div>
-                                            <div class="mt-2">
-                                                <button type="button" class="btn btn-primary me-2" onclick="alert('수정 내용이 저장되었습니다.')">저장</button>
-                                                <button type="button" class="btn btn-outline-danger" onclick="confirm('정말 퇴사 처리 하시겠습니까?')">퇴사 처리</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                            
-                                    <div class="tab-pane fade" id="navs-attendance" role="tabpanel">
-                                        
+									    <div class="p-3">
+									
+									        <div id="view-area-info">
+									            <div class="row g-3 mb-4">
+									                <div class="col-sm-4">
+									                    <div class="d-flex align-items-center p-3 border rounded h-100 bg-white shadow-sm">
+									                        <div class="avatar me-3">
+									                            <span class="avatar-initial rounded-circle bg-label-primary"><i class='bx bx-buildings fs-4'></i></span>
+									                        </div>
+									                        <div>
+									                            <small class="text-muted d-block mb-1">소속 부서</small>
+									                            <h6 class="mb-0 fw-bold text-dark" id="txt-dept-name">
+									                                <c:choose>
+									                                    <c:when test="${dto.deptCode == 10}">인사팀</c:when>
+									                                    <c:when test="${dto.deptCode == 11}">회계팀</c:when>
+									                                    <c:when test="${dto.deptCode == 12}">재무팀</c:when>
+									                                    <c:when test="${dto.deptCode == 13}">영업팀</c:when>
+									                                    <c:when test="${dto.deptCode == 14}">CS팀</c:when>
+									                                    <c:when test="${dto.deptCode == 15}">마케팅팀</c:when>
+									                                    <c:when test="${dto.deptCode == 16}">개발팀</c:when>
+									                                    <c:when test="${dto.deptCode == 17}">가맹점</c:when>
+									                                    <c:when test="${dto.deptCode == 20}">임원</c:when>
+									                                    <c:when test="${dto.deptCode == 99}">관리자</c:when>
+									                                    <c:otherwise>기타 부서</c:otherwise>
+									                                </c:choose>
+									                            </h6>
+									                        </div>
+									                    </div>
+									                </div>
+									                <div class="col-sm-4">
+									                    <div class="d-flex align-items-center p-3 border rounded h-100 bg-white shadow-sm">
+									                        <div class="avatar me-3">
+									                            <span class="avatar-initial rounded-circle bg-label-info"><i class='bx bx-briefcase fs-4'></i></span>
+									                        </div>
+									                        <div>
+									                            <small class="text-muted d-block mb-1">직급</small>
+									                            <h6 class="mb-0 fw-bold text-dark" id="txt-position-name">
+									                                <c:choose>
+									                                    <c:when test="${dto.positionCode == 1}">팀장</c:when>
+									                                    <c:when test="${dto.positionCode == 2}">차장</c:when>
+									                                    <c:when test="${dto.positionCode == 3}">과장</c:when>
+									                                    <c:when test="${dto.positionCode == 4}">대리</c:when>
+									                                    <c:when test="${dto.positionCode == 5}">주임</c:when>
+									                                    <c:when test="${dto.positionCode == 6}">사원</c:when>
+									                                    <c:when test="${dto.positionCode == 10}">이사</c:when>
+									                                    <c:when test="${dto.positionCode == 11}">상무</c:when>
+									                                    <c:when test="${dto.positionCode == 12}">전무</c:when>
+									                                    <c:when test="${dto.positionCode == 17}">가맹점</c:when>
+									                                    <c:when test="${dto.positionCode == 99}">관리자</c:when>
+									                                    <c:otherwise>직급 없음</c:otherwise>
+									                                </c:choose>
+									                            </h6>
+									                        </div>
+									                    </div>
+									                </div>
+									                <div class="col-sm-4">
+									                    <div class="d-flex align-items-center p-3 border rounded h-100 bg-light shadow-sm">
+									                        <div class="avatar me-3">
+									                            <span class="avatar-initial rounded-circle bg-label-warning"><i class='bx bx-calendar fs-4'></i></span>
+									                        </div>
+									                        <div>
+									                            <small class="text-muted d-block mb-1">입사일</small>
+									                            <h6 class="mb-0 fw-bold text-dark">${dto.memHireDate}</h6>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+									
+									            <h6 class="text-muted text-uppercase font-size-sm fw-bold border-bottom pb-2 mb-4">상세 정보</h6>
+									            <div class="row g-4">
+									                <div class="col-md-6">
+									                    <ul class="list-group list-group-flush">
+									                        <li class="list-group-item d-flex justify-content-between px-0 pb-3 border-0">
+									                            <div class="d-flex align-items-center">
+									                                <div class="badge rounded-pill bg-label-secondary me-3 p-2"><i class='bx bx-hash'></i></div>
+									                                <div>
+									                                    <small class="text-muted d-block">사원 번호</small>
+									                                    <span class="fw-semibold text-heading">${dto.memberId}</span>
+									                                </div>
+									                            </div>
+									                        </li>
+									                    </ul>
+									                </div>
+									                <div class="col-md-6">
+									                    <ul class="list-group list-group-flush">
+									                        <li class="list-group-item d-flex px-0 pb-3 border-0">
+									                            <div class="badge rounded-pill bg-label-secondary me-3 p-2"><i class='bx bx-envelope'></i></div>
+									                            <div>
+									                                <small class="text-muted d-block">이메일</small>
+									                                <span class="fw-semibold text-heading" id="txt-email">${dto.memEmail}</span>
+									                            </div>
+									                        </li>
+									                        <li class="list-group-item d-flex px-0 py-3 border-0">
+									                            <div class="badge rounded-pill bg-label-secondary me-3 p-2"><i class='bx bx-phone'></i></div>
+									                            <div>
+									                                <small class="text-muted d-block">휴대전화</small>
+									                                <span class="fw-semibold text-heading" id="txt-phone">${dto.memPhone}</span>
+									                            </div>
+									                        </li>
+									                        <li class="list-group-item d-flex px-0 py-3 border-0">
+									                            <div class="badge rounded-pill bg-label-secondary me-3 p-2"><i class='bx bx-map'></i></div>
+									                            <div>
+									                                <small class="text-muted d-block">주소</small>
+									                                <span class="fw-semibold text-heading">
+									                                    (<span id="txt-zip">${dto.memZipCode}</span>) 
+									                                    <span id="txt-addr">${dto.memAddress}</span> 
+									                                    <span id="txt-addr-detail">${dto.memAddressDetail}</span>
+									                                </span>
+									                            </div>
+									                        </li>
+									                    </ul>
+									                </div>
+									            </div>
+									
+									            <div class="mt-5 text-end border-top pt-3">
+									                <button type="button" class="btn btn-primary me-2" onclick="toggleEditMode(true, 'info')">
+									                    <i class='bx bx-edit-alt me-1'></i> 정보 수정
+									                </button>
+									            </div>
+									        </div>
+									                
+									        <div id="edit-area-info" style="display: none;">
+									            <form id="updateForm" action="member_info_update" method="post">
+									                
+									                <div class="row g-3 mb-4">
+									                    <div class="col-sm-4">
+									                        <label class="form-label text-muted">소속 부서 (관리자 전용)</label>
+									                        <select class="form-select form-select-lg" id="edit-dept" name="deptCode">
+									                            <option value="10" ${dto.deptCode == 10 ? 'selected' : ''}>인사팀</option>
+									                            <option value="11" ${dto.deptCode == 11 ? 'selected' : ''}>회계팀</option>
+									                            <option value="12" ${dto.deptCode == 12 ? 'selected' : ''}>재무팀</option>
+									                            <option value="13" ${dto.deptCode == 13 ? 'selected' : ''}>영업팀</option>
+									                            <option value="14" ${dto.deptCode == 14 ? 'selected' : ''}>CS팀</option>
+									                            <option value="15" ${dto.deptCode == 15 ? 'selected' : ''}>마케팅팀</option>
+									                            <option value="16" ${dto.deptCode == 16 ? 'selected' : ''}>개발팀</option>
+									                            <option value="17" ${dto.deptCode == 17 ? 'selected' : ''}>가맹점</option>
+									                            <option value="20" ${dto.deptCode == 20 ? 'selected' : ''}>임원</option>
+									                            <option value="99" ${dto.deptCode == 99 ? 'selected' : ''}>관리자</option>
+									                        </select>
+									                    </div>
+									                    <div class="col-sm-4">
+									                        <label class="form-label text-muted">직급 (관리자 전용)</label>
+									                        <select class="form-select form-select-lg" id="edit-position" name="positionCode">
+									                            <option value="1" ${dto.positionCode == 1 ? 'selected' : ''}>팀장</option>
+									                            <option value="2" ${dto.positionCode == 2 ? 'selected' : ''}>차장</option>
+									                            <option value="3" ${dto.positionCode == 3 ? 'selected' : ''}>과장</option>
+									                            <option value="4" ${dto.positionCode == 4 ? 'selected' : ''}>대리</option>
+									                            <option value="5" ${dto.positionCode == 5 ? 'selected' : ''}>주임</option>
+									                            <option value="6" ${dto.positionCode == 6 ? 'selected' : ''}>사원</option>
+									                            <option value="10" ${dto.positionCode == 10 ? 'selected' : ''}>이사</option>
+									                            <option value="11" ${dto.positionCode == 11 ? 'selected' : ''}>상무</option>
+									                            <option value="12" ${dto.positionCode == 12 ? 'selected' : ''}>전무</option>
+									                            <option value="17" ${dto.positionCode == 17 ? 'selected' : ''}>가맹점</option>
+									                            <option value="99" ${dto.positionCode == 99 ? 'selected' : ''}>관리자</option>
+									                        </select>
+									                    </div>
+									                    <div class="col-sm-4">
+									                        <label class="form-label text-muted">입사일</label>
+									                        <input type="text" class="form-control form-control-lg bg-light" value="${dto.memHireDate}" readonly>
+									                    </div>
+									                </div>
+									
+									                <h6 class="text-muted text-uppercase font-size-sm fw-bold border-bottom pb-2 mb-4">정보 수정</h6>
+									
+									                <div class="row g-4">
+									                    <div class="col-md-6">
+									                        <div class="mb-3">
+									                            <label class="form-label">사원 번호</label>
+									                            <input type="text" class="form-control bg-light" name="memberId" value="${dto.memberId}" readonly>
+									                        </div>
+									                    </div>
+									
+									                    <div class="col-md-6">
+									                        <div class="mb-3">
+									                            <label class="form-label">이메일</label>
+									                            <div class="input-group input-group-merge">
+									                                <span class="input-group-text"><i class='bx bx-envelope'></i></span>
+									                                <input type="email" class="form-control" id="edit-email" name="memEmail" value="${dto.memEmail}">
+									                            </div>
+									                        </div>
+									                        <div class="mb-3">
+									                            <label class="form-label">휴대전화</label>
+									                            <div class="input-group input-group-merge">
+									                                <span class="input-group-text"><i class='bx bx-phone'></i></span>
+									                                <input type="text" name="memPhone" class="form-control" maxlength="13" oninput="autoHyphen(this)" value="${dto.memPhone}">
+									                            </div>
+									                        </div>
+									                        <div class="mb-3">
+									                            <label class="form-label">주소</label>
+									                            <div class="input-group mb-2">
+														            <input type="text" id="memZipCode" name="memZipCode" class="form-control" value="${dto.memZipCode}" aria-label="우편번호" readonly required />
+														            <button class="btn btn-outline-primary" type="button" onclick="DaumPostcode()">우편번호 찾기</button>
+														        </div>
+														        
+														        <input type="text" id="memAddress" name="memAddress" class="form-control mb-2" value="${dto.memAddress}" readonly required />
+														        
+														        <input type="text" id="memAddressDetail" name="memAddressDetail" class="form-control" value="${dto.memAddressDetail}" required />
+									                        </div>
+									                    </div>
+									                </div>
+									
+									                <div class="mt-5 text-end border-top pt-3 bg-light p-3 rounded">
+									                    <span class="text-danger small me-3">* 부서/직급은 관리자만 수정 가능합니다.</span>
+									                    <button type="submit" class="btn btn-primary me-2" >
+									                        <i class='bx bx-save me-1'></i> 저장하기
+									                    </button>
+									                    <button type="button" class="btn btn-secondary" onclick="toggleEditMode(false, 'info')">
+									                        취소
+									                    </button>
+									                </div>
+									            </form>
+									        </div>
+									    </div>
+									</div> 
+									
+			<!-- 근태 기록 -->
+									<div class="tab-pane fade" id="navs-attendance" role="tabpanel">
                                         <div class="card mb-4 border">
                                             <div class="card-body">
                                                 <div class="row gx-3 gy-2 align-items-center">
@@ -261,7 +452,9 @@
                                             </div>
                                         </div>
                                     </div>
-
+                                    
+                    
+                    <!-- 휴가 현황 -->
                                     <div class="tab-pane fade" id="navs-vacation" role="tabpanel">
     
 									    <div class="row mb-4">
@@ -425,134 +618,7 @@
 <script src="/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="/vendor/js/menu.js"></script>
 <script src="/js/main.js"></script>
-
-<script>
-    function toggleDateInputs() {
-        const type = document.getElementById("dateType").value;
-        const areaMonth = document.getElementById("input-month");
-        const areaYear = document.getElementById("input-year");
-        const areaCustom = document.getElementById("input-custom");
-        const dateInputArea = document.getElementById("dateInputArea");
-
-        areaMonth.style.display = "none";
-        areaYear.style.display = "none";
-        areaCustom.style.display = "none";
-        
-        // 기본적으로 영역을 보이게 설정하고, 'all'일 때만 숨김
-        if (type === "all") {
-            dateInputArea.style.display = "none";
-        } else {
-            dateInputArea.style.display = "block";
-            if (type === "month") areaMonth.style.display = "block";
-            else if (type === "year") areaYear.style.display = "block";
-            else if (type === "custom") areaCustom.style.display = "block";
-        }
-    }
-
-    function applyFilters() {
-        const type = document.getElementById("dateType").value;
-        const statusFilter = document.getElementById("attendanceStatusFilter").value;
-        const table = document.getElementById("attendanceTable");
-        const rows = table.getElementsByTagName("tr");
-        let visibleCount = 0;
-
-        const valMonth = document.getElementById("filterMonth").value;
-        const valYear = document.getElementById("filterYear").value;
-        const valStart = document.getElementById("filterStartDate").value;
-        const valEnd = document.getElementById("filterEndDate").value;
-
-        for (let i = 1; i < rows.length; i++) {
-            const row = rows[i];
-            const rowDate = row.getAttribute("data-date");
-            const rowStatus = row.getAttribute("data-status");
-            let dateMatch = false;
-            let statusMatch = false;
-
-            if (type === "all") dateMatch = true;
-            else if (type === "month" && rowDate.startsWith(valMonth)) dateMatch = true;
-            else if (type === "year" && rowDate.startsWith(valYear)) dateMatch = true;
-            else if (type === "custom" && rowDate >= valStart && rowDate <= valEnd) dateMatch = true;
-
-            if (statusFilter === "all" || rowStatus === statusFilter) statusMatch = true;
-
-            if (dateMatch && statusMatch) {
-                row.style.display = "";
-                visibleCount++;
-            } else {
-                row.style.display = "none";
-            }
-        }
-
-        const noDataMsg = document.getElementById("noDataMessage");
-        if (visibleCount === 0) {
-            noDataMsg.style.display = "block";
-            table.style.display = "none";
-        } else {
-            noDataMsg.style.display = "none";
-            table.style.display = "";
-        }
-    }
-    function openEditModal(btn) {
-        const tr = btn.closest('tr');
-        
-        const date = tr.getAttribute('data-date');
-        const inTime = tr.getAttribute('data-in');
-        const outTime = tr.getAttribute('data-out');
-        const status = tr.getAttribute('data-status');
-        const note = tr.getAttribute('data-note');
-        
-        document.getElementById('editDate').value = date;
-        document.getElementById('editInTime').value = inTime; 
-        document.getElementById('editOutTime').value = outTime;
-        document.getElementById('editStatus').value = status;
-        document.getElementById('editNote').value = note ? note : "";
-
-        document.getElementById('currentRowIndex').value = tr.rowIndex;
-
-        const myModal = new bootstrap.Modal(document.getElementById('modalAttendanceEdit'));
-        myModal.show();
-    }
-
-    function saveAttendanceChanges() {
-        const rowIndex = document.getElementById('currentRowIndex').value;
-        const newInTime = document.getElementById('editInTime').value;
-        const newOutTime = document.getElementById('editOutTime').value;
-        const newStatus = document.getElementById('editStatus').value;
-        const newNote = document.getElementById('editNote').value;
-        
-        alert("수정되었습니다. (DB 반영 로직 필요)");
-
-        const table = document.getElementById('attendanceTable');
-        const tr = table.rows[rowIndex]; 
-
-        tr.querySelector('.in-time').innerText = newInTime ? newInTime : "-";
-        tr.querySelector('.out-time').innerText = newOutTime ? newOutTime : "-";
-        tr.querySelector('.note-text').innerText = newNote;
-
-        const badge = tr.querySelector('.status-badge');
-        let badgeClass = "bg-label-primary";
-        let badgeText = "기타";
-
-        if(newStatus === 'normal') { badgeClass="bg-label-success"; badgeText="정상"; }
-        else if(newStatus === 'late') { badgeClass="bg-label-warning"; badgeText="지각"; }
-        else if(newStatus === 'early') { badgeClass="bg-label-info"; badgeText="조퇴"; }
-        else if(newStatus === 'absent') { badgeClass="bg-label-danger"; badgeText="결근"; }
-        else if(newStatus === 'vacation') { badgeClass="bg-label-primary"; badgeText="연차/휴가"; }
-        else if(newStatus === 'half') { badgeClass="bg-label-info"; badgeText="반차"; }
-
-        badge.className = `badge ${badgeClass} status-badge`;
-        badge.innerText = badgeText;
-
-        tr.setAttribute('data-in', newInTime);
-        tr.setAttribute('data-out', newOutTime);
-        tr.setAttribute('data-status', newStatus);
-        tr.setAttribute('data-note', newNote);
-
-        // 모달 닫기
-        const modalEl = document.getElementById('modalAttendanceEdit');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        modalInstance.hide();
-    }
-</script>
+<script type="text/javascript" src="/js/member/AM_member_detail.js"></script>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </body>
 </html>

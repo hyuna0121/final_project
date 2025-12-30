@@ -5,24 +5,7 @@
     
     <mapper namespace="com.cafe.erp.member.MemberDAO">
 
-    <resultMap id="memberResultMap" type="com.cafe.erp.member.MemberDTO">
-        <id property="memberId" column="member_id"/>
-        <result property="memPassword" column="mem_password"/>
-        <result property="memName" column="mem_name"/>
-        <result property="memZipCode" column="mem_zip_code"/>        
-        <result property="memAddress" column="mem_address"/>
-        <result property="memAddressDetail" column="mem_address_detail"/>
-        <result property="memEmail" column="mem_email"/>
-        <result property="memPhone" column="mem_phone"/>
-        <result property="memHireDate" column="mem_hire_date"/>
-        <result property="memLeftDate" column="mem_left_date"/>
-        <result property="memIsActive" column="mem_is_active"/>
-        <result property="deptCode" column="dept_code"/>
-        <result property="positionCode" column="position_code"/>
-        <result property="positionCode" column="position_code"/>
-    </resultMap>
-
-    <select id="list" resultMap="memberResultMap">
+    <select id="list" resultType="MemberDTO">
 		SELECT 
             M.member_id, M.mem_password, M.mem_name, M.mem_zip_code, 
             M.mem_address_detail, M.mem_email, M.mem_phone, 
@@ -41,22 +24,46 @@
             M.mem_hire_date ASC
 	</select>
 	
+	
+	
+	
+	<select id="getMemberId" parameterType="String" resultType="String">
+        SELECT MAX(member_id) 
+        FROM member 
+        WHERE member_id LIKE CONCAT(#{prefix}, '%')
+    </select>
+	
 	<insert id="add" parameterType="MemberDTO">
-		<selectKey keyProperty="memberId" resultType="int" order="BEFORE">
-        SELECT 
-            CONCAT(
-                #{idPrefix}, DATE_FORMAT(NOW(), '%y'), 
-                LPAD(IFNULL(MAX(CAST(SUBSTRING(member_id, 4) AS UNSIGNED)), 0) + 1,
-                3, '0')
-                )
-        FROM member
-        WHERE member_id LIKE CONCAT(#{idPrefix}, DATE_FORMAT(NOW(), '%y'), '%')
-    </selectKey>
 		INSERT INTO member 
 		(member_id, mem_password, mem_name, mem_zip_code, mem_address, mem_address_detail, mem_email, mem_phone, mem_hire_date, mem_is_active, dept_code, position_code)
 		VALUES
 		(#{memberId}, 1234, #{memName}, #{memZipCode}, #{memAddress}, #{memAddressDetail}, #{memEmail}, #{memPhone},  #{memHireDate}, 1,  #{deptCode}, #{positionCode})
 	</insert>
+	
+	
+	
+	
+	
+	<select id="detail" parameterType="MemberDTO" resultType="MemberDTO">
+		SELECT *
+		FROM member
+		WHERE member_id = #{memberId}
+	</select>
+	
+	
+	
+	<update id="update" parameterType="MemberDTO">
+		UPDATE member
+		SET
+			mem_zip_code = #{memZipCode},
+			mem_address = #{memAddress},
+			mem_address_detail = #{memAddressDetail},
+			mem_email = #{memEmail},
+			mem_phone = #{memPhone},
+			dept_code = #{deptCode},
+			position_code = #{positionCode}
+		WHERE member_id = #{memberId}
+	</update>
 	
 	<select id="searchOwner" parameterType="String" resultType="MemberDTO"> 
 		SELECT m.member_id, m.mem_name 
@@ -64,9 +71,4 @@
 		WHERE m.mem_name LIKE CONCAT(#{keyword}, '%') AND s.member_id IS NULL AND m.member_id LIKE '2%' 
 	</select>
 	
-<!-- 	INSERT INTO member 
-		(member_id, mem_password, mem_name, mem_zip_code, mem_address, mem_address_detail, mem_email, mem_phone, mem_hire_date, mem_is_active, dept_code, position_code)
-		VALUES
-		(member_id = #{memberId}, mem_password = #{memPassword}, mem_name = #{memName}, mem_zip_code = #{memZipCode}, mem_address = #{memAddress},
-		 mem_address_detail = #{memAddress_detail}, mem_email = #{memEmail}, mem_phone = #{memPhone}, mem_hire_date = #{memHireDate}, 1, dept_code = #{memDeptCode}, position_code = #{memPositionCode}) -->
 </mapper>
