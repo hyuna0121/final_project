@@ -23,5 +23,17 @@
             ON sc.store_id = s.store_id 
             ORDER BY sc.contract_id DESC
 	</select>
+	
+	<select id="countContractId" parameterType="String">
+		SELECT COUNT(contract_id) FROM store_contract WHERE contract_id LIKE '${id}%'
+	</select>
 
+	<insert id="add" parameterType="ContractDTO">
+		INSERT INTO store_contract VALUE(#{contractId}, #{storeId}, #{contractRoyalti}, #{contractDeposit}, #{contractStartDate}, #{contractEndDate}, #{contractStatus}, now(), now())
+	</insert>
+	
+	<insert id="fileAdd" parameterType="ContractFileDTO">
+		INSERT INTO store_contract_file	VALUE(null, #{contractId}, #{fileOriginalName}, #{fileSavedName})	
+	</insert>
+	
 </mapper>

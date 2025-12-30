@@ -9,4 +9,10 @@ public interface ContractDAO {
 	
 	public List<ContractDTO> list() throws Exception;
 
+	public int countContractId(String id);
+
+	public int add(ContractDTO contractDTO);
+
+	public int fileAdd(ContractFileDTO contractFileDTO);
+
 }
