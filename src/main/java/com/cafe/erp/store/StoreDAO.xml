@@ -6,7 +6,25 @@
 <mapper namespace="com.cafe.erp.store.StoreDAO">
 
 	<select id="list" resultType="StoreDTO">
-		SELECT * FROM store ORDER BY store_id
+		SELECT 
+            s.store_id,
+            s.store_name,          
+            s.member_id,
+            s.store_address,
+            s.store_zonecode,
+            s.store_latitude,
+            s.store_longitude,
+            s.store_status,
+            s.store_start_time,
+            s.store_close_time,
+            s.store_created_at,
+            s.store_updated_at,
+            m.mem_name
+        FROM 
+            store s             
+            LEFT JOIN member m                
+            ON s.member_id = m.member_id 
+            ORDER BY s.store_id
 	</select>
 
 	<select id="countStoreId" parameterType="String">
@@ -17,5 +35,28 @@
 		INSERT INTO store 
 		VALUE(#{storeId}, #{storeName}, #{memberId}, #{storeAddress}, #{storeLatitude}, #{storeLongitude}, "오픈 준비", null, null, now(), now(), #{storeZonecode});
 	</insert>
+	
+	<select id="searchStore" parameterType="String">
+		SELECT 
+            s.store_id,
+            s.store_name,          
+            s.member_id,
+            s.store_address,
+            s.store_zonecode,
+            s.store_latitude,
+            s.store_longitude,
+            s.store_status,
+            s.store_start_time,
+            s.store_close_time,
+            s.store_created_at,
+            s.store_updated_at,
+            m.mem_name
+        FROM 
+            store s             
+            LEFT JOIN member m                
+            ON s.member_id = m.member_id 
+            WHERE s.store_name LIKE CONCAT(#{keyword}, '%')
+            ORDER BY s.store_name
+	</select>
 	
 </mapper>

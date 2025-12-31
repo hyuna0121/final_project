@@ -25,4 +25,7 @@ public class StoreDTO {
 	private LocalDateTime storeCreatedAt;
 	private LocalDateTime storeUpdatedAt;
 	
+	// member table column
+	private String memName;
+	
 }

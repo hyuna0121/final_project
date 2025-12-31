@@ -45,11 +45,29 @@
               <div class="row">
                 <div class="col-12">
                     
+                    <div class="browser-tab-container">
+                        <ul class="nav nav-tabs browser-tab-nav border-0" role="tablist">
+                            <li class="nav-item">
+                                <button type="button" class="nav-link" onclick="switchTab('store')">
+                                    <i class="bx bx-store me-1"></i> 가맹점 조회
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" class="nav-link active" onclick="switchTab('contract')">
+                                    <i class="bx bx-file me-1"></i> 계약 조회
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button type="button" class="nav-link" onclick="switchTab('evaluation')">
+                                    <i class="bx bx-clipboard me-1"></i> 평가 조회
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
 
                     <div class="browser-content-panel">
                         
-                        <div id="view-store" class="tab-view">
-                            
+                        <div id="view-store" class="tab-view" style="display:none;">
                             <div class="card shadow-none border bg-transparent mb-4">
                                 <div class="card-body py-3 px-3">
                                     <form id="storeSearchForm" onsubmit="return false;">
@@ -72,7 +90,7 @@
                                                 <input type="time" class="form-control" id="filterOpenTime" />
                                             </div>
                                             <div class="col-md-3">
-                                                <label class="form-label small text-muted">가맹점명</label>
+                                                <label class="form-label small text-muted">가맹점명 / 점주명</label>
                                                 <input type="text" class="form-control" placeholder="검색어 입력" id="filterKeyword" />
                                             </div>
                                             <div class="col-md-2 d-flex align-items-end">
@@ -102,19 +120,11 @@
                                         <thead>
                                             <tr>
                                                 <th width="5%">No</th>
-                                                <th class="sortable" onclick="toggleSort(this, 'store_name')">
-                                                    가맹점명 <i class="bx bx-sort-alt-2 sort-icon"></i>
-                                                </th>
-                                                <th class="sortable" onclick="toggleSort(this, 'store_address')">
-                                                    가맹점 주소 <i class="bx bx-sort-alt-2 sort-icon"></i>
-                                                </th>
-                                                <th class="sortable" onclick="toggleSort(this, 'operation_status')">
-                                                    운영 상태 <i class="bx bx-sort-alt-2 sort-icon"></i>
-                                                </th>
-                                                <th class="sortable" onclick="toggleSort(this, 'open_time')">
-                                                    운영 시간 <i class="bx bx-sort-alt-2 sort-icon"></i>
-                                                </th>
-                                                <!-- <th>점주 정보 (ID)</th> -->
+                                                <th class="sortable" onclick="toggleSort(this, 'store_name')">가맹점명 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th class="sortable" onclick="toggleSort(this, 'store_address')">주소 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th class="sortable" onclick="toggleSort(this, 'operation_status')">상태 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th class="sortable" onclick="toggleSort(this, 'open_time')">운영 시간 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th>점주 정보</th>
                                                 <th>관리</th>
                                             </tr>
                                         </thead>
@@ -123,31 +133,147 @@
                                                 <td>1</td>
                                                 <td><span class="fw-bold text-primary">강남 본점</span></td>
                                                 <td>서울 강남구 테헤란로 123</td>
-                                                <td><span class="badge bg-label-success">오픈</span></td>
+                                                <td><span class="badge bg-label-success">OPEN</span></td>
                                                 <td>09:00 ~ 22:00</td>
-                                                <!-- <td>김철수 (101)</td> -->
+                                                <td>김철수 (101)</td>
+                                                <td><button class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="view-contract" class="tab-view">
+                            
+                            <div class="card shadow-none border bg-transparent mb-4">
+                                <div class="card-body py-3 px-3">
+                                    <form id="contractSearchForm" onsubmit="return false;">
+                                        <div class="row g-3">
+                                            <div class="col-md-2">
+                                                <label class="form-label small text-muted">계약 상태</label>
+                                                <select class="form-select" id="searchContractStatus">
+                                                    <option value="">전체</option>
+                                                    <option value="ACTIVE">유효 (Active)</option>
+                                                    <option value="EXPIRED">만료 (Expired)</option>
+                                                    <option value="TERMINATED">해지 (Terminated)</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label small text-muted">계약 시작일 구간</label>
+                                                <div class="input-group">
+                                                    <input type="date" class="form-control" id="searchStartDateFrom" />
+                                                    <span class="input-group-text">~</span>
+                                                    <input type="date" class="form-control" id="searchStartDateTo" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small text-muted">가맹점 주소</label>
+                                                <input type="text" class="form-control" placeholder="시/군/구 입력" id="searchStoreAddress" />
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-muted">로얄티 / 여신(보증금)</label>
+                                                <div class="input-group">
+                                                    <select class="form-select" style="flex: 0 0 40%;">
+                                                        <option value="royalti">로얄티</option>
+                                                        <option value="deposit">여신</option>
+                                                    </select>
+                                                    <input type="number" class="form-control" placeholder="최소 금액" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label small text-muted">가맹점명 검색</label>
+                                                <div class="input-group input-group-merge">
+                                                    <span class="input-group-text"><i class="bx bx-search"></i></span>
+                                                    <input type="text" class="form-control" placeholder="가맹점 이름" id="searchStoreName" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 d-flex align-items-end justify-content-end gap-2">
+                                                <button class="btn btn-outline-secondary" type="reset"><i class="bx bx-refresh"></i> 초기화</button>
+                                                <button class="btn btn-primary px-5" onclick="searchContracts()"><i class="bx bx-search"></i> 조회</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="card shadow-none border bg-transparent">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="mb-0">가맹점 계약 목록</h5>
+                                    <div>
+                                        <button class="btn btn-label-success me-2" onclick="downloadContractExcel()">
+                                            <i class="bx bxs-file-export me-1"></i> 엑셀 저장
+                                        </button>
+                                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerContractModal">
+                                            <i class="bx bx-plus me-1"></i> 계약 등록
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th width="5%">No</th>
+                                                <th class="sortable" onclick="toggleSort(this, 'contract_id')">계약번호 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th class="sortable" onclick="toggleSort(this, 'store_name')">가맹점명 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th class="sortable" onclick="toggleSort(this, 'royalti')">로얄티 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th class="sortable" onclick="toggleSort(this, 'deposit')">여신(보증금) <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th class="sortable" onclick="toggleSort(this, 'start_date')">계약 시작일 <i class="bx bx-sort-alt-2 sort-icon"></i></th>
+                                                <th>계약 종료일</th>
+                                                <th>상태</th>
+                                                <th>관리</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>1</td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></button>
+                                                    <a href="javascript:void(0);" class="fw-bold" 
+                                                       onclick="openContractDetail('CT-2024-001', '강남 본점', '150,000', '50,000,000', '2024-01-01', '2026-01-01', 'ACTIVE')">
+                                                        CT-2024-001
+                                                    </a>
                                                 </td>
+                                                <td><a href="javascript:void(0);" class="text-dark">강남 본점</a></td>
+                                                <td>150,000원</td>
+                                                <td>50,000,000원</td>
+                                                <td>2024-01-01</td>
+                                                <td>2026-01-01</td>
+                                                <td><span class="badge bg-label-primary">ACTIVE</span></td>
+                                                <td><button class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></button></td>
                                             </tr>
                                             <tr>
                                                 <td>2</td>
-                                                <td>부산 서면점</td>
-                                                <td>부산 부산진구 중앙대로 456</td>
-                                                <td><span class="badge bg-label-success">오픈</span></td>
-                                                <td>10:00 ~ 23:00</td>
-                                                <!-- <td>이영희 (102)</td> -->
+                                                <td>
+                                                    <a href="javascript:void(0);" class="fw-bold"
+                                                       onclick="openContractDetail('CT-2023-088', '부산 서면점', '150,000', '30,000,000', '2023-05-01', '2025-05-01', 'ACTIVE')">
+                                                        CT-2023-088
+                                                    </a>
+                                                </td>
+                                                <td><a href="javascript:void(0);" class="text-dark">부산 서면점</a></td>
+                                                <td>150,000원</td>
+                                                <td>30,000,000원</td>
+                                                <td>2023-05-01</td>
+                                                <td>2025-05-01</td>
+                                                <td><span class="badge bg-label-primary">ACTIVE</span></td>
                                                 <td>
                                                     <button class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></button>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>3</td>
-                                                <td>제주 공항점</td>
-                                                <td>제주 제주시 공항로 1</td>
-                                                <td><span class="badge bg-label-danger">폐업</span></td>
-                                                <td>08:00 ~ 20:00</td>
-                                                <!-- <td>박지성 (103)</td> -->
+                                                <td>
+                                                    <a href="javascript:void(0);" class="fw-bold text-muted"
+                                                       onclick="openContractDetail('CT-2020-012', '제주 공항점', '150,000', '20,000,000', '2020-03-01', '2022-03-01', 'EXPIRED')">
+                                                        CT-2020-012
+                                                    </a>
+                                                </td>
+                                                <td><a href="javascript:void(0);" class="text-dark">제주 공항점</a></td>
+                                                <td>150,000원</td>
+                                                <td>20,000,000원</td>
+                                                <td>2020-03-01</td>
+                                                <td>2022-03-01</td>
+                                                <td><span class="badge bg-label-danger">EXPIRED</span></td>
                                                 <td>
                                                     <button class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></button>
                                                 </td>
@@ -155,25 +281,18 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <!-- <div class="card-footer d-flex justify-content-center">
+                                <div class="card-footer d-flex justify-content-center">
                                     <nav aria-label="Page navigation">
                                         <ul class="pagination">
-                                            <li class="page-item prev"><a class="page-link" href="#"><i class="bx bx-chevron-left"></i></a></li>
                                             <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                            <li class="page-item next"><a class="page-link" href="#"><i class="bx bx-chevron-right"></i></a></li>
                                         </ul>
                                     </nav>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
 
-                        <div id="view-contract" class="tab-view" style="display:none;">
-                            <div class="alert alert-secondary">계약 조회 화면 (기존 코드 유지)</div>
-                        </div>
-
                         <div id="view-evaluation" class="tab-view" style="display:none;">
-                            <div class="alert alert-secondary">평가 조회 화면 (기존 코드 유지)</div>
+                            <div class="alert alert-secondary">평가 조회 화면</div>
                         </div>
 
                     </div>
@@ -198,63 +317,127 @@
                 <div class="modal-body">
                     <form id="registerStoreForm">
                         <div class="row g-3">
-                            
                             <div class="col-md-6">
-                                <label class="form-label" for="storeName">가맹점명 <span class="text-danger">*</span></label>
-                                <div class="input-group input-group-merge">
-                                    <span class="input-group-text"><i class="bx bx-store"></i></span>
-                                    <input type="text" id="storeName" class="form-control" placeholder="가맹점 이름 입력" required />
-                                </div>
+                                <label class="form-label">가맹점명 <span class="text-danger">*</span></label>
+                                <input type="text" id="storeName" class="form-control" required />
                             </div>
-
-                            <!-- <div class="col-md-6">
-                                <label class="form-label" for="memberId">점주(사원) 선택 <span class="text-danger">*</span></label>
+                            <div class="col-md-6">
+                                <label class="form-label">점주 선택 <span class="text-danger">*</span></label>
                                 <select id="memberId" class="form-select" required>
                                     <option value="">점주를 선택하세요</option>
-                                    <option value="101">김철수 (ID: 101)</option>
-                                    <option value="102">이영희 (ID: 102)</option>
-                                    <option value="103">박지성 (ID: 103)</option>
+                                    <option value="101">김철수</option>
                                 </select>
-                            </div> -->
-
+                            </div>
                             <div class="col-md-12">
-                                <label class="form-label" for="storeAddress">가맹점 주소 <span class="text-danger">*</span></label>
+                                <label class="form-label">가맹점 주소 <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="text" id="storeAddress" class="form-control" placeholder="주소 검색 버튼을 클릭하세요" readonly required />
-                                    <button class="btn btn-outline-primary" type="button" onclick="openAddressApi()">
-                                        <i class="bx bx-map me-1"></i> 주소 검색
-                                    </button>
+                                    <input type="text" id="storeAddress" class="form-control" readonly required />
+                                    <button class="btn btn-outline-primary" type="button" onclick="alert('주소 API')">주소 검색</button>
                                 </div>
                             </div>
-
                             <div class="col-md-6">
-                                <label class="form-label text-muted">위도 (Latitude)</label>
-                                <input type="text" id="latitude" class="form-control bg-light" placeholder="주소 선택 시 자동 입력" readonly />
+                                <label class="form-label text-muted">위도</label>
+                                <input type="text" id="latitude" class="form-control bg-light" readonly />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label text-muted">경도 (Longitude)</label>
-                                <input type="text" id="longitude" class="form-control bg-light" placeholder="주소 선택 시 자동 입력" readonly />
+                                <label class="form-label text-muted">경도</label>
+                                <input type="text" id="longitude" class="form-control bg-light" readonly />
                             </div>
-
-                            <hr class="my-4" />
-
                             <div class="col-md-4">
-                                <label class="form-label" for="operationStatus">운영 상태</label>
+                                <label class="form-label">운영 상태</label>
                                 <select id="operationStatus" class="form-select">
-                                    <option value="OPEN">운영중 (OPEN)</option>
-                                    <option value="CLOSED">폐업 (CLOSED)</option>
-                                    <option value="RENOVATION">인테리어 공사중</option>
+                                    <option value="OPEN">운영중</option>
+                                    <option value="CLOSED">폐업</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">오픈 시간</label>
+                                <input type="time" id="openTime" class="form-control" value="09:00" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">마감 시간</label>
+                                <input type="time" id="closeTime" class="form-control" value="22:00" />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="registerContractModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📑 가맹점 계약 등록</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="registerContractForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label" for="contractId">계약 번호 <span class="text-danger">*</span></label>
+                                <input type="text" id="contractId" class="form-control" placeholder="예: CT-2025-001" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="contractStoreId">가맹점 선택 <span class="text-danger">*</span></label>
+                                <select id="contractStoreId" class="form-select" required>
+                                    <option value="">가맹점을 선택하세요</option>
+                                    <option value="1">강남 본점</option>
+                                </select>
+                            </div>
+                            <div class="col-12"><hr class="my-2"></div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label" for="royalty">로얄티 (금액)</label>
+                                <div class="input-group">
+                                    <input type="number" id="royalty" class="form-control" placeholder="150000" />
+                                    <span class="input-group-text">원</span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="form-label" for="deposit">여신 (보증금)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">₩</span>
+                                    <input type="number" id="deposit" class="form-control" placeholder="50000000" />
+                                    <span class="input-group-text">원</span>
+                                </div>
+                            </div>
+                            <div class="col-12"><hr class="my-2"></div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="startDate">계약 시작일</label>
+                                <input type="date" id="startDate" class="form-control" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="endDate">계약 종료일</label>
+                                <input type="date" id="endDate" class="form-control" required />
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label" for="contractStatus">초기 계약 상태</label>
+                                <select id="contractStatus" class="form-select">
+                                    <option value="ACTIVE">ACTIVE (유효)</option>
+                                    <option value="PENDING">PENDING (대기)</option>
                                 </select>
                             </div>
 
-                            <div class="col-md-4">
-                                <label class="form-label" for="openTime">오픈 시간</label>
-                                <input type="time" id="openTime" class="form-control" value="09:00" />
-                            </div>
-
-                            <div class="col-md-4">
-                                <label class="form-label" for="closeTime">마감 시간</label>
-                                <input type="time" id="closeTime" class="form-control" value="22:00" />
+                            <div class="col-12 mt-3">
+                                <label class="form-label">계약서 및 첨부파일</label>
+                                <div id="fileContainer">
+                                    <div class="input-group mb-2">
+                                        <input type="file" class="form-control" name="contractFiles">
+                                        <button type="button" class="btn btn-outline-primary" onclick="addFileField()">
+                                            <i class="bx bx-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-text small text-muted">
+                                    ※ 버튼을 누르면 첨부파일 칸이 추가됩니다.
+                                </div>
                             </div>
 
                         </div>
@@ -262,7 +445,81 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" onclick="submitStoreRegistration()">저장</button>
+                    <button type="button" class="btn btn-primary" onclick="submitContractRegistration()">계약 저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="detailContractModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📋 계약 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">계약 번호</label>
+                            <input type="text" id="detailContractId" class="form-control bg-white fw-bold" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">가맹점명</label>
+                            <input type="text" id="detailStoreName" class="form-control bg-white" readonly />
+                        </div>
+                        <div class="col-12"><hr class="my-1 border-light"></div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">로얄티</label>
+                            <input type="text" id="detailRoyalty" class="form-control bg-white" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small">여신(보증금)</label>
+                            <input type="text" id="detailDeposit" class="form-control bg-white" readonly />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small">시작일</label>
+                            <input type="text" id="detailStartDate" class="form-control bg-white" readonly />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small">종료일</label>
+                            <input type="text" id="detailEndDate" class="form-control bg-white" readonly />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small">상태</label>
+                            <input type="text" id="detailStatus" class="form-control bg-white" readonly />
+                        </div>
+                        
+                        <div class="col-12 mt-4">
+                            <h6 class="text-muted mb-3"><i class="bx bx-file"></i> 첨부파일 다운로드</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bx bxs-file-pdf text-danger me-2 fs-4"></i>
+                                        <span>2024_표준가맹계약서.pdf</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="downloadAttachment('contract.pdf')">
+                                        <i class="bx bx-download"></i> 다운로드
+                                    </button>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bx bxs-file-image text-primary me-2 fs-4"></i>
+                                        <span>사업자등록증_사본.jpg</span>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="downloadAttachment('license.jpg')">
+                                        <i class="bx bx-download"></i> 다운로드
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-danger" onclick="downloadContractPdf()">
+                        <i class="bx bxs-file-pdf me-1"></i> 계약서 PDF 저장
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
@@ -284,82 +541,95 @@
         $('#view-' + tabName).fadeIn(200);
     }
 
-    // 2. 테이블 정렬 (오름차순/내림차순 토글)
+    // 2. 테이블 정렬
     function toggleSort(thElement, column) {
-        // 모든 아이콘 초기화
         $('.sort-icon').removeClass('bx-sort-up bx-sort-down sort-active').addClass('bx-sort-alt-2');
-        
         const icon = $(thElement).find('i');
         let currentOrder = $(thElement).data('order') || 'none';
         
-        // 정렬 상태 토글
         if (currentOrder === 'asc') {
             $(thElement).data('order', 'desc');
             icon.removeClass('bx-sort-alt-2').addClass('bx-sort-down sort-active');
-            console.log(`Sort by ${column} DESC`); // 서버 요청 시 사용
         } else {
             $(thElement).data('order', 'asc');
             icon.removeClass('bx-sort-alt-2').addClass('bx-sort-up sort-active');
-            console.log(`Sort by ${column} ASC`); // 서버 요청 시 사용
         }
     }
 
-    // 3. 검색 기능 (콘솔 확인용)
-    function searchStores() {
-        const params = {
-            status: $('#filterStatus').val(),
-            address: $('#filterAddress').val(),
-            openTime: $('#filterOpenTime').val(),
-            keyword: $('#filterKeyword').val()
-        };
-        console.log("검색 요청:", params);
-        alert("검색 조건으로 조회합니다. (콘솔 확인)");
+    // 3. 계약 조회 (더미)
+    function searchContracts() {
+        alert("계약 정보를 조회합니다. (콘솔 로그 확인)");
     }
 
-    // 4. 엑셀 다운로드
+    // 4. 엑셀 다운로드 (더미)
+    function downloadContractExcel() {
+        if(confirm("조회된 계약 목록을 엑셀로 저장하시겠습니까?")) {
+            alert("contract_list.xlsx 다운로드가 시작되었습니다.");
+        }
+    }
+    
     function downloadStoreExcel() {
-        if(confirm("전체 가맹점 목록을 엑셀로 저장하시겠습니까?\n(포함 항목: 가맹점명, 주소, 운영상태, 운영시간, 점주정보)")) {
-            // 실제 구현: window.location.href = '/store/excel/download';
-            alert("가맹점_목록.xlsx 다운로드가 시작되었습니다.");
+        if(confirm("가맹점 목록을 엑셀로 저장하시겠습니까?")) {
+            alert("store_list.xlsx 다운로드가 시작되었습니다.");
         }
     }
 
-    // 5. 주소 API (Daum/Kakao 주소 API 연동 예시)
-    function openAddressApi() {
-        // 실제 API 연동 시: new daum.Postcode({...}).open();
-        alert("주소 검색 API 팝업이 열립니다.");
-        
-        // (더미 데이터 세팅)
-        $('#storeAddress').val("서울 강남구 테헤란로 123");
-        $('#latitude').val("37.5665");
-        $('#longitude').val("126.9780");
+    // 5. 계약 등록 저장
+    function submitContractRegistration() {
+        alert("신규 계약이 등록되었습니다.");
+        $('#registerContractModal').modal('hide');
     }
 
-    // 6. 가맹점 등록 저장
-    function submitStoreRegistration() {
-        // 폼 유효성 검사
-        if(!$('#storeName').val() || !$('#memberId').val() || !$('#storeAddress').val()) {
-            alert("필수 항목(가맹점명, 점주, 주소)을 입력해주세요.");
-            return;
-        }
-        
-        // AJAX 요청 로직 들어갈 자리
-        const formData = {
-            store_name: $('#storeName').val(),
-            member_id: $('#memberId').val(),
-            store_address: $('#storeAddress').val(),
-            latitude: $('#latitude').val(),
-            longitude: $('#longitude').val(),
-            operation_status: $('#operationStatus').val(),
-            open_time: $('#openTime').val(),
-            close_time: $('#closeTime').val()
-        };
-        
-        console.log("등록 데이터:", formData);
-        alert("신규 가맹점이 등록되었습니다.");
-        $('#registerStoreModal').modal('hide');
-        // location.reload();
+    /* =========================================
+       [파일 첨부 기능] 동적 추가/삭제
+       ========================================= */
+    function addFileField() {
+        const container = document.getElementById('fileContainer');
+        const newDiv = document.createElement('div');
+        newDiv.className = 'input-group mb-2';
+        newDiv.innerHTML = `
+            <input type="file" class="form-control" name="contractFiles">
+            <button type="button" class="btn btn-outline-danger" onclick="removeFileField(this)">
+                <i class="bx bx-minus"></i>
+            </button>
+        `;
+        container.appendChild(newDiv);
     }
+
+    function removeFileField(button) {
+        button.parentElement.remove();
+    }
+    
+    /* =========================================
+       [계약 상세 조회 기능] (NEW)
+       ========================================= */
+    function openContractDetail(id, store, royalty, deposit, start, end, status) {
+        // 모달 필드에 값 채워넣기
+        $('#detailContractId').val(id);
+        $('#detailStoreName').val(store);
+        $('#detailRoyalty').val(royalty + "원");
+        $('#detailDeposit').val(deposit + "원");
+        $('#detailStartDate').val(start);
+        $('#detailEndDate').val(end);
+        $('#detailStatus').val(status);
+        
+        // 모달 띄우기
+        $('#detailContractModal').modal('show');
+    }
+
+    // PDF 다운로드 (shell)
+    function downloadContractPdf() {
+        const id = $('#detailContractId').val();
+        alert(`[${id}] 계약서 문서를 PDF로 생성하여 다운로드합니다.`);
+    }
+
+    // 첨부파일 다운로드 (shell)
+    function downloadAttachment(fileName) {
+        alert(`첨부파일 [${fileName}] 을(를) 다운로드합니다.`);
+    }
+    
+    // 가맹점 조회 로직 (기존)
+    function searchStores() { alert("가맹점 조회"); }
     </script>
   </body>
 </html>

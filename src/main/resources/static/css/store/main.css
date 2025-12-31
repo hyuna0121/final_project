@@ -33,6 +33,26 @@
     color: #566a7f;
 }
 
+/* 테이블 정렬 스타일 */
+.sortable { 
+	cursor: pointer; 
+	user-select: none; 
+	position: relative; 
+}
+.sortable:hover { 
+	background-color: #f0f2f4; 
+	color: #696cff; 
+}
+
+.sort-icon { 
+	font-size: 0.9em; 
+	margin-left: 5px; 
+	color: #969696; 
+}
+.sort-active { 
+	color: #696cff;
+} 
+
 /* 콘텐츠 영역 스타일 */
 #tab-content-area {
     min-height: 600px;
@@ -40,4 +60,19 @@
     border-radius: 10px;
     padding: 24px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+#detailStatusArea .badge {
+    display: flex; /* Flexbox 컨테이너로 설정 */
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: center; /* 수평 중앙 정렬 (선택 사항) */
+    width: 100%; /* 부모 요소 너비에 맞춤 (input처럼) */
+    /* Bootstrap 기본 form-control 높이 계산식 (폰트 크기 1rem 기준) */
+    /* 실제 적용된 테마에 따라 약간의 오차가 있을 수 있으니 필요시 px 단위로 직접 조정하세요. 예: height: 38px; */
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem; /* Bootstrap 기본 form-control 패딩 */
+    font-size: 1rem; /* 폰트 크기를 input 텍스트와 비슷하게 키움 */
+    /* 기존 배지 스타일 오버라이드 */
+    font-weight: normal; /* input 텍스트처럼 보이게 굵기 조정 (선택 사항) */
+    border-radius: 0.375rem; /* form-control과 동일한 모서리 둥글기 */
 }

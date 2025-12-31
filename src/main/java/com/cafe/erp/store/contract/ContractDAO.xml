@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.cafe.erp.store.contract.ContractDAO">
+
+	<select id="list" resultType="ContractDTO">
+		SELECT 
+            sc.contract_id,
+            sc.store_id,          
+            sc.contract_royalti,
+            sc.contract_deposit,
+            sc.contract_start_date,
+            sc.contract_end_date,
+            sc.contract_status,
+            sc.contract_created_at,
+            sc.contract_updated_at,
+            s.store_name
+        FROM 
+            store_contract sc             
+            INNER JOIN store s                
+            ON sc.store_id = s.store_id 
+            ORDER BY sc.contract_id DESC
+	</select>
+	
+	<select id="countContractId" parameterType="String">
+		SELECT COUNT(contract_id) FROM store_contract WHERE contract_id LIKE '${id}%'
+	</select>
+
+	<insert id="add" parameterType="ContractDTO">
+		INSERT INTO store_contract VALUE(#{contractId}, #{storeId}, #{contractRoyalti}, #{contractDeposit}, #{contractStartDate}, #{contractEndDate}, #{contractStatus}, now(), now())
+	</insert>
+	
+	<insert id="fileAdd" parameterType="ContractFileDTO">
+		INSERT INTO store_contract_file	VALUE(null, #{contractId}, #{fileOriginalName}, #{fileSavedName})	
+	</insert>
+	
+	<select id="getDetail" parameterType="String" resultMap="detailResult">
+		SELECT 
+			sc.contract_id,
+            sc.store_id,          
+            sc.contract_royalti,
+            sc.contract_deposit,
+            sc.contract_start_date,
+            sc.contract_end_date,
+            sc.contract_status,
+            sc.contract_created_at,
+            sc.contract_updated_at,
+            s.store_name,
+            scf.file_id,
+            scf.file_original_name,
+            scf.file_saved_name
+		FROM store_contract sc
+		INNER JOIN store s ON sc.store_id = s.store_id 
+		LEFT JOIN  store_contract_file scf ON sc.contract_id=scf.contract_id
+		WHERE sc.contract_id = #{contractId};
+	</select>
+	
+	<resultMap type="ContractDTO" id="detailResult">
+		<id column="contract_id" property="contractId"/>
+		<result column="store_id" property="storeId"/>
+		<result column="contract_royalti" property="contractRoyalti"/>
+		<result column="contract_deposit" property="contractDeposit"/>
+		<result column="contract_start_date" property="contractStartDate"/>
+		<result column="contract_end_date" property="contractEndDate"/>
+		<result column="contract_status" property="contractStatus"/>
+		<result column="contract_created_at" property="contractCreatedAt"/>
+		<result column="contract_updated_at" property="contractUpdatedAt"/>
+		<result column="store_name" property="storeName"/>
+		
+		<collection property="fileDTOs" ofType="ContractFileDTO">
+			<id column="file_id" property="fileId"/>
+			<result column="file_original_name" property="fileOriginalName"/>
+			<result column="file_saved_name" property="fileSavedName"/>
+		</collection>
+	</resultMap>
+	
+</mapper>

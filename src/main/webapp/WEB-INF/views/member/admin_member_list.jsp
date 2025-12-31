@@ -109,8 +109,8 @@
                     
                     	<c:forEach items="${list}" var="member">
 		                    <tr>
-        	                	<td><i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>${member.memberId}</strong></td>
-            	            	<td><a href="./detail?empId=102401" class="fw-bold text-body">${member.memName}</a></td>
+        	                	<td><i class="fab fa-angular fa-lg text-danger me-3"></i>${member.memberId}</td>
+            	            	<td><a href="./AM_member_detail?memberId=${member.memberId}"><span class="fw-bold text-primary"> ${member.memName}</span> </a></td>
             	            	<td>
 	            	            	<c:choose>
     	        	            		<c:when test="${member.deptCode == 10}">
@@ -195,7 +195,7 @@
 
 								        <c:otherwise>
 								            <span class="badge bg-label-dark">
-								                퇴사
+								                퇴직
 								            </span>
 								        </c:otherwise>
 								    </c:choose>
@@ -379,7 +379,7 @@
     
     <script>
         function previewEmpId() {
-            const deptSelect = document.getElementById("memDeptCode");
+            const deptSelect = document.getElementById("deptCode");
             const previewInput = document.getElementById("previewIdInput");
             const hiddenPrefix = document.getElementById("idPrefix");
             

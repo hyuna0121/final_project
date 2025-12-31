@@ -98,7 +98,7 @@ async function searchOwner() {
 
     try {
         const params = new URLSearchParams({ keyword: keyword });
-        const url = `/store/tab/store/search/owner?${params.toString()}`;
+        const url = `/member/search/owner?${params.toString()}`;
 
         const response = await fetch(url, {
             method: "GET",

@@ -14,19 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cafe.erp.member.MemberDTO;
-import com.cafe.erp.member.MemberService;
 
 @Controller
-@RequestMapping("/store/*")
+@RequestMapping("/store/")
 public class StoreController {
 
 	@Autowired
 	private StoreService storeService;
-	@Autowired
-	private MemberService memberService;
 
 	@Value("${kakao.appkey}")
 	private String kakaoKey;
@@ -42,24 +36,18 @@ public class StoreController {
 		return "store/main";
 	}
 
-	@GetMapping("/tab/store")
-	public String list(Model model) throws Exception {
+//	store list tab
+	@GetMapping("tab/store")
+	public String storeList(Model model) throws Exception {
 		List<StoreDTO> storeList = storeService.list();
 		model.addAttribute("list", storeList);
 
 		return "store/tab_store";
 	}
 
-	@GetMapping("/tab/store/search/owner")
+	@PostMapping("tab/store/add") 
 	@ResponseBody
-	public List<MemberDTO> searchOwner(@RequestParam String keyword) throws Exception {
-		return memberService.searchOwner(keyword);
-	}
-
-	@PostMapping("/tab/store/add") 
-	@ResponseBody
-	public Map<String, Object> add(@RequestBody StoreDTO storeDTO) throws Exception { 
-		System.out.println(storeDTO);  
+	public Map<String, Object> addStore(@RequestBody StoreDTO storeDTO) throws Exception { 
 		int result = storeService.add(storeDTO);
 	 
 		Map<String, Object> response = new HashMap<>();
@@ -73,6 +61,14 @@ public class StoreController {
 		}
 		
 		return response; 
+	}
+	
+	
+	// contract list tab
+	@GetMapping("tab/store/search/store")
+	@ResponseBody
+	public List<StoreDTO> searchStore(@RequestParam String keyword) throws Exception {
+		return storeService.searchStore(keyword);
 	}
 
 }

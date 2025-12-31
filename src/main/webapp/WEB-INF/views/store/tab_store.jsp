@@ -9,9 +9,9 @@
 	          			<label class="form-label small text-muted">운영 상태</label>
 				        	<select class="form-select" id="filterStatus">
 				            	<option value="">전체</option>
-				                <option value="OPEN">운영중</option>
+				                <option value="READY">오픈 준비</option>
+				                <option value="OPEN">오픈</option>
 				                <option value="CLOSED">폐업</option>
-				                <option value="RENOVATION">인테리어 공사</option>
 				            </select>
 	        		</div>
 			        <div class="col-md-3">
@@ -21,6 +21,10 @@
 			        <div class="col-md-2">
 			        	<label class="form-label small text-muted">오픈 시간</label>
 			            <input type="time" class="form-control" id="filterOpenTime" />
+			        </div>
+			        <div class="col-md-2">
+			        	<label class="form-label small text-muted">종료 시간</label>
+			            <input type="time" class="form-control" id="filterCloseTime" />
 			        </div>
 			        <div class="col-md-3">
 			            <label class="form-label small text-muted">가맹점명</label>
@@ -59,12 +63,13 @@
 	              		<th>
 	                		가맹점명 <i class="bx bx-sort-alt-2 sort-icon"></i>
 	              		</th>
+	              		<th>
+	                		가맹점주 <i class="bx bx-sort-alt-2 sort-icon"></i>
+	              		</th>
 		                <th>
 		                	주소 <i class="bx bx-sort-alt-2 sort-icon"></i>
 		              	</th>
-		              	<th>
-		                	운영 상태 <i class="bx bx-sort-alt-2 sort-icon"></i>
-		              	</th>
+		              	<th>운영 상태</th>
 		              	<th>
 		                	운영 시간 <i class="bx bx-sort-alt-2 sort-icon"></i>
 		              	</th>
@@ -77,6 +82,7 @@
 	       				<tr>
 	         				<td>${dto.storeId}</td>
 				            <td><span class="fw-bold text-primary">${dto.storeName}</span></td>
+				            <td>${dto.memName}</td>
 				            <td>${dto.storeAddress}</td>
 				            <td>
 				            	<c:if test="${dto.storeStatus eq '오픈'}"><span class="badge bg-label-info">${dto.storeStatus}</span></c:if>

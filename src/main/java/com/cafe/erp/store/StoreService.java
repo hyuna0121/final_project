@@ -55,5 +55,9 @@ public class StoreService {
 		
 		return storeDAO.add(storeDTO);
 	}
+
+	public List<StoreDTO> searchStore(String keyword) throws Exception {
+		return storeDAO.searchStore(keyword);
+	}
 	
 }

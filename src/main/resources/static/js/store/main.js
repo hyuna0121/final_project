@@ -9,7 +9,6 @@ function loadTab(tabName, element) {
     }
 
     // AJAX로 JSP 조각 불러오기
-    // Controller URL: /franchise/tab/{tabName}
     const url = '/store/tab/' + tabName;
     
     $('#tab-content-area').fadeOut(100, function() {
