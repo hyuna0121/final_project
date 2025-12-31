@@ -80,7 +80,7 @@
 	          	<tbody>
 	            	<c:forEach items="${list}" var="dto">
 	       				<tr>
-	         				<td>${dto.storeId}</td>
+	         				<td class="fw-bold">${dto.storeId}</td>
 				            <td><span class="fw-bold text-primary">${dto.storeName}</span></td>
 				            <td>${dto.memName}</td>
 				            <td>${dto.storeAddress}</td>

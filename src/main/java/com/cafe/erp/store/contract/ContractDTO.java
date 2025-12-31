@@ -25,6 +25,10 @@ public class ContractDTO {
 	
 	// store table column
 	private String storeName;
+	private String storeAddress;
+	
+	// member table column
+	private String memName;
 	
 	// store_contract_file table
 	private List<ContractFileDTO> fileDTOs;

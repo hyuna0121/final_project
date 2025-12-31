@@ -102,7 +102,7 @@
 	          	<tbody>
 	            	<c:forEach items="${list}" var="dto">
 	       				<tr>
-	         				<td>${dto.contractId}</td>
+	         				<td class="fw-bold">${dto.contractId}</td>
 				            <td>
 				            	<a href="javascript:void(0);"
 				            	   class="fw-bold text-primary"
@@ -153,9 +153,9 @@
                         	<div class="col-md-12">
                                 <label class="form-label" for="storeNameInput">가맹점명 검색 <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <input type="text" id="storeNameInput" class="form-control" placeholder="가맹점명 입력" onkeyup="if(window.event.keyCode==13){searcStore()}" required />
+                                    <input type="text" id="storeNameInput" class="form-control" placeholder="가맹점명 입력" onkeyup="if(window.event.keyCode==13){searchStore()}" required />
                                     <input type="hidden" id="storeId" name="storeId" />
-                                    <button class="btn btn-primary" type="button" onclick="searcStore()">
+                                    <button class="btn btn-primary" type="button" onclick="searchStore()">
                                         <i class="bx bx-search"></i>
                                     </button>
                                 </div>
@@ -228,57 +228,118 @@
         </div>
     </div>
     
-    <div class="modal fade" id="detailContractModal" tabindex="-1" aria-hidden="true">
+	<div class="modal fade" id="detailContractModal" tabindex="-1" aria-hidden="true">
 	    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
 	        <div class="modal-content">
-	            <div class="modal-header">
-	                <h5 class="modal-title">계약 상세 정보</h5>
+	            <div class="modal-header border-bottom-0"> <h5 class="modal-title fw-bold">계약 상세 정보</h5>
 	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 	            </div>
-	            <div class="modal-body">
-	                <div class="row g-3">
-	                    <div class="col-md-6">
-	                        <label class="form-label text-muted small">계약 번호</label>
-	                        <input type="text" id="detailContractId" class="form-control bg-white fw-bold" readonly />
+
+	            
+	            <div class="modal-body pt-0">
+                    <div class="col-12"><hr class="mt-3 mb-1 border-light"></div>
+	                <div class="d-flex gap-4 align-items-center bg-white border rounded-3 p-3 mt-3 mb-3">
+                        <div class="col-md-2" style="margin-left: 5px;">
+                            <span class="text-muted small d-block mb-1">계약 번호</span>
+                            <span id="detailContractId" class="fw-bold text-dark"></span> 
+                        </div>
+                        <div>
+                            <span class="text-muted small d-block mb-1">현재 상태</span>
+                            <div id="detailStatusArea"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-12"><hr class="mb-4 border-light"></div>
+	
+	                <div class="row g-4">
+	                    <div class="col-12">
+	                        <div class="p-3 bg-light border rounded-3">
+	                            <h6 class="fw-bold mb-3"><i class="bx bx-store me-1"></i> 가맹점 정보</h6>
+	                            <div class="row g-3">
+	                                <div class="col-md-3 ps-md-4 border-end">
+	                                    <label class="text-muted small d-block">가맹점명</label>
+	                                    <span id="detailStoreName" class="fw-semibold fs-6 text-primary"></span>
+	                                </div>
+	                                <div class="col-md-3 ps-md-4 border-end">
+	                                    <label class="text-muted small d-block">가맹점주</label>
+	                                    <span id="detailMemName" class="fw-semibold fs-6"></span>
+	                                </div>
+	                                <div class="col-md-6 ps-md-4">
+	                                    <label class="text-muted small d-block">주소</label>
+	                                    <span id="detailStoreAddress" class="fw-semibold fs-6"></span>
+	                                </div>
+	                            </div>
+	                        </div>
 	                    </div>
-	                    <div class="col-md-6">
-	                        <label class="form-label text-muted small">가맹점명</label>
-	                        <input type="text" id="detailStoreName" class="form-control bg-white" readonly />
-	                    </div>
-	                    <div class="col-12"><hr class="my-1 border-light"></div>
-	                    <div class="col-md-6">
-	                        <label class="form-label text-muted small">로얄티</label>
-	                        <input type="text" id="detailRoyalty" class="form-control bg-white" readonly />
-	                    </div>
-	                    <div class="col-md-6">
-	                        <label class="form-label text-muted small">여신(보증금)</label>
-	                        <input type="text" id="detailDeposit" class="form-control bg-white" readonly />
-	                    </div>
-	                    <div class="col-md-4">
-	                        <label class="form-label text-muted small">시작일</label>
-	                        <input type="text" id="detailStartDate" class="form-control bg-white" readonly />
-	                    </div>
-	                    <div class="col-md-4">
-	                        <label class="form-label text-muted small">종료일</label>
-	                        <input type="text" id="detailEndDate" class="form-control bg-white" readonly />
-	                    </div>
-	                    <div class="col-md-4">
-	                        <label class="form-label text-muted small">상태</label>
-	                        <div id="detailStatusArea"></div>
+	
+	                    <div class="col-12">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-light border rounded-3">
+                                        <h6 class="fw-bold mb-3"><i class="bx bx-calendar me-1"></i> 계약 기간</h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6 ps-md-4 border-end">
+                                                <label class="text-muted small d-block">계약 시작일</label>
+                                                <span id="detailStartDate" class="fw-semibold mode-view"></span>
+                                                <input type="date" id="editStartDate" class="form-control form-control-sm mode-edit d-none" />
+                                            </div>
+                                            <div class="col-md-6 ps-md-4">
+                                                <label class="text-muted small d-block">계약 종료일</label>
+                                                <span id="detailEndDate" class="fw-semibold mode-view"></span>
+                                                <input type="date" id="editEndDate" class="form-control form-control-sm mode-edit d-none" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-light border rounded-3">
+                                        <h6 class="fw-bold mb-3"><i class="bx bx-won me-1"></i> 계약 조건</h6>
+                                        <div class="row g-3">
+                                            <div class="col-md-6 ps-md-4 border-end">
+                                                <label class="text-muted small d-block">로얄티</label>
+                                                <span id="detailRoyalty" class="fw-semibold mode-view"></span>
+                                                <input type="number" id="editRoyalty" class="form-control form-control-sm mode-edit d-none" placeholder="숫자만 입력" />
+                                            </div>
+                                            <div class="col-md-6 ps-md-4">
+                                                <label class="text-muted small d-block">여신(보증금)</label>
+                                                <span id="detailDeposit" class="fw-semibold mode-view"></span>
+                                                <input type="number" id="editDeposit" class="form-control form-control-sm mode-edit d-none" placeholder="숫자만 입력" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 	                    </div>
 	                    
-	                    <div class="col-12 mt-4">
-	                        <h6 class="text-muted mb-3"><i class="bx bx-file"></i> 첨부파일 다운로드</h6>
-	                        <ul class="list-group" id="detailFileList">
-	                            </ul>
-	                    </div>
+	                    <div class="col-12"><hr class="my-1 border-light"></div>
+	                    <div class="col-12">
+                            <div class="p-3 bg-white border rounded-3">
+                                <h6 class="fw-bold mb-3"><i class="bx bx-file"></i> 첨부파일 다운로드</h6>
+                                <ul class="list-group" id="detailFileList"></ul>
+                            </div>
+						</div>
+						<div class="col-12"><hr class="my-1 border-light"></div>
 	                </div>
 	            </div>
-	            <div class="modal-footer d-flex justify-content-between">
-	                <button type="button" class="btn btn-danger" onclick="downloadContractPdf()">
-	                    <i class="bx bxs-file-pdf me-1"></i> 계약서 PDF 저장
-	                </button>
-	                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+	
+	            <div class="modal-footer d-flex justify-content-between bg-light border-top-0">
+	                <button type="button" id="btnPdfDownload" class="btn btn-danger" onclick="downloadContractPdf()">
+						<i class="bx bxs-file-pdf me-1"></i> 계약서 PDF 저장
+					</button>
+					<div class="d-felx">
+						<button type="button" id="btnEditMode" class="btn btn-primary px-4 me-2" onclick="enableEditMode()">
+				            <i class="bx bx-edit me-1"></i> 수정
+				        </button>
+		                <button type="button" id="btnCloseModal" class="btn btn-secondary px-4" data-bs-dismiss="modal">닫기</button>
+		                
+				        <button type="button" id="btnCancelEdit" class="btn btn-secondary px-4 me-2 d-none" onclick="cancelEditMode()">
+				            취소
+				        </button>
+		                <button type="button" id="btnSaveContract" class="btn btn-primary px-4 d-none" onclick="updateContract()">
+				            계약 저장
+				        </button>
+					</div>
 	            </div>
 	        </div>
 	    </div>
@@ -296,7 +357,7 @@
         <div style="margin-bottom: 20px; line-height: 1.8; font-size: 11pt; text-align: justify;">
             <p>
                 <strong>(주)카페ERP</strong>(이하 "가맹본부"라 한다)와 
-                <strong><span id="pdfStoreName" style="text-decoration: underline;"></span></strong>(이하 "가맹점사업자"라 한다)는 
+                <strong><span id="pdfStoreName" style="text-decoration: underline;"></span></strong>(이하 "가맹점사업자"라 한다)은 
                 상호 대등한 입장에서 공정한 거래질서에 따라 다음과 같이 가맹계약을 체결한다. 
             </p>
         </div>
@@ -305,12 +366,12 @@
         <p style="font-size: 10pt; margin-bottom: 5px;">이 계약에 의하여 가맹점사업자가 개설하게 되는 가맹점의 표시는 다음과 같다. </p>
         <table style="width: 100%; border-collapse: collapse; border: 1px solid #000; font-size: 10pt;">
             <tr>
-                <th style="border: 1px solid #000; padding: 8px; background-color: #f3f3f3; width: 30%;">상호(점포명)</th>
+                <th style="border: 1px solid #000; padding: 8px; background-color: #f3f3f3; width: 30%;">상호명(점포명)</th>
                 <td style="border: 1px solid #000; padding: 8px;"><span id="pdfStoreNameTable"></span></td>
             </tr>
             <tr>
-                <th style="border: 1px solid #000; padding: 8px; background-color: #f3f3f3;">계약 상태</th>
-                <td style="border: 1px solid #000; padding: 8px;"><span id="pdfStatus"></span></td>
+                <th style="border: 1px solid #000; padding: 8px; background-color: #f3f3f3;">주소</th>
+                <td style="border: 1px solid #000; padding: 8px;"><span id="pdfStoreAddress"></span></td>
             </tr>
         </table>
 
@@ -332,11 +393,11 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">영업표지 사용료(로얄티)</td>
+                    <td style="border: 1px solid #000; padding: 8px;">영업표지 사용료(로얄티)</td>
                     <td style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold;">
                         <span id="pdfRoyalty"></span>
                     </td>
-                    <td style="border: 1px solid #000; padding: 8px; text-align: center;">매월 1일</td>
+                    <td style="border: 1px solid #000; padding: 8px;">매월 1일</td>
                 </tr>
             </tbody>
         </table>
@@ -354,7 +415,7 @@
                 이 계약의 체결을 증명하기 위하여 계약서 2통을 작성하여 각각 기명날인한 후 각 1통씩 보관한다.
             </p>
             <p style="text-align: center; font-size: 12pt; margin-top: 30px;">
-                <strong><span id="pdfToday"></span></strong>
+                <strong><span id="pdfCreatedAt"></span></strong>
             </p>
         </div>
 

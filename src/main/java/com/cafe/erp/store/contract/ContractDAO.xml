@@ -48,11 +48,14 @@
             sc.contract_created_at,
             sc.contract_updated_at,
             s.store_name,
+            s.store_address,
+            m.mem_name,
             scf.file_id,
             scf.file_original_name,
             scf.file_saved_name
 		FROM store_contract sc
 		INNER JOIN store s ON sc.store_id = s.store_id 
+		INNER JOIN member m ON s.member_id = m.member_id
 		LEFT JOIN  store_contract_file scf ON sc.contract_id=scf.contract_id
 		WHERE sc.contract_id = #{contractId};
 	</select>
@@ -68,6 +71,8 @@
 		<result column="contract_created_at" property="contractCreatedAt"/>
 		<result column="contract_updated_at" property="contractUpdatedAt"/>
 		<result column="store_name" property="storeName"/>
+		<result column="store_address" property="storeAddress"/>
+		<result column="mem_name" property="memName"/>
 		
 		<collection property="fileDTOs" ofType="ContractFileDTO">
 			<id column="file_id" property="fileId"/>

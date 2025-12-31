@@ -80,8 +80,8 @@
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
               
-			    <div class="col-12">
-                    <ul class="nav nav-pills-custom" role="tablist">
+			    <div class="col-12 px-0">
+                    <ul class="nav nav-pills-custom ps-0" role="tablist">
                         <li class="nav-item">
                             <button type="button" class="nav-link active" id="btn-store" onclick="loadTab('store', this)">
                                 <i class="bx bx-store me-1"></i> 가맹점 정보 </button>
