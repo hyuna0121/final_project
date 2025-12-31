@@ -86,22 +86,22 @@
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-dock-top"></i>
-        <div data-i18n="Account Settings">product</div>
+        <div data-i18n="Account Settings">물품</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
-          <a href="/product/add" class="menu-link">
-            <div data-i18n="Account">Add Product</div>
+          <a href="/item/add" class="menu-link">
+            <div data-i18n="Account">물품 등록</div>
           </a>
         </li>
         <li class="menu-item">
-          <a href="/product/list" class="menu-link">
-            <div data-i18n="Notifications">Search Product</div>
+          <a href="/item/list" class="menu-link">
+            <div data-i18n="Notifications">물품 검색</div>
           </a>
         </li>
         <li class="menu-item">
-          <a href="/product/priceDetail" class="menu-link">
-            <div data-i18n="Notifications">price Fluctuation</div>
+          <a href="/item/priceDetail" class="menu-link">
+            <div data-i18n="Notifications">물품 단가</div>
           </a>
         </li>
       </ul>
