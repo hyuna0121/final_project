@@ -11,7 +11,7 @@ public interface StoreDAO {
 
 	public int add(StoreDTO storeDTO) throws Exception;
 	
-	public int countStoreId(String id) throws Exception;
+	public Integer maxStoreId(String id) throws Exception;
 
 	public List<StoreDTO> searchStore(String keyword) throws Exception;
 	

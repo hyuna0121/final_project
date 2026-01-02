@@ -29,10 +29,17 @@ public class ContractService {
 	public int add(ContractDTO contractDTO, List<MultipartFile> files) throws Exception {
 		
 		int year = LocalDate.now().getYear();
-		String id = "CT" + year;
-		int count = contractDAO.countContractId(id) + 1;
-		String num = String.format("%03d", count);
-		contractDTO.setContractId(id + num);
+		String prefix = "CT" + year;
+		String maxId = contractDAO.maxContractId(prefix);
+		
+		int nextNum = 1;
+		if (maxId != null) {
+			String num = maxId.substring(prefix.length());
+			nextNum = Integer.parseInt(num) + 1;
+		}
+		
+		String newId = prefix + String.format("%03d", nextNum);
+		contractDTO.setContractId(newId);
 		
 		int result = contractDAO.add(contractDTO);
 		

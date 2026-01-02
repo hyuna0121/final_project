@@ -27,8 +27,8 @@
             ORDER BY s.store_id
 	</select>
 
-	<select id="countStoreId" parameterType="String">
-		SELECT COUNT(store_id) FROM store WHERE store_id LIKE '${id}%'
+	<select id="maxStoreId" parameterType="String" resultType="Integer">
+		SELECT MAX(store_id) FROM store WHERE CAST(store_id AS CHAR) LIKE CONCAT(#{id}, '%') FOR UPDATE
 	</select>
 	
 	<insert id="add" parameterType="storeDTO">

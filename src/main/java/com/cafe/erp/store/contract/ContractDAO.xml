@@ -24,8 +24,8 @@
             ORDER BY sc.contract_id DESC
 	</select>
 	
-	<select id="countContractId" parameterType="String">
-		SELECT COUNT(contract_id) FROM store_contract WHERE contract_id LIKE '${id}%'
+	<select id="maxContractId" parameterType="String" resultType="String">
+		SELECT MAX(contract_id) FROM store_contract WHERE contract_id LIKE CONCAT(#{prefix}, '%') FOR UPDATE
 	</select>
 
 	<insert id="add" parameterType="ContractDTO">

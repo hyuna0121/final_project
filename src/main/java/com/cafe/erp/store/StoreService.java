@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StoreService {
@@ -16,6 +17,7 @@ public class StoreService {
 		return storeDAO.list(); 
 	}
 
+	@Transactional
 	public int add(StoreDTO storeDTO) throws Exception {
 		String[] addrs = storeDTO.getStoreAddress().split(" ");
 		
@@ -47,10 +49,15 @@ public class StoreService {
 				regionCode += 15; break;
 		}
 		
-		String id = regionCode + year.substring(2);
-		int count = storeDAO.countStoreId(id) + 1;
-		String num = String.format("%03d", count);
-		int storeId = Integer.parseInt(id + num);
+		String prefix = regionCode + year.substring(2);
+		Integer maxId = storeDAO.maxStoreId(prefix);
+		
+		int nextId = 1;
+		if (maxId != null) nextId = (maxId % 1000) + 1;
+		
+		String num = String.format("%03d", nextId);
+		
+		int storeId = Integer.parseInt(prefix + num);
 		storeDTO.setStoreId(storeId);
 		
 		return storeDAO.add(storeDTO);

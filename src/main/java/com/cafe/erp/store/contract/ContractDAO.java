@@ -10,7 +10,7 @@ public interface ContractDAO {
 	
 	public List<ContractDTO> list() throws Exception;
 
-	public int countContractId(String id);
+	public String maxContractId(String id);
 
 	public int add(ContractDTO contractDTO);
 
