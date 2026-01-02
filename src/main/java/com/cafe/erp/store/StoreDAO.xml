@@ -5,7 +5,32 @@
     
 <mapper namespace="com.cafe.erp.store.StoreDAO">
 
-	<select id="list" resultType="StoreDTO">
+	<sql id="searchCondition">
+        <where>
+            <if test="storeStatus != null and storeStatus != ''">
+                AND s.store_status = #{storeStatus}
+            </if>
+            
+            <if test="storeAddress != null and storeAddress != ''">
+                AND s.store_address LIKE CONCAT('%', #{storeAddress}, '%')
+            </if>
+            
+            <if test="storeName != null and storeName != ''">
+                AND s.store_name LIKE CONCAT('%', #{storeName}, '%')
+            </if>
+            
+            <if test="storeStartTime != null and storeStartTime != ''">
+            	AND s.store_start_time >= #{storeStartTime}
+	        </if>
+	
+	        <if test="storeCloseTime != null and storeCloseTime != ''">
+	            AND s.store_close_time &lt;= #{storeCloseTime}
+	        </if>
+            
+            </where>
+    </sql>
+
+	<select id="list" parameterType="StoreSearchDTO" resultType="StoreDTO">
 		SELECT 
             s.store_id,
             s.store_name,          
@@ -24,7 +49,9 @@
             store s             
             LEFT JOIN member m                
             ON s.member_id = m.member_id 
+       		<include refid="searchCondition" />
             ORDER BY s.store_id
+            LIMIT #{startNum}, #{perPage}
 	</select>
 
 	<select id="maxStoreId" parameterType="String" resultType="Integer">
@@ -57,6 +84,11 @@
             ON s.member_id = m.member_id 
             WHERE s.store_name LIKE CONCAT(#{keyword}, '%')
             ORDER BY s.store_name
+	</select>
+	
+	<select id="count" parameterType="StoreSearchDTO" resultType="Long">
+		SELECT COUNT(store_id) FROM store s
+		<include refid="searchCondition" />
 	</select>
 	
 </mapper>

@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cafe.erp.util.Pager;
+
+
 @Controller
 @RequestMapping("/store/")
 public class StoreController {
@@ -31,10 +34,12 @@ public class StoreController {
 	}
 
 	@GetMapping("list")
-	public String main(Model model) throws Exception {
-		model.addAttribute("kakaoKey", kakaoKey);
-		List<StoreDTO> storeList = storeService.list();
+	public String list(StoreSearchDTO searchDTO, Model model) throws Exception {
+		List<StoreDTO> storeList = storeService.list(searchDTO);
+		
 		model.addAttribute("list", storeList);
+		model.addAttribute("kakaoKey", kakaoKey);
+		model.addAttribute("pager", searchDTO);
 		
 		return "store/tab_store";
 	}

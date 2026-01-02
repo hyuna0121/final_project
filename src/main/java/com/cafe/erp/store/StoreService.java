@@ -7,14 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cafe.erp.util.Pager;
+
 @Service
 public class StoreService {
 	
 	@Autowired
 	private StoreDAO storeDAO;
 
-	public List<StoreDTO> list() throws Exception {
-		return storeDAO.list(); 
+	public List<StoreDTO> list(StoreSearchDTO searchDTO) throws Exception {
+		Long totalCount = storeDAO.count(searchDTO);
+		
+		searchDTO.pageing(totalCount);
+		
+		return storeDAO.list(searchDTO); 
 	}
 
 	@Transactional

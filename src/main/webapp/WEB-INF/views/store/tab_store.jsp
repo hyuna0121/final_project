@@ -100,35 +100,37 @@
                 <div id="tab-content-area">
                    	<div class="card shadow-none border bg-white mb-4">
 						<div class="card-body py-3 px-3">
-					    	<form id="storeSearchForm" onsubmit="return false;">
+					    	<form id="storeSearchForm" method="get" action="/store/list">
+					    		<input type="hidden" name="page" id="page" value="1">
 					      		<div class="row g-3">
-					        		<div class="col-md-2">
-					          			<label class="form-label small text-muted">운영 상태</label>
-								        	<select class="form-select" id="filterStatus">
+					        		<div class="col-12 col-sm-6 col-md-4 col-lg-2">
+					          			<label class="form-label small">운영 상태</label>
+								        	<select class="form-select" id="filterStatus" name="storeStatus">
 								            	<option value="">전체</option>
-								                <option value="READY">오픈 준비</option>
-								                <option value="OPEN">오픈</option>
-								                <option value="CLOSED">폐업</option>
+								                <option value="오픈 준비" ${pager.storeStatus == '오픈 준비' ? 'selected' : ''}>오픈 준비</option>
+								                <option value="오픈" ${pager.storeStatus == '오픈' ? 'selected' : ''}>오픈</option>
+								                <option value="폐업" ${pager.storeStatus == '폐업' ? 'selected' : ''}>폐업</option>
 								            </select>
 					        		</div>
-							        <div class="col-md-3">
-							        	<label class="form-label small text-muted">주소 (지역)</label>
-							        	<input type="text" class="form-control" placeholder="예: 서울 강남구" id="filterAddress" />
+							        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+										<label class="form-label small">오픈 시간</label>
+							            <input type="time" class="form-control" id="filterOpenTime" name="storeStartTime" value="${pager.storeStartTime}" />
 							        </div>
-							        <div class="col-md-2">
-							        	<label class="form-label small text-muted">오픈 시간</label>
-							            <input type="time" class="form-control" id="filterOpenTime" />
+							        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+										<label class="form-label small">종료 시간</label>
+							            <input type="time" class="form-control" id="filterCloseTime" name="storeCloseTime" value="${pager.storeCloseTime}" />
 							        </div>
-							        <div class="col-md-2">
-							        	<label class="form-label small text-muted">종료 시간</label>
-							            <input type="time" class="form-control" id="filterCloseTime" />
+									<div class="col-12 col-sm-6 col-md-4 col-lg-2">
+										<label class="form-label small">주소 (지역)</label>
+										<input type="text" class="form-control" placeholder="예: 서울 강남구" id="filterAddress" name="storeAddress" value="${pager.storeAddress}" />
+									</div>
+							        <div class="col-12 col-sm-6 col-md-4 col-lg-2">
+							            <label class="form-label small">가맹점명</label>
+							            <input type="text" class="form-control" placeholder="가맹점명" id="filterKeyword" name="storeName" value="${pager.storeName}" />
 							        </div>
-							        <div class="col-md-3">
-							            <label class="form-label small text-muted">가맹점명</label>
-							            <input type="text" class="form-control" placeholder="검색어 입력" id="filterKeyword" />
-							        </div>
-							        <div class="col-md-2 d-flex align-items-end">
-							            <button class="btn btn-primary w-100" onclick="searchStores()">
+							        <div class="col-12 col-sm-6 col-md-4 col-lg-2 d-flex align-items-end justify-content-end gap-2 ps-md-5">
+										<button class="btn btn-outline-secondary text-nowrap" type="button" onclick="resetSearchForm()"><i class="bx bx-refresh"></i> 초기화</button>
+							            <button class="btn btn-primary text-nowrap" onclick="searchStores()">
 							            	<i class="bx bx-search me-1"></i> 조회
 							            </button>
 							        </div>
@@ -190,10 +192,12 @@
 					    <div class="card-footer d-flex justify-content-center">
 					        <nav aria-label="Page navigation">
 					            <ul class="pagination">
-					                <li class="page-item prev"><a class="page-link" href="#"><i class="bx bx-chevron-left"></i></a></li>
-					                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-					                <li class="page-item"><a class="page-link" href="#">2</a></li>
-					                <li class="page-item next"><a class="page-link" href="#"><i class="bx bx-chevron-right"></i></a></li>
+					                <li class="page-item ${pager.begin == 1 ? 'disabled' : ''}"><a class="page-link" href="javascript:movePage(${pager.begin - 1})"><i class="bx bx-chevron-left"></i></a></li>
+					                <!-- <li class="page-item active"><a class="page-link" href="#">1</a></li> -->
+					                <c:forEach begin="${pager.begin}" end="${pager.end}" var="i">
+									    <li class="page-item ${pager.page == i ? 'active' : ''}"><a class="page-link" href="javascript:movePage(${i})">${i}</a></li>
+							  		</c:forEach>
+					                <li class="page-item next"><a class="page-link" href="javascript:movePage(${pager.end + 1})"><i class="bx bx-chevron-right"></i></a></li>
 					            </ul>
 					        </nav>
 					    </div>
