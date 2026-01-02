@@ -25,15 +25,40 @@
   		<if test="storeName != null and storeName != ''">
   			AND s.store_name LIKE CONCAT('%',#{storeName},'%')
   		</if>
-  		
-  		<if test="sourceType == 'CONTRACT'">
-		    AND r.contract_id IS NOT NULL
-		</if>
-		
-		<if test="sourceType == 'ORDER'">
-		    AND r.store_order_id IS NOT NULL
-		</if>
   	</sql>
+  	
+  	<sql id="receivableSourceTypeFilter">
+	  <where>
+	    <if test="sourceType == 'CONTRACT'">
+	      EXISTS (
+	        SELECT 1
+	        FROM receivable r2
+	        JOIN store_contract c2
+	          ON r2.contract_id = c2.contract_id
+	        WHERE r2.receivable_type = 'R'
+	          AND r2.contract_id IS NOT NULL
+	          AND c2.store_id = t.store_id
+	          AND DATE_FORMAT(r2.receivable_date, '%Y-%m') = t.base_month
+	      )
+	    </if>
+	
+	    <if test="sourceType == 'ORDER'">
+	      EXISTS (
+	        SELECT 1
+	        FROM receivable r2
+	        JOIN order_store so2
+	          ON r2.store_order_id = so2.store_order_id
+	        WHERE r2.receivable_type = 'R'
+	          AND r2.store_order_id IS NOT NULL
+	          AND so2.store_id = t.store_id
+	          AND DATE_FORMAT(r2.receivable_date, '%Y-%m') = t.base_month
+	      )
+	    </if>
+	  </where>
+	</sql>
+  	
+  	
+  	
   	
   	
   	<!-- 가맹 미수금 조회 SQL -->
@@ -41,19 +66,27 @@
   		id="receivableSearchList" 
   		parameterType="ReceivableSearchDTO"
   		resultType="ReceivableSummaryDTO">
-  		SELECT
-  			s.store_id,
-  			s.store_name,
-  			DATE_FORMAT(r.receivable_date, '%Y-%m') AS base_month,
-  			SUM(r.receivable_total_amount) AS total_amount
-  			
-		<include refid="receivableSearchBase"/>
+		  SELECT
+		    t.store_id,
+		    t.store_name,
+		    t.base_month,
+		    t.total_amount
+		  FROM (
+		    SELECT
+		      s.store_id,
+		      s.store_name,
+		      DATE_FORMAT(r.receivable_date, '%Y-%m') AS base_month,
+		      SUM(r.receivable_total_amount) AS total_amount
+		    <include refid="receivableSearchBase"/>
+		    GROUP BY
+		      s.store_id,
+		      s.store_name,
+		      base_month
+		  ) t
+		  <include refid="receivableSourceTypeFilter"/>
 		
-		GROUP BY
-			s.store_id,
-			s.store_name,
-			base_month
-		LIMIT #{pager.perPage} OFFSET #{pager.startNum}
+		  LIMIT #{pager.perPage}
+		  OFFSET #{pager.startNum}
   	</select>
   	
   	<!-- 페이지네이션 갯수 -->
@@ -62,18 +95,61 @@
   		parameterType="ReceivableSearchDTO"
   		resultType="Long">
   	
-  	SELECT COUNT(*)
-  	FROM (
-  		SELECT
-  			s.store_id,
-  			DATE_FORMAT(r.receivable_date, '%Y-%m')
-		<include refid="receivableSearchBase"/>  	
-  	
-  	GROUP BY
-  		s.store_id,
-  		DATE_FORMAT(r.receivable_date, '%Y-%m')
-  	) t
+	  SELECT COUNT(*)
+	  FROM (
+	    SELECT
+	      t.store_id,
+	      t.base_month
+	    FROM (
+	      SELECT
+	        s.store_id,
+	        DATE_FORMAT(r.receivable_date, '%Y-%m') AS base_month
+	      <include refid="receivableSearchBase"/>
+	      GROUP BY
+	        s.store_id,
+	        base_month
+	    ) t
+	
+	    <include refid="receivableSourceTypeFilter"/>
+	
+	  ) cnt
   	</select>
+  	
+  	<!-- 상세 물품 대금 리스트 SQL -->
+  	<select id="receivableItem" parameterType="ReceivableSummaryDTO" resultType="com.cafe.erp.receivable.detail.ReceivableItemDTO">
+	  	SELECT 
+	  		r.receivable_id,
+	    	os.store_order_created_at  AS orderDate,
+	    	vi.item_name               AS itemName,
+	    	osd.store_order_qty        AS quantity,
+	    	vip.item_supply_price      AS unitPrice,
+	    	osd.store_order_amount     AS supplyAmount,
+	    	floor(osd.store_order_amount*0.1) AS taxAmount,
+	    	osd.store_order_amount+floor(osd.store_order_amount*0.1) AS totalAmount
+	    	
+		FROM receivable r
+		JOIN order_store os
+			ON r.store_order_id = os.store_order_id
+		JOIN order_store_detail osd
+			ON os.store_order_id = osd.store_order_id
+		JOIN vendor_item vi
+			ON osd.item_id = vi.item_id
+		LEFT JOIN vendor_item_price vip
+			ON vip.item_id = vi.item_id
+		WHERE r.receivable_type = 'R'
+			AND os.store_id = #{storeId}
+			AND DATE_FORMAT(os.store_order_created_at, '%Y-%m') = #{baseMonth}
+			AND vip.item_price_enable = 0
+		ORDER BY os.store_order_created_at DESC;
+  	
+  	</select>
+  	
+  	
+  	
+  	
+  	
+  	
+  	
   	
   	
   	

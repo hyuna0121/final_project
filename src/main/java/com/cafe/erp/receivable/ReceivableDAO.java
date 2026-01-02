@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.cafe.erp.receivable.detail.ReceivableItemDTO;
+
 @Mapper
 public interface ReceivableDAO {
 
@@ -16,6 +18,7 @@ public interface ReceivableDAO {
 	public Long receivableSearchCount(
 			ReceivableSearchDTO receivableSearchDTO
 			);
-	
+	// 디테일 페이지 물품 대금 품목 리스트
+	public List<ReceivableItemDTO> receivableItem(ReceivableSummaryDTO receivableSummaryDTO);
 	
 }

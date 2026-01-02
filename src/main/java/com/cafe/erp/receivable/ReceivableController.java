@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.cafe.erp.receivable.detail.ReceivableItemDTO;
 import com.cafe.erp.util.Pager;
 
 import jakarta.validation.Valid;
@@ -37,9 +38,6 @@ public class ReceivableController {
 			model.addAttribute("errorMessage", bindingResult.getFieldError().getDefaultMessage());
 			return "receivable/receivable-table";
 		}
-		
-		
-		
 		List<ReceivableSummaryDTO> list = service.receivableSearchList(receivableSearchDTO);
 		model.addAttribute("receivables", list);
 		Pager pager  = receivableSearchDTO.getPager();
@@ -48,4 +46,15 @@ public class ReceivableController {
 		
 		return "receivable/receivable-table";
 	}
+	
+	@GetMapping("receivableDetail")
+	public void detail(ReceivableSummaryDTO receivableSummaryDTO, Model model) {
+		// 디테일 페이지 물품 대금 리스트
+		List<ReceivableItemDTO> itemList = service.receivableItem(receivableSummaryDTO);
+	    model.addAttribute("receivableSummaryDTO", receivableSummaryDTO);
+	    model.addAttribute("receivableItemList", itemList);
+	    
+	}
+	
+	
 }

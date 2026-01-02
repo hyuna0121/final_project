@@ -29,9 +29,7 @@
         </td>
 
         <td class="text-center">
-          <a href="/receivable/detail
-                    ?storeId=${row.storeId}
-                    &baseMonth=${row.baseMonth}"
+          <a href="/receivable/receivableDetail?storeId=${row.storeId}&storeName=${row.storeName}&baseMonth=${row.baseMonth}"
              class="btn btn-sm btn-outline-primary">
             상세
           </a>

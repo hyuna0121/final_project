@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+
+.receivable-table {
+  table-layout: fixed;
+}
+
+/* 컬럼 폭 정의 */
+.receivable-table col.col-receivable { width: 260px; }
+.receivable-table col.col-date       { width: 120px; }
+.receivable-table col.col-qty        { width: 80px; }
+.receivable-table col.col-unit       { width: 120px; }
+.receivable-table col.col-amount     { width: 120px; }
+.receivable-table col.col-tax        { width: 100px; }
+.receivable-table col.col-total      { width: 130px; }
+
+.receivable-table td.text-end {
+  font-variant-numeric: tabular-nums;
+}
+
+.receivable-table td.item-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

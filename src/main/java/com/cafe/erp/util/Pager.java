@@ -30,7 +30,7 @@ public class Pager {
 	
 	public Long getPerPage() {
 		if (this.perPage == null || this.perPage % 5 != 0 || this.perPage < 1) {
-			this.perPage = 5L;
+			this.perPage = 10L;
 		}
 		return this.perPage;
 	}
