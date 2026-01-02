@@ -72,5 +72,9 @@ public class StoreService {
 	public List<StoreDTO> searchStore(String keyword) throws Exception {
 		return storeDAO.searchStore(keyword);
 	}
+
+	public List<StoreDTO> excelList(StoreSearchDTO searchDTO) throws Exception {
+		return storeDAO.excelList(searchDTO);
+	}
 	
 }

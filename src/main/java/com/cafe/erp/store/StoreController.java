@@ -1,9 +1,16 @@
 package com.cafe.erp.store;
 
+import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -14,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.cafe.erp.util.Pager;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @Controller
@@ -60,6 +66,45 @@ public class StoreController {
 		}
 		
 		return response; 
+	}
+	
+	@GetMapping("downloadExcel")
+	public void downloadExcel(StoreSearchDTO searchDTO, HttpServletResponse response) throws Exception {
+		List<StoreDTO> list = storeService.excelList(searchDTO);
+		
+		Workbook workbook = new XSSFWorkbook();
+		Sheet sheet = workbook.createSheet("가맹점 목");
+		
+		Row headerRow = sheet.createRow(0);
+		String[] headers = {"ID","가맹점명", "점주ID", "점주명", "주소", "상태", "오픈시간", "마감시간"};
+		
+		for (int i = 0; i < headers.length; i++) {
+			Cell cell = headerRow.createCell(i);
+			cell.setCellValue(headers[i]);
+		}
+		
+		int rowNum = 1;
+		for (StoreDTO dto : list) {
+			Row row = sheet.createRow(rowNum++);
+			
+			row.createCell(0).setCellValue(dto.getStoreId());
+			row.createCell(1).setCellValue(dto.getStoreName());
+			row.createCell(2).setCellValue(dto.getMemberId());
+			row.createCell(3).setCellValue(dto.getMemName());
+			row.createCell(4).setCellValue(dto.getStoreAddress());
+			row.createCell(5).setCellValue(dto.getStoreStatus());
+			row.createCell(6).setCellValue(dto.getStoreStartTime() != null ? dto.getStoreStartTime().toString() : "");
+			row.createCell(7).setCellValue(dto.getStoreCloseTime() != null ? dto.getStoreCloseTime().toString() : "");
+		}
+		
+		response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		String fileName = URLEncoder.encode("가맹점목록_"+ LocalDate.now() +".xlsx", "UTF-8");
+		fileName = fileName.replaceAll("\\+", "%20");
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+		
+		workbook.write(response.getOutputStream());
+		workbook.close();
+		
 	}
 	
 	

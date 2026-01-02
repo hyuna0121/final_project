@@ -144,7 +144,7 @@
 						<div class="card-header d-flex justify-content-between align-items-center">
 					    	<h5 class="mb-0">가맹점 목록</h5>
 					        <div>
-					       		<button type="button" class="btn btn-outline-success me-2">
+					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
 					            </button>
 					          	<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerStoreModal">

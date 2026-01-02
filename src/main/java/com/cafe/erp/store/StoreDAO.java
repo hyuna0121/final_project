@@ -18,5 +18,7 @@ public interface StoreDAO {
 	public List<StoreDTO> searchStore(String keyword) throws Exception;
 
 	public Long count(StoreSearchDTO searchDTO) throws Exception;
+
+	public List<StoreDTO> excelList(StoreSearchDTO searchDTO) throws Exception;
 	
 }

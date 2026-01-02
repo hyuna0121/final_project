@@ -91,4 +91,22 @@
 		<include refid="searchCondition" />
 	</select>
 	
+	<select id="excelList" parameterType="StoreSearchDTO" resultType="StoreDTO">
+		SELECT 
+           s.store_id,
+           s.store_name,          
+           s.member_id,
+           m.mem_name,
+           s.store_address,
+           s.store_status,
+           s.store_start_time,
+           s.store_close_time
+       FROM 
+           store s             
+           LEFT JOIN member m                
+           ON s.member_id = m.member_id 
+      		<include refid="searchCondition" />
+           ORDER BY s.store_id
+	</select>
+	
 </mapper>

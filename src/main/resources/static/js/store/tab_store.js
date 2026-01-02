@@ -260,3 +260,8 @@ function resetSearchForm() {
 	        document.getElementById('page').value = 1;
 	    }
 }
+
+function downloadExcel() {
+	var searchParams = $('#storeSearchForm').serialize();
+	location.href='/store/downloadExcel?' + searchParams;
+}
