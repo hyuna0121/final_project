@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafe.erp.store.voc.VocDAO">
+
+	<select id="list" resultType="VocDTO">
+		SELECT 
+			v.voc_id,
+			v.member_id,
+			m.mem_name,
+			v.store_id,
+			s.store_name,
+			v.voc_title,
+			v.voc_type,
+			v.voc_status,
+			v.voc_created_at
+		FROM voc v
+			LEFT JOIN member m ON v.member_id = m.member_id
+			LEFT JOIN store s ON v.store_id = s.store_id
+		ORDER BY voc_id DESC
+	</select>
+	
+	<insert id="add" parameterType="VocDTO">
+		INSERT INTO voc(member_id, store_id, voc_title , voc_type, voc_contact, voc_contents, voc_status, voc_created_at, voc_updated_at) 
+		VALUES (#{memberId}, #{storeId}, #{vocTitle}, #{vocType}, #{vocContact}, #{vocContents}, 0, now(), now())
+	</insert>
+	
+	<select id="detail" parameterType="Integer" resultType="VocDTO">
+		SELECT 
+		    v.voc_id,
+		    v.member_id,
+		    m.mem_name,
+		    v.store_id,
+		    s.store_name,
+		    o.mem_name AS owner_name,  
+		    s.store_address,
+		    v.voc_title,
+		    v.voc_contact,
+		    v.voc_contents,
+		    v.voc_type,
+		    v.voc_status,
+		    v.voc_created_at,
+		    v.voc_updated_at
+		FROM voc v
+		    LEFT JOIN member m ON v.member_id = m.member_id  
+		    LEFT JOIN store s ON v.store_id = s.store_id       
+		    LEFT JOIN member o ON s.member_id = o.member_id    
+		WHERE v.voc_id = #{vocId}
+	</select>
+	
+</mapper>

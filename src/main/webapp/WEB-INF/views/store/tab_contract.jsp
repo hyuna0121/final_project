@@ -246,6 +246,7 @@
 			                        	<div class="col-md-12">
 			                                <label class="form-label" for="storeNameInput">가맹점명 검색 <span class="text-danger">*</span></label>
 			                                <div class="input-group">
+			                                	<span class="input-group-text"><i class="bx bx-store"></i></span>
 			                                    <input type="text" id="storeNameInput" class="form-control" placeholder="가맹점명 입력" onkeyup="if(window.event.keyCode==13){searchStore()}" required />
 			                                    <input type="hidden" id="storeId" name="storeId" />
 			                                    <button class="btn btn-primary" type="button" onclick="searchStore()">
