@@ -62,32 +62,69 @@
   	
   	
   	<!-- 가맹 미수금 조회 SQL -->
-  	<select 
-  		id="receivableSearchList" 
-  		parameterType="ReceivableSearchDTO"
-  		resultType="ReceivableSummaryDTO">
-		  SELECT
-		    t.store_id,
-		    t.store_name,
-		    t.base_month,
-		    t.total_amount
-		  FROM (
-		    SELECT
-		      s.store_id,
-		      s.store_name,
-		      DATE_FORMAT(r.receivable_date, '%Y-%m') AS base_month,
-		      SUM(r.receivable_total_amount) AS total_amount
-		    <include refid="receivableSearchBase"/>
-		    GROUP BY
-		      s.store_id,
-		      s.store_name,
-		      base_month
-		  ) t
-		  <include refid="receivableSourceTypeFilter"/>
-		
-		  LIMIT #{pager.perPage}
-		  OFFSET #{pager.startNum}
-  	</select>
+	<select 
+	  id="receivableSearchList" 
+	  parameterType="ReceivableSearchDTO"
+	  resultType="ReceivableSummaryDTO">
+	
+	  SELECT
+	    t.store_id,
+	    t.store_name,
+	    t.base_month,
+	    t.total_amount
+	  FROM (
+	    SELECT
+	      s.store_id,
+	      s.store_name,
+	      DATE_FORMAT(r.receivable_date, '%Y-%m') AS base_month,
+	      SUM(rb.remain_amount) AS total_amount
+	
+	    FROM receivable r
+	
+	    LEFT JOIN (
+	        SELECT
+	            r2.receivable_id,
+	            r2.receivable_total_amount
+	            - IFNULL(SUM(rt.transaction_amount), 0) AS remain_amount
+	        FROM receivable r2
+	        LEFT JOIN receivable_transaction rt
+	            ON r2.receivable_id = rt.receivable_id
+	        WHERE r2.receivable_type = 'R'
+	        GROUP BY
+	            r2.receivable_id,
+	            r2.receivable_total_amount
+	    ) rb
+	      ON r.receivable_id = rb.receivable_id
+	      
+	    LEFT JOIN store_contract c
+	      ON r.contract_id = c.contract_id
+	    LEFT JOIN order_store so
+	      ON r.store_order_id = so.store_order_id
+	    JOIN store s
+	      ON s.store_id = COALESCE(c.store_id, so.store_id)
+	
+	    WHERE r.receivable_type = 'R'
+	
+	    <if test="baseMonth != null and baseMonth != ''">
+	      AND DATE_FORMAT(r.receivable_date, '%Y-%m') = #{baseMonth}
+	    </if>
+	
+	    <if test="storeName != null and storeName != ''">
+	      AND s.store_name LIKE CONCAT('%',#{storeName},'%')
+	    </if>
+	
+	    GROUP BY
+	      s.store_id,
+	      s.store_name,
+	      base_month
+	  ) t
+	
+	  <include refid="receivableSourceTypeFilter"/>
+	
+	  LIMIT #{pager.perPage}
+	  OFFSET #{pager.startNum}
+	
+	</select>
   	
   	<!-- 페이지네이션 갯수 -->
   	<select 
@@ -168,8 +205,8 @@
 		ORDER BY vip.item_supply_price DESC
   	</select>
   	
+	<!-- 상세 가맹비 미수 내역 -->
   	<select id="receivableRoyalty" parameterType="ReceivableSummaryDTO" resultType="com.cafe.erp.receivable.detail.ReceivableRoyaltyDTO">
-	  	<!-- 상세 가맹비 미수 내역 -->
 	  	SELECT
 		    r.receivable_id               AS receivableId,
 		    sc.contract_start_date        AS contractDate,
@@ -186,6 +223,75 @@
 		  AND DATE_FORMAT(r.receivable_date, '%Y-%m') = #{baseMonth}
 		ORDER BY r.receivable_date DESC
   	</select>
+  	
+  <!-- 상세 가맹비 합계 -->
+  <select id="selectAmountSummary"
+        parameterType="ReceivableSummaryDTO"
+        resultType="com.cafe.erp.receivable.detail.ReceivableAmountSummaryDTO">
+	    SELECT
+	        IFNULL(SUM(
+	            CASE
+	                WHEN r.contract_id IS NOT NULL
+	                THEN r.receivable_total_amount
+	                ELSE 0
+	            END
+	        ), 0) AS royaltyTotal,
+	        IFNULL(SUM(
+	            CASE
+	                WHEN r.store_order_id IS NOT NULL
+	                THEN r.receivable_total_amount
+	                ELSE 0
+	            END
+	        ), 0) AS productTotal
+	    FROM receivable r
+	    LEFT JOIN store_contract sc
+	        ON r.contract_id = sc.contract_id
+	    LEFT JOIN order_store os
+	        ON r.store_order_id = os.store_order_id
+	    WHERE
+	        (
+	            (r.contract_id IS NOT NULL AND sc.store_id = #{storeId})
+	         OR (r.store_order_id IS NOT NULL AND os.store_id = #{storeId})
+	        )
+	      AND r.receivable_type = 'R'
+	      AND r.receivable_status IN ('O','P')
+	</select>
+
+
+  	<select id="paidAmount" parameterType="ReceivableSummaryDTO" resultType="com.cafe.erp.receivable.detail.ReceivableTransactionDTO">
+	  	SELECT
+	    rt.transaction_date,
+	    rt.transaction_amount,
+	    rt.transaction_memo,
+	    
+	    CASE
+	        WHEN r.contract_id IS NOT NULL THEN 'CONTRACT'
+	        WHEN r.store_order_id IS NOT NULL THEN 'ORDER'
+	    END AS source_type
+		
+		FROM receivable_transaction rt
+		
+		JOIN receivable r
+		  ON rt.receivable_id = r.receivable_id
+		
+		LEFT JOIN store_contract sc
+		  ON r.contract_id = sc.contract_id
+		
+		LEFT JOIN order_store os
+		  ON r.store_order_id = os.store_order_id
+		
+		JOIN store s
+		  ON s.store_id = COALESCE(sc.store_id, os.store_id)
+		
+		WHERE s.store_id = #{storeId}
+		
+		ORDER BY rt.transaction_date DESC;
+  	</select>
+  	
+  	
+  	
+  	
+  	
   	
   	
 </mapper>

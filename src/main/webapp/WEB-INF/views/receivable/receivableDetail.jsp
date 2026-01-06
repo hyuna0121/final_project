@@ -54,8 +54,6 @@
     <!-- Helpers -->
     <script src="/vendor/js/helpers.js"></script>
 	
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="/js/config.js"></script>
   </head>
 
@@ -107,8 +105,8 @@
 					
 					      <thead>
 					        <tr>
-					          <th class="text-center">채권코드</th>
-					          <th class="text-center">발주일자</th>
+					          <th class="text-first">채권코드</th>
+					          <th class="text-first">발주일자</th>
 					          <th class="text-end">품목 수</th>
 					          <th class="text-end">공급가액</th>
 					          <th class="text-end">세액</th>
@@ -131,11 +129,11 @@
 					          <c:otherwise>
 					            <c:forEach var="row" items="${receivableOrderSummaryDTO}">
 					              <tr>
-					                <td class="text-center">
+					                <td class="text-first">
 					                  ${row.receivableId}
 					                </td>
 					
-					                <td class="text-center">
+					                <td class="text-first">
 					                  <fmt:formatDate value="${row.orderDate}" pattern="yyyy-MM-dd"/>
 					                </td>
 					
@@ -181,12 +179,12 @@
 				      <table class="table">
 				        <thead>
 				          <tr>
-				            <th>채권 코드</th>
-				            <th>계약일</th>
-				            <th>공급가액</th>
-				            <th>세액</th>
-				            <th>합계</th>
-				            <th>상태</th>
+				            <th class="text-first">채권 코드</th>
+				            <th class="text-first">계약일</th>
+				            <th class="text-end">공급가액</th>
+				            <th class="text-end">세액</th>
+				            <th class="text-end">합계</th>
+				            <th class="text-center">상태</th>
 				          </tr>
 				        </thead>
 				        <tbody>
@@ -194,9 +192,9 @@
 						
 						    <c:when test="${not empty receivableRoyaltyDTO}">
 						        <tr>
-						          <td>${receivableRoyaltyDTO.receivableId}</td>
+						          <td class="text-first">${receivableRoyaltyDTO.receivableId}</td>
 						
-						          <td>
+						          <td class="text-first">
 						            <fmt:formatDate value="${receivableRoyaltyDTO.contractDate}" pattern="yyyy-MM-dd"/>
 						          </td>
 						
@@ -243,19 +241,44 @@
 				      <table class="table">
 				        <thead>
 				          <tr>
-				            <th>지급일</th>
-				            <th>지급 금액</th>
-				            <th>지급 구분</th>
-				            <th>비고</th>
+				            <th class="text-first">지급일</th>
+				            <th class="text-center">지급 금액</th>
+				            <th class="text-center">지급 구분</th>
+				            <th class="text-center">비고</th>
 				          </tr>
 				        </thead>
-				        <tbody>
-				          <tr>
-				            <td colspan="4" class="text-center text-muted">
-				              데이터가 없습니다.
-				            </td>
-				          </tr>
-				        </tbody>
+							<tbody>
+							  <c:choose>
+							    <c:when test="${empty receivableTransactionDTO}">
+							      <tr>
+							        <td colspan="4" class="text-center text-muted">
+							          데이터가 없습니다.
+							        </td>
+							      </tr>
+							    </c:when>
+							    <c:otherwise>
+							      <c:forEach items="${receivableTransactionDTO}" var="paid">
+							        <tr>
+							          <!-- 지급일 -->
+							          <td class="text-first">
+							            <fmt:formatDate value="${paid.transactionDate}" pattern="yyyy-MM-dd" />
+							          </td>
+							          <td class="text-center">
+							            <fmt:formatNumber value="${paid.transactionAmount}" pattern="#,###" />
+							          </td>
+							          <td class="text-center">
+							            <c:choose>
+							              <c:when test="${paid.sourceType eq 'CONTRACT'}">가맹비</c:when>
+							              <c:when test="${paid.sourceType eq 'ORDER'}">물품대금</c:when>
+							              <c:otherwise>-</c:otherwise>
+							            </c:choose>
+							          </td>
+							          <td class="text-center">${paid.transactionMemo}</td>
+							        </tr>
+							      </c:forEach>
+							    </c:otherwise>
+							  </c:choose>
+							</tbody>
 				      </table>
 				    </div>
 				  </div>
@@ -268,23 +291,33 @@
 				        <tbody>
 				          <tr>
 				            <th>물품대금 합계</th>
-				            <td class="text-end">0</td>
+				            <td class="text-end">
+			            		<fmt:formatNumber value="${receivableAmountSummaryDTO.productTotal}" type="number"/>
+				            </td>
 				          </tr>
 				          <tr>
 				            <th>가맹비 합계</th>
-				            <td class="text-end">0</td>
+				            <td class="text-end">
+				            	<fmt:formatNumber value="${receivableAmountSummaryDTO.royaltyTotal}" type="number"/>
+				            </td>
 				          </tr>
 				          <tr>
 				            <th>총 거래 금액</th>
-				            <td class="text-end">0</td>
+				            <td class="text-end">
+				            	<fmt:formatNumber value="${receivableAmountSummaryDTO.totalAmount}" type="number"/>
+				            </td>
 				          </tr>
 				          <tr>
 				            <th>지급 금액</th>
-				            <td class="text-end">0</td>
+				            <td class="text-end">
+				            	<fmt:formatNumber value="${receivableAmountSummaryDTO.paidAmount}" type="number"/>
+				            </td>
 				          </tr>
 				          <tr>
 				            <th class="text-danger">미지급 금액</th>
-				            <td class="text-end text-danger fw-bold">0</td>
+				            <td class="text-end text-danger fw-bold">
+				            	<fmt:formatNumber value="${receivableAmountSummaryDTO.unpaidAmount}" type="number"/>
+				            </td>
 				          </tr>
 				        </tbody>
 				      </table>

@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cafe.erp.receivable.detail.ReceivableAmountSummaryDTO;
 import com.cafe.erp.receivable.detail.ReceivableItemDTO;
 import com.cafe.erp.receivable.detail.ReceivableOrderSummaryDTO;
 import com.cafe.erp.receivable.detail.ReceivableRoyaltyDTO;
+import com.cafe.erp.receivable.detail.ReceivableTransactionDTO;
 import com.cafe.erp.util.Pager;
 
 import jakarta.validation.Valid;
@@ -29,6 +31,7 @@ public class ReceivableController {
 	
 	@GetMapping("receivable")
 	public void receivableList() throws Exception {
+		
 	}
 	
 	@PostMapping("search")
@@ -56,10 +59,16 @@ public class ReceivableController {
 		// 디테일 페이지 물품 대금 리스트
 		List<ReceivableOrderSummaryDTO> receivableOrderSummaryDTO = service.orderSummary(receivableSummaryDTO);
 		ReceivableRoyaltyDTO receivableRoyaltyDTO = service.receivableRoyalty(receivableSummaryDTO);
+		ReceivableAmountSummaryDTO receivableAmountSummaryDTO = service.selectAmountSummary(receivableSummaryDTO);
+		List<ReceivableTransactionDTO> receivableTransactionDTO = service.paidAmount(receivableSummaryDTO);
+		
 		
 		model.addAttribute("receivableSummaryDTO", receivableSummaryDTO);
 		model.addAttribute("receivableOrderSummaryDTO", receivableOrderSummaryDTO);
 		model.addAttribute("receivableRoyaltyDTO", receivableRoyaltyDTO);
+		model.addAttribute("receivableAmountSummaryDTO", receivableAmountSummaryDTO);
+		model.addAttribute("receivableTransactionDTO", receivableTransactionDTO);
+		
 		
 	}
 	
