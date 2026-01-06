@@ -86,22 +86,22 @@
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-dock-top"></i>
-        <div data-i18n="Account Settings">product</div>
+        <div data-i18n="Account Settings">물품</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
-          <a href="/product/add" class="menu-link">
-            <div data-i18n="Account">Add Product</div>
+          <a href="/item/add" class="menu-link">
+            <div data-i18n="Account">물품등록</div>
           </a>
         </li>
         <li class="menu-item">
-          <a href="/product/list" class="menu-link">
-            <div data-i18n="Notifications">Search Product</div>
+          <a href="/item/list" class="menu-link">
+            <div data-i18n="Notifications">물품검색</div>
           </a>
         </li>
         <li class="menu-item">
-          <a href="/product/priceDetail" class="menu-link">
-            <div data-i18n="Notifications">price Fluctuation</div>
+          <a href="/item/priceDetail" class="menu-link">
+            <div data-i18n="Notifications">단가조회</div>
           </a>
         </li>
       </ul>
@@ -110,17 +110,17 @@
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-        <div data-i18n="Authentications">vendor</div>
+        <div data-i18n="Authentications">거래처</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
           <a href="/vendor/add" class="menu-link">
-            <div data-i18n="Notifications">Add Vendor</div>
+            <div data-i18n="Notifications">거래처등록</div>
           </a>
         </li>
         <li class="menu-item">
           <a href="/vendor/list" class="menu-link">
-            <div data-i18n="Notifications">Search Vendor</div>
+            <div data-i18n="Notifications">거래처조회</div>
           </a>
         </li>
       </ul>
@@ -129,7 +129,7 @@
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-        <div data-i18n="Misc">Order</div>
+        <div data-i18n="Misc">발주</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
@@ -187,6 +187,7 @@
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+		<!-- <i class='menu-icon bx  bx-package'></i> -->
         <div data-i18n="Misc">Stock</div>
       </a>
     </li>
