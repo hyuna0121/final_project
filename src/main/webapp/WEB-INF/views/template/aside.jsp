@@ -262,12 +262,12 @@
     <li class="menu-item">
       <a href="javascript:void(0)" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-collection"></i>
-        <div data-i18n="Basic">Receivable</div>
+        <div data-i18n="Basic">채권</div>
       </a>
       <ul class="menu-sub">
        <li class="menu-item">
          <a href="/receivable/receivable" class="menu-link">
-           <div data-i18n="Perfect Scrollbar">Receivable List</div>
+           <div data-i18n="Perfect Scrollbar">미수금 목록</div>
          </a>
        </li>
        <li class="menu-item">

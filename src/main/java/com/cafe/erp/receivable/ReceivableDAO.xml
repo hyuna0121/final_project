@@ -123,7 +123,6 @@
 	
 	  LIMIT #{pager.perPage}
 	  OFFSET #{pager.startNum}
-	
 	</select>
   	
   	<!-- 페이지네이션 갯수 -->
@@ -146,9 +145,7 @@
 	        s.store_id,
 	        base_month
 	    ) t
-	
 	    <include refid="receivableSourceTypeFilter"/>
-	
 	  ) cnt
   	</select>
   	
@@ -268,23 +265,17 @@
 	        WHEN r.contract_id IS NOT NULL THEN 'CONTRACT'
 	        WHEN r.store_order_id IS NOT NULL THEN 'ORDER'
 	    END AS source_type
-		
+	    
 		FROM receivable_transaction rt
-		
 		JOIN receivable r
 		  ON rt.receivable_id = r.receivable_id
-		
 		LEFT JOIN store_contract sc
 		  ON r.contract_id = sc.contract_id
-		
 		LEFT JOIN order_store os
 		  ON r.store_order_id = os.store_order_id
-		
 		JOIN store s
 		  ON s.store_id = COALESCE(sc.store_id, os.store_id)
-		
 		WHERE s.store_id = #{storeId}
-		
 		ORDER BY rt.transaction_date DESC;
   	</select>
   	

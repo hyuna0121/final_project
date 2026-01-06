@@ -236,7 +236,16 @@
 				
 				  <!-- ================= 지급 이력 ================= -->
 				  <div class="card mb-4">
-				    <h5 class="card-header">지급 이력</h5>
+			  		<div class="card-header d-flex justify-content-between align-items-center">
+					    <h5 class="mb-0">지급 이력</h5>
+					    <button
+					      type="button"
+					      class="btn btn-sm btn-outline-secondary"
+					      data-bs-toggle="modal"
+					      data-bs-target="#paymentModal">
+					      + 지급
+					    </button>
+					  </div>
 				    <div class="table-responsive text-nowrap">
 				      <table class="table">
 				        <thead>
