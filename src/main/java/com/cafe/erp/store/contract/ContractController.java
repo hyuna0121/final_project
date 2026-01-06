@@ -86,7 +86,7 @@ public class ContractController {
 	public void downloadExcel(ContractSearchDTO searchDTO, HttpServletResponse response) throws Exception {
 		List<ContractDTO> list = contractService.excelList(searchDTO);
 		String[] headers = {"ID", "가맹점ID", "가맹점명", "점주ID", "점주명", "주소", 
-				            "로얄티", "여신(보증금)", "계약시작일", "계약종료일", "계약상태", "생성일", "수정일"};
+				            "로얄티", "여신(보증금)", "계약시작일", "계약종료일", "계약상태", "생성일시", "수정일시"};
 		
 		ExcelUtil.download(list, headers, "가맹점 계약 목록", response, (row, dto) -> {
 			row.createCell(0).setCellValue(dto.getContractId());
