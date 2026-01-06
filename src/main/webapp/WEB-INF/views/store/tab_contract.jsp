@@ -95,7 +95,7 @@
                         </li>
                     </ul>
                 </div>
-                
+                <h4 class="fw-bold py-3 mb-3"><span class="text-muted fw-normal">가맹점 /</span> 계약 목록</h4>
                 <div id="tab-content-area">
         		    <div class="card shadow-none border bg-white mb-4">
 				        <div class="card-body py-4 px-4">

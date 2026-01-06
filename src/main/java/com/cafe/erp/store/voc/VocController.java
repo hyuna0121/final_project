@@ -15,10 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.cafe.erp.store.StoreDTO;
 import com.cafe.erp.store.StoreSearchDTO;
@@ -60,8 +63,8 @@ public class VocController {
 	
 	@PostMapping("addProcess")
 	@ResponseBody
-	public Map<String, Object> addVocProcess(@RequestBody VocProcessDTO processDTO) throws Exception { 
-		return result(vocService.addProcess(processDTO));
+	public Map<String, Object> addVocProcess(@ModelAttribute VocProcessDTO processDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception { 
+		return result(vocService.addProcess(processDTO, files));
 	}
 	
 	private Map<String, Object> result(int result) {

@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cafe.erp.store.voc.VocDTO;
-import com.cafe.erp.store.voc.VocSearchDTO;
 import com.cafe.erp.util.ExcelUtil;
 
 import jakarta.servlet.http.HttpServletResponse;

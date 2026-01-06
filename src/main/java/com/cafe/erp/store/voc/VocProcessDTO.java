@@ -2,6 +2,7 @@ package com.cafe.erp.store.voc;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,9 @@ public class VocProcessDTO {
 	
 	// member table column
 	private String memName;
+	
+	// store_contract_file table
+	private List<VocProcessFileDTO> fileDTOs;
 	
 	public String getProcessCreatedAtStr() {
         if (this.processCreatedAt == null) return "";

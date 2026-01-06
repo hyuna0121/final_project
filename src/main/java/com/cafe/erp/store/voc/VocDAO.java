@@ -21,4 +21,6 @@ public interface VocDAO {
 
 	public List<VocDTO> excelList(VocSearchDTO searchDTO) throws Exception;
 
+	public int addFile(VocProcessFileDTO processFileDTO) throws Exception;
+
 }

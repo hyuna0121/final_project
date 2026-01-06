@@ -168,7 +168,32 @@
 						                <small class="d-block mb-1 ${isMe ? 'me-2 text-primary fw-bold' : 'ms-2 text-dark fw-bold'}">
 						                    ${process.memName}
 						                </small>
-						                <div class="chat-bubble ${isMe ? 'chat-right' : 'chat-left'} text-start"><span>${process.processContents}</span></div>
+						                
+						                <div class="chat-bubble ${isMe ? 'chat-right' : 'chat-left'} text-start">
+										    <span class="d-block">${process.processContents}</span>
+										
+										    <c:if test="${not empty process.fileDTOs and not empty process.fileDTOs[0].fileOriginalName}">
+										        <c:if test="${not empty process.processContents}">
+										            <hr class="my-2 ${isMe ? 'border-white opacity-50' : 'border-secondary opacity-25'}">
+										        </c:if>
+										
+										        <div class="file-list d-flex flex-column gap-1">
+										            <c:forEach var="file" items="${process.fileDTOs}">
+										                <div class="d-flex align-items-center justify-content-between">
+										                    
+										                    <div class="d-flex align-items-center" style="cursor: pointer;" 
+										                         onclick="previewFile('${file.fileOriginalName}', '${file.fileSavedName}')">
+										                        <i class="bx bx-file me-1 ${isMe ? 'text-white' : 'text-secondary'}"></i>
+										                        <span class="${isMe ? 'text-white' : 'text-dark'} text-truncate" 
+										                              style="font-size: 0.85rem;">
+										                            ${file.fileOriginalName}
+										                        </span>
+										                    </div>
+										                </div>
+										            </c:forEach>
+										        </div>
+										    </c:if>
+										</div>
 						
 						                <div class="chat-time ${isMe ? 'me-1' : 'ms-1'}">
 						                    ${process.processCreatedAtStr}
@@ -179,20 +204,18 @@
                           </div>
 
                           <div class="card-footer p-3">
-                              <div id="filePreview" class="mb-2 small text-primary" style="display: none;">
-						        <i class="bx bx-paperclip"></i> <span id="fileNameDisplay"></span>
-						        <button type="button" class="btn-close btn-close-sm ms-2" onclick="clearFile()"></button>
+                              <div id="filePreview" class="d-flex flex-wrap gap-2 mb-2 small text-primary" style="display: none;">
 						    </div>
 						
 						    <div class="input-group input-group-merge">
-						        <input type="file" id="replyFile" style="display: none;" onchange="showFileName()">
+						        <label class="input-group-text bg-white border-end-0" for="replyFile" style="cursor: pointer;">
+						            <i class="bx bx-paperclip"></i>
+						        </label>
 						        
-						        <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('replyFile').click()">
-						            <i class="bx bx-image-add"></i>
-						        </button>
+						        <input type="file" multiple id="replyFile" style="display: none;" onchange="showFileName()">
 						
 								<input type="hidden" id="vocId" value="${dto.vocId}">
-						        <textarea class="form-control" id="processContents" rows="2" placeholder="메시지를 입력하세요..."></textarea>
+						        <textarea class="form-control" id="processContents" rows="2" placeholder="메시지를 입력하세요..." style="resize: none; padding: 20px 10px 10px;"></textarea>
 						        
 						        <button class="btn btn-primary" type="button" onclick="submitVocProcess()">
 						            <i class="bx bx-send"></i> 등록
@@ -205,6 +228,31 @@
               </div>
             </div>
             <!-- / Content -->
+            <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+			    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" role="document"> 
+			    	<div class="modal-content">
+			            <div class="modal-header">
+			            	<h5 class="modal-title fs-6 text-secondary">미리보기</h5>
+			                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			            </div>
+			            <div class="modal-body p-20 text-center">
+			                <img id="previewImage" src="" class="img-fluid rounded shadow" alt="미리보기">
+			                
+			                <div id="noPreviewMsg" class="alert alert-light text-center d-none">
+			                    <i class="bx bx-info-circle mb-2 fs-1"></i><br>
+			                    미리보기를 지원하지 않는 파일 형식입니다.<br>
+			                    다운로드 아이콘을 눌러 확인해주세요.
+			                </div>
+			            </div>
+			            <div class="modal-footer">
+			                <a id="modalDownloadBtn" href="#" class="btn btn-primary">
+			                    <i class="bx bx-download me-1"></i> 다운로드
+			                </a>
+			                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">닫기</button>
+			            </div>
+			        </div>
+			    </div>
+			</div>
 
             <!-- Footer -->
             <c:import url="/WEB-INF/views/template/footer.jsp"></c:import>

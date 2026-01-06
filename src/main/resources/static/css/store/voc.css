@@ -9,12 +9,12 @@
     font-size: 0.95rem;
     line-height: 1.5; 
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
     display: inline-block;
     width: fit-content;
-    max-width: 70%;
-    word-break: keep-all; 
-    overflow-wrap: break-word; 
-    white-space: pre-wrap;   
+    max-width: 75%;
+   	
+    word-break: normal;
 }
 
 .chat-left {
@@ -23,6 +23,7 @@
     border-top-left-radius: 0;
     margin-left: 10px;
 }
+
 .chat-left::before {
     content: "";
     position: absolute;

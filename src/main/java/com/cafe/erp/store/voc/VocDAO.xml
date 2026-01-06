@@ -79,21 +79,40 @@
 		WHERE v.voc_id = #{vocId}
 	</select>
 	
-	<select id="processList" parameterType="Integer" resultType="VocProcessDTO">
+	<select id="processList" parameterType="Integer" resultMap="processResult">
 		SELECT 
 			vp.process_id,
 			vp.member_id,
 			m.mem_name,
 		    vp.process_contents,
 		    vp.process_created_at,
-		    vp.process_is_deleted
+		    vp.process_is_deleted,
+		    vpf.file_id,
+		    vpf.file_saved_name,
+            vpf.file_original_name
 		FROM voc_process vp
 		LEFT JOIN member m ON vp.member_id = m.member_id
+		LEFT JOIN voc_process_file vpf ON vp.process_id = vpf.process_id
 		WHERE voc_id = #{vocId}
 		ORDER BY process_created_at
 	</select>
 	
-	<insert id="addProcess" parameterType="VocProcessDTO">
+	<resultMap type="VocProcessDTO" id="processResult">
+		<id column="process_id" property="processId"/>
+		<result column="member_id" property="memberId"/>
+		<result column="mem_name" property="memName"/>
+		<result column="process_contents" property="processContents"/>
+		<result column="process_created_at" property="processCreatedAt"/>
+		<result column="process_is_deleted" property="processIsDeleted"/>
+		
+		<collection property="fileDTOs" ofType="VocProcessFileDTO">
+			<id column="file_id" property="fileId"/>
+			<result column="file_original_name" property="fileOriginalName"/>
+			<result column="file_saved_name" property="fileSavedName"/>
+		</collection>
+	</resultMap>
+	
+	<insert id="addProcess" parameterType="VocProcessDTO" useGeneratedKeys="true" keyProperty="processId">
 		INSERT INTO voc_process(voc_id, member_id, process_contents, process_created_at, process_is_deleted) 
 		VALUES (#{vocId}, #{memberId}, #{processContents}, now(), 0)
 	</insert>
@@ -127,5 +146,9 @@
 		<include refid="searchCondition" />
 		ORDER BY voc_id DESC
 	</select>
+	
+	<insert id="addFile" parameterType="VocProcessFileDTO">
+		INSERT INTO voc_process_file VALUE(null, #{processId}, #{fileOriginalName}, #{fileSavedName})	
+	</insert>
 	
 </mapper>

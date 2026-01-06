@@ -157,18 +157,18 @@
     <!-- 가맹점 발주 -->
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-cube-alt"></i>
-        <div data-i18n="Misc">Store</div>
+        <i class="menu-icon tf-icons bx bx-store"></i>
+        <div data-i18n="Misc">가맹점</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
-          <a href="" class="menu-link">
-            <div data-i18n="Error">Request</div>
+          <a href="/store/list" class="menu-link">
+            <div data-i18n="Error">목록</div>
           </a>
         </li>
         <li class="menu-item">
-          <a href="javascript:void(0);" class="menu-link">
-            <div data-i18n="Under Maintenance">Approval</div>
+          <a href="/store/voc/list" class="menu-link">
+            <div data-i18n="Under Maintenance">VOC</div>
           </a>
         </li>
         <li class="menu-item">

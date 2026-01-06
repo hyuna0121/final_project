@@ -1,15 +1,44 @@
+let accumulatedFiles = [];
+
 function showFileName() {
     const fileInput = document.getElementById('replyFile');
-    if (fileInput.files.length > 0) {
-        document.getElementById('fileNameDisplay').innerText = fileInput.files[0].name;
-        document.getElementById('filePreview').style.display = 'block';
+    const newFiles = Array.from(fileInput.files);
+    
+    accumulatedFiles = accumulatedFiles.concat(newFiles);
+
+    fileInput.value = '';
+    renderFilePreview();
+}
+
+function renderFilePreview() {
+    const filePreview = document.getElementById('filePreview');
+    filePreview.innerHTML = '';
+
+    if (accumulatedFiles.length > 0) {
+        filePreview.style.display = 'flex';
+
+        accumulatedFiles.forEach((file, index) => {
+            const fileTag = document.createElement('div');
+            fileTag.className = 'border rounded px-2 py-1 bg-light d-flex align-items-center small shadow-sm';
+            fileTag.style.fontSize = '0.85rem';
+
+            fileTag.innerHTML = `
+                <i class="bx bx-file me-2 text-secondary"></i>
+                <span class="me-2">${file.name}</span>
+                <button type="button" class="btn-close btn-close-sm" aria-label="Close" onclick="removeFile(${index})"></button>
+            `;
+            filePreview.appendChild(fileTag);
+        });
+    } else {
+        filePreview.style.display = 'none';
     }
 }
-// 파일 선택 취소
-function clearFile() {
-    document.getElementById('replyFile').value = '';
-    document.getElementById('filePreview').style.display = 'none';
+
+function removeFile(targetIndex) {
+    accumulatedFiles.splice(targetIndex, 1);
+    renderFilePreview();
 }
+
 
 async function fetchJson(url, options = {}) {
     const response = await fetch(url, options);
@@ -92,19 +121,21 @@ async function submitVocProcess() {
         alert("내용을 입력해주세요.");
         return;
     }
-
-    const formData = {
-        vocId: vocId,
-        processContents: processContents
-    };
+	
+	const formData = new FormData();
+	formData.append("vocId", vocId);
+	formData.append("processContents", processContents);
+	
+	if (typeof accumulatedFiles !== 'undefined' && accumulatedFiles.length > 0) {
+        accumulatedFiles.forEach(file => {
+            formData.append("files", file); 
+        });
+    }
 
     try {
         const response = await fetch('/store/voc/addProcess', { 
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', 
-				},
-            body: JSON.stringify(formData)
+            body: formData
         });
 
         if (!response.ok) {
@@ -117,4 +148,29 @@ async function submitVocProcess() {
         console.error('Error:', error);
         alert("등록 중 오류가 발생했습니다.");
     }
+}
+
+function previewFile(fileName, savedName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+    const previewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+    const imgEl = document.getElementById('previewImage');
+    const msgEl = document.getElementById('noPreviewMsg');
+	
+	const downloadBtn = document.getElementById('modalDownloadBtn');
+
+    downloadBtn.href = `/fileDownload/vocImageDownload?fileSavedName=${encodeURIComponent(savedName)}&fileOriginalName=${encodeURIComponent(fileName)}`;
+
+    if (imageExtensions.includes(ext)) {
+        imgEl.src = '/fileDownload/vocImage?fileSavedName=' + savedName;
+        
+        imgEl.classList.remove('d-none');
+        msgEl.classList.add('d-none');
+    } else {
+        imgEl.classList.add('d-none');
+        msgEl.classList.remove('d-none');
+    }
+
+    previewModal.show();
 }
