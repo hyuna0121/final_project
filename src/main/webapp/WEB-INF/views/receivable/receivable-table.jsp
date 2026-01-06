@@ -13,7 +13,7 @@
     <tr>
       <th>가맹점</th>
       <th>기준월</th>
-      <th class="text-end">총 미수금</th>
+      <th class="text-end">남은 미수금</th>
       <th class="text-center">관리</th>
     </tr>
   </thead>

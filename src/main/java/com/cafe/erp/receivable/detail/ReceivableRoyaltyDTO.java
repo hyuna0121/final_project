@@ -16,9 +16,5 @@ public class ReceivableRoyaltyDTO {
 	private Integer supplyAmount;
 	private Integer taxAmount;
 	private Integer totalAmount;
-	private String status;
-	
-	
-	
-	
+	private String status;	
 }

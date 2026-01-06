@@ -9,11 +9,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ReceivableSummaryDTO {
-	
-	
 	private Long storeId;
     private String storeName;
     private String baseMonth;   
     private Long totalAmount;
-	
 }
