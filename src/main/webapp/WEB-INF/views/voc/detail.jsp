@@ -168,9 +168,8 @@
 						                <small class="d-block mb-1 ${isMe ? 'me-2 text-primary fw-bold' : 'ms-2 text-dark fw-bold'}">
 						                    ${process.memName}
 						                </small>
-						                
 						                <div class="chat-bubble ${isMe ? 'chat-right' : 'chat-left'} text-start">
-										    <span class="d-block">${process.processContents}</span>
+										    <span>${process.processContents}</span>
 										
 										    <c:if test="${not empty process.fileDTOs and not empty process.fileDTOs[0].fileOriginalName}">
 										        <c:if test="${not empty process.processContents}">
@@ -181,7 +180,7 @@
 										            <c:forEach var="file" items="${process.fileDTOs}">
 										                <div class="d-flex align-items-center justify-content-between">
 										                    
-										                    <div class="d-flex align-items-center" style="cursor: pointer;" 
+										                    <div class="d-flex align-items-center" style="cursor: pointer; width: 100%; min-width: 250px;" 
 										                         onclick="previewFile('${file.fileOriginalName}', '${file.fileSavedName}')">
 										                        <i class="bx bx-file me-1 ${isMe ? 'text-white' : 'text-secondary'}"></i>
 										                        <span class="${isMe ? 'text-white' : 'text-dark'} text-truncate" 
