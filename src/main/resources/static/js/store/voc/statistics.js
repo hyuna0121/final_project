@@ -281,7 +281,6 @@ function fetchStatistics(year, month) {
             }
 
             const summary = data.summary;
-            
             if (summary) {
                 document.getElementById('kpiTotal').innerText = summary.total + '건';
                 renderDiff('#kpiTotalDiff', summary.totalRate, '%', true);
@@ -293,6 +292,52 @@ function fetchStatistics(year, month) {
                 document.getElementById('kpiPending').innerText = summary.pending + '건';
                 document.getElementById('kpiAvgTime').innerText = summary.avgTime + '시간';
                 renderDiff('#kpiAvgTimeDiff', summary.avgDiff, '시간', true);
+            }
+
+            const tbody = document.getElementById('managerTableBody');
+            tbody.innerHTML = '';
+
+            if (data.managerList && data.managerList.length > 0) {
+                data.managerList.forEach(item => {
+                    const initial = item.category ? item.category.charAt(0) : '?';
+
+                    let badgeClass = 'bg-label-primary';
+                    let badgeText = '-';
+                    
+                    if (item.avgTime <= 24) {
+                        badgeClass = 'bg-label-primary';
+                        badgeText = '빠름';
+                    } else if (item.avgTime <= 48) {
+                        badgeClass = 'bg-label-success';
+                        badgeText = '보통';
+                    } else {
+                        badgeClass = 'bg-label-warning';
+                        badgeText = '느림';
+                    }
+
+                    const tr = `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-xs me-2">
+                                        <span class="avatar-initial rounded-circle ${badgeClass}">${initial}</span>
+                                    </div>
+                                    <span>${item.category}</span>
+                                </div>
+                            </td>
+                            <td>${item.count}건</td>
+                            <td>${item.activeCount}건</td>
+                            <td>${item.pendingCount}건</td>
+                            <td>
+                                <span class="badge ${badgeClass}">${badgeText}</span>
+                                <small class="text-muted ms-1">(${item.avgTime}시간)</small>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.insertAdjacentHTML('beforeend', tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-3">데이터가 없습니다.</td></tr>';
             }
 
         })

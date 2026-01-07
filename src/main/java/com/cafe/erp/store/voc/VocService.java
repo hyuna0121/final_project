@@ -44,7 +44,9 @@ public class VocService {
 		return vocDAO.processList(vocId);
 	}
 
-	public int addProcess(VocProcessDTO processDTO, List<MultipartFile> files) throws Exception {
+	public int addProcess(Integer isFirst, VocProcessDTO processDTO, List<MultipartFile> files) throws Exception {
+		if (isFirst == 0) vocDAO.updateToActive(processDTO.getVocId());
+		
 		processDTO.setMemberId(121001);
 		int result = vocDAO.addProcess(processDTO);
 		
@@ -120,6 +122,10 @@ public class VocService {
 	    current.put("avgDiff", Math.round(avgDiff * 10) / 10.0);  
 
 	    return current;
+	}
+	
+	public List<VocStatDTO> managerPerformance(String year, String month) throws Exception {
+		return vocDAO.managerPerformance(year, month);
 	}
 	
 }

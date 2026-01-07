@@ -49,14 +49,15 @@ public class VocController {
 		List<VocProcessDTO> processList = vocService.processList(vocId);
 		model.addAttribute("dto", vocDTO);
 		model.addAttribute("list", processList);
+		model.addAttribute("listSize", processList.size());
 		
 		return "voc/detail";
 	}
 	
 	@PostMapping("addProcess")
 	@ResponseBody
-	public Map<String, Object> addVocProcess(@ModelAttribute VocProcessDTO processDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception { 
-		return result(vocService.addProcess(processDTO, files));
+	public Map<String, Object> addVocProcess(Integer isFirst, @ModelAttribute VocProcessDTO processDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception { 
+		return result(vocService.addProcess(isFirst, processDTO, files));
 	}
 	
 	private Map<String, Object> result(int result) {
@@ -141,7 +142,11 @@ public class VocController {
         // summary
         Map<String, Object> summary = vocService.summary(year, month);
         resultMap.put("summary", summary);
-		
+        
+        // managerPerformance
+        List<VocStatDTO> managerList = vocService.managerPerformance(year, month);
+        resultMap.put("managerList", managerList);
+        
 		return resultMap;
 	}
 

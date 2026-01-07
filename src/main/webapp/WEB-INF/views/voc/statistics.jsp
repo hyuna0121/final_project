@@ -74,7 +74,7 @@
 			    <div class="col-12 px-0">
                     <ul class="nav nav-pills mb-3" role="tablist">
                         <li class="nav-item">
-                        	<a href="/store/voc/list" class="nav-link"><i class="bx bx-user-voice me-1"></i> VOC</a>
+                        	<a href="/store/voc/list" class="nav-link"><i class='bx bx-support me-1'></i> VOC</a>
                         </li>
                         <li class="nav-item">
                         	<a href="/store/voc/statistics" class="nav-link active"><i class="bx bx-bar-chart-alt-2 me-1"></i> 통계</a>
@@ -97,7 +97,7 @@
                 
             </div>
 
-              <div id="tab-content-area">
+              <div>
                 <div class="row">
                     <div class="col-lg-3 col-md-6 col-6 mb-4">
                         <div class="card">
@@ -200,7 +200,7 @@
                                     <li class="d-flex mb-4 pb-1">
                                         <div class="avatar flex-shrink-0 me-3">
                                         	<a href="javascript:void(0);" class="voc-link" data-type="SERVICE">
-	                                            <span class="avatar-initial rounded bg-label-success"><i class='bx bx-support'></i></span>
+	                                            <span class="avatar-initial rounded bg-label-success"><i class="bx bx-user-voice"></i></span>
 								            </a>
                                         </div>
                                         <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
@@ -259,37 +259,12 @@
                                         <tr>
                                             <th>담당자</th>
                                             <th>처리 완료</th>
-                                            <th>진행중</th>
+                                            <th>처리 중</th>
+                                            <th>처리 대기</th>
                                             <th>평균시간</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-xs me-2">
-                                                        <span class="avatar-initial rounded-circle bg-label-primary">정</span>
-                                                    </div>
-                                                    <span>정CS</span>
-                                                </div>
-                                            </td>
-                                            <td>54</td>
-                                            <td>2</td>
-                                            <td><span class="badge bg-label-success">빠름</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-xs me-2">
-                                                        <span class="avatar-initial rounded-circle bg-label-warning">이</span>
-                                                    </div>
-                                                    <span>이매니저</span>
-                                                </div>
-                                            </td>
-                                            <td>42</td>
-                                            <td>5</td>
-                                            <td><span class="badge bg-label-warning">보통</span></td>
-                                        </tr>
+                                    <tbody id="managerTableBody">
                                     </tbody>
                                 </table>
                             </div>

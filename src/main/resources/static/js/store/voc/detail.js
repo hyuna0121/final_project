@@ -116,6 +116,7 @@ async function submitVocRegistration() {
 async function submitVocProcess() {
     const vocId = document.getElementById('vocId').value;
     const processContents = document.getElementById('processContents').value;
+    const isFirst = document.getElementById('isFirst').value;
     
     if (!processContents) {
         alert("내용을 입력해주세요.");
@@ -125,6 +126,7 @@ async function submitVocProcess() {
 	const formData = new FormData();
 	formData.append("vocId", vocId);
 	formData.append("processContents", processContents);
+    formData.append("isFirst", isFirst);
 	
 	if (typeof accumulatedFiles !== 'undefined' && accumulatedFiles.length > 0) {
         accumulatedFiles.forEach(file => {

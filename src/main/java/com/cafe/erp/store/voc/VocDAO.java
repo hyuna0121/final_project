@@ -32,4 +32,8 @@ public interface VocDAO {
 	
 	public Map<String, Object> summary(String year, String month) throws Exception;
 
+	public int updateToActive(Integer vocId) throws Exception;
+	
+	public List<VocStatDTO> managerPerformance(String year, String month) throws Exception;
+
 }

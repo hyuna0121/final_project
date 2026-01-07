@@ -1,6 +1,6 @@
 $(function() {
-    let startParam = '${pager.searchStartDate}'.trim(); 
-    let endParam = '${pager.searchEndDate}'.trim();
+    let startParam = $('#searchStartDate').val(); 
+    let endParam = $('#searchEndDate').val();
 
     let startMoment = moment();
     let endMoment = moment();
@@ -32,7 +32,15 @@ $(function() {
             daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
             monthNames: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
             firstDay: 0
-        }
+        },
+		ranges: {
+	        '오늘': [moment(), moment()],
+	        '어제': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+	        '최근 7일': [moment().subtract(6, 'days'), moment()],
+	        '최근 30일': [moment().subtract(29, 'days'), moment()],
+	        '이번 달': [moment().startOf('month'), moment().endOf('month')],
+	        '지난 달': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+		}
     });
 
     if (hasValidData) {

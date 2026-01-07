@@ -161,6 +161,7 @@
                           </div>
                           
                           <div class="card-body overflow-auto" style="max-height: 500px; background-color: #f8f9fa; padding-bottom: 0;" id="replyArea">
+                              <input type="hidden" value="${listSize}" id="isFirst">
                               <c:forEach var="process" items="${list}">
                               	<c:set var="isMe" value="${process.memName == '최영업'}" />
 						        <div class="d-flex w-100 my-3 ${isMe ? 'justify-content-end' : 'justify-content-start'}">
