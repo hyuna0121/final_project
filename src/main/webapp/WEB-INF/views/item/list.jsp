@@ -163,7 +163,7 @@
 					            </c:choose>
 						      </td>
 						      <td class="text">
-							    <button class="btn btn-sm btn-warning btn-update-item"
+							    <button class="btn btn-sm btn-outline-warning btn-update-item"
 								  data-bs-toggle="modal"
 								  data-bs-target="#editModal"
 								  data-id="${item.itemId}"
@@ -172,7 +172,7 @@
 								  data-autouse="${item.itemAutoOrder}">
 								  수정
 								</button>
-							    <button class="btn btn-sm btn-danger btn-update-price"
+							    <button class="btn btn-sm btn-outline-danger btn-update-price"
 							      data-bs-toggle="modal"
 							      data-bs-target="#editModal"
 							      data-id="${item.itemId}"

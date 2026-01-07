@@ -27,4 +27,6 @@ public interface ItemDAO {
 	public void insertPrice(ItemPriceDetailDTO itemPriceDetailDTO);
 	
 	public List<ItemPriceDetailDTO> searchPrice(String itemName, String category, Boolean itemPriceEnable, String vendorCode);
+
+	public List<ItemDTO> searchForOrder(Long vendorCode, String keyword);
 }

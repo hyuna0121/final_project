@@ -126,6 +126,33 @@
 		  </if>
 		</select>
     	
+    	
+    	<!-- 발주페이지 물품 목록 전달 -->
+    	<select id="searchForOrder" resultType="ItemDTO">
+    		select 
+    			vi.item_id as itemId,
+    			vi.item_code as itemCode,
+    			vi.item_name as itemName,
+    			vi.item_enable as itemEnable,
+    			vi.item_auto_order as itemAutoOrder,
+    			vip.item_supply_price as itemSupplyPrice,
+    			vip.item_price_enable as itemPriceEnable,
+    			v.vendor_code as vendorCode,
+    			v.vendor_name as vendorName
+    		 from vendor_item vi
+    		join vendor_item_price vip on vi.item_id = vip.item_id
+    		join vendor v on v.vendor_id = vip.vendor_id
+    		where vi.item_enable = 0 and vip.item_price_enable = 0
+    		<if test="vendorCode != null and vendorCode != ''">
+    			and v.vendor_code LIKE CONCAT('%', #{vendorCode}, '%')
+    		</if>
+    		<if test="keyword != null and keyword != ''">
+    			and (
+			      vi.item_code LIKE CONCAT('%', #{keyword}, '%')
+			      OR vi.item_name LIKE CONCAT('%', #{keyword}, '%')
+			    )
+    		</if>
+    	</select>
     </mapper>
     
    

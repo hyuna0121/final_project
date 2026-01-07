@@ -1,0 +1,71 @@
+@charset "UTF-8";
+
+.btn-lg, .btn-group-lg > .btn {
+	padding: 0;
+}
+
+.btn:focus,
+.btn:focus-visible {
+  box-shadow: none !important;
+}
+
+/* 클릭 애니메이션용 */
+.btn {
+  transition: background-color 0.5s ease,
+              box-shadow 0.15s ease,
+              transform 0.05s ease;
+}
+
+/* 누르는 순간 */
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* outline 버튼 클릭 시 배경 효과 */
+.btn-outline-primary:active {
+  background-color: rgba(105, 108, 255, 0.15);
+}
+
+.btn-outline-success:active {
+  background-color: rgba(40, 199, 111, 0.15);
+}
+
+.btn-outline-secondary:active {
+  background-color: rgba(108, 117, 125, 0.15);
+}
+
+.btn-outline-primary:focus,
+.btn-outline-primary:focus-visible {
+  background-color: transparent !important;
+}
+
+.btn-outline-success:focus,
+.btn-outline-success:focus-visible {
+  background-color: transparent !important;
+}
+
+.btn-outline-secondary:focus,
+.btn-outline-secondary:focus-visible {
+  background-color: transparent !important;
+}
+
+/* outline 버튼 focus 시 글씨색 복원 */
+.btn-outline-primary:focus,
+.btn-outline-primary:focus-visible {
+  color: #696cff !important;
+}
+
+.btn-outline-success:focus,
+.btn-outline-success:focus-visible {
+  color: #28c76f !important;
+}
+
+.btn-outline-secondary:focus,
+.btn-outline-secondary:focus-visible {
+  color: #6c757d !important;
+}
+
+.card-border{
+	border: 1px solid #eee;
+	box-shadow: none;
+}

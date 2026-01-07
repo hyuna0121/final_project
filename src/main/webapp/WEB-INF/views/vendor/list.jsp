@@ -149,7 +149,7 @@
 				            <td>${v.vendorManagerTel}</td>
 				            <td>${v.vendorManagerEmail}</td>
 				            <td>
-				              <button class="btn btn-sm btn-warning"
+				              <button class="btn btn-sm btn-outline-warning"
 				                data-bs-toggle="modal"
 				                data-bs-target="#editModal"
 				                onclick="update(${v.vendorId})">

@@ -12,18 +12,18 @@ public class ItemPriceDetailDTO {
 	// 보여주는 view 전용 DTO
 	
 	// 단가
-	private int itemPriceId;
-	private int itemSupplyPrice;
-	private boolean itemPriceEnable;
+	private Integer itemPriceId;
+	private Integer itemSupplyPrice;
+	private Boolean itemPriceEnable;
 	
 	// 품목
-	private int itemId;
+	private Integer itemId;
 	private String itemCode;
 	private String itemName;
 	private String itemCategory;
 	
 	// 거래처
-	private int vendorId;
-	private int vendorCode;
+	private Integer vendorId;
+	private Integer vendorCode;
 	private String vendorName;
 }

@@ -9,13 +9,16 @@ import lombok.ToString;
 @ToString
 public class ItemDTO {
 	
-	private int itemId;
+	private Integer itemId;
 	private String itemCode;
 	private String itemName;
 	private String itemCategory;
-	private boolean itemEnable;
-	private boolean itemAutoOrder;
-	private int itemSupplyPrice;
-	private int vendorId;
+	private Boolean itemEnable;
+	private Boolean itemAutoOrder;
+	private Integer itemSupplyPrice;
+	private Integer vendorId;
+	private Integer vendorCode;
+	private String vendorName;
+	private Boolean itemPriceEnable;
 	
 }

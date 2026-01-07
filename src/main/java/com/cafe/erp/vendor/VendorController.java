@@ -19,10 +19,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/vendor/*")
 public class VendorController {
 
-    private final ItemService itemService;
-
 	@Autowired
 	private VendorService vendorService;
+	
+	private final ItemService itemService;
 
     VendorController(ItemService itemService) {
         this.itemService = itemService;

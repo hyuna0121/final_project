@@ -72,4 +72,9 @@ public class ItemService {
 	public List<ItemPriceDetailDTO> searchPrice(String itemName, String category, Boolean itemPriceEnable, String vendorCode) {
 		return itemDAO.searchPrice(itemName,category,itemPriceEnable,vendorCode);
 	}
+	
+//	
+	public List<ItemDTO> searchForOrder(Long vendorCode, String keyword) {
+		return itemDAO.searchForOrder(vendorCode, keyword);
+	}
 }

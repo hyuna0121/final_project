@@ -179,7 +179,7 @@
 								<form action="priceCheck" method="post">
 								  <input type="hidden" name="itemPriceId" value="${itemPrice.itemPriceId}">
 								  <input type="hidden" name="itemPriceEnable" value="${itemPrice.itemPriceEnable}">
-						            <button class="btn btn-sm btn-warning btn-update-item"
+						            <button class="btn btn-sm btn-outline-warning btn-update-item"
 									  data-bs-toggle="modal"
 									  data-bs-target="#editModal">
 									  변경
