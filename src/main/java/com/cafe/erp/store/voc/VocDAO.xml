@@ -6,12 +6,12 @@
 
 	<sql id="searchCondition">
         <where>
-            <if test="vocType != null and vocType != ''">
-                AND v.voc_type = #{vocType}
+            <if test="searchVocType != null and searchVocType != ''">
+                AND v.voc_type = #{searchVocType}
             </if>
             
-            <if test="vocStatus != null">
-                AND v.voc_status = #{vocStatus}
+            <if test="searchVocStatus != null">
+                AND v.voc_status = #{searchVocStatus}
             </if>
             
             <if test="searchStartDate != null">
@@ -22,12 +22,12 @@
 	            AND v.voc_created_at &lt;= CONCAT(#{searchEndDate}, ' 23:59:59')
 	        </if>
 	        
-	        <if test="storeName != null and storeName != ''">
-                AND s.store_name LIKE CONCAT('%', #{storeName}, '%')
+	        <if test="searchStoreName != null and searchStoreName != ''">
+                AND s.store_name LIKE CONCAT('%', #{searchStoreName}, '%')
             </if>
 	
-	        <if test="vocTitle != null and vocTitle != ''">
-                AND v.voc_title LIKE CONCAT('%', #{vocTitle}, '%')
+	        <if test="searchVocTitle != null and searchVocTitle != ''">
+                AND v.voc_title LIKE CONCAT('%', #{searchVocTitle}, '%')
             </if>
     	</where>
     </sql>

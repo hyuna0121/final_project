@@ -101,21 +101,21 @@
 							    <div class="row g-3">
 							        <div class="col-12 col-lg-3">
 							            <label class="form-label small">불만 유형</label>
-							            <select class="form-select" id="vocType" name="vocType">
+							            <select class="form-select" id="searchVocType" name="searchVocType">
 							                <option value="">전체</option>
-							                <option value="HYGIENE" ${pager.vocType eq 'HYGIENE' ? 'selected' : ''}>위생</option>
-							                <option value="TASTE" ${pager.vocType eq 'TASTE' ? 'selected' : ''}>맛</option>
-							                <option value="SERVICE" ${pager.vocType eq 'SERVICE' ? 'selected' : ''}>서비스</option>
+							                <option value="HYGIENE" ${pager.searchVocType eq 'HYGIENE' ? 'selected' : ''}>위생</option>
+							                <option value="TASTE" ${pager.searchVocType eq 'TASTE' ? 'selected' : ''}>맛</option>
+							                <option value="SERVICE" ${pager.searchVocType eq 'SERVICE' ? 'selected' : ''}>서비스</option>
 							            </select>
 							        </div>
 							
 							        <div class="col-12 col-lg-3">
 							            <label class="form-label small">처리 상태</label>
-							            <select class="form-select" id="vocStatus" name="vocStatus">
+							            <select class="form-select" id="searchVocStatus" name="searchVocStatus">
 							                <option value="">전체</option>
-							                <option value="0" ${pager.vocStatus eq 0 ? 'selected' : ''}>처리 대기</option>
-							                <option value="1" ${pager.vocStatus eq 1 ? 'selected' : ''}>처리 중</option>
-							                <option value="2" ${pager.vocStatus eq 2 ? 'selected' : ''}>처리 완료</option>
+							                <option value="0" ${pager.searchVocStatus eq 0 ? 'selected' : ''}>처리 대기</option>
+							                <option value="1" ${pager.searchVocStatus eq 1 ? 'selected' : ''}>처리 중</option>
+							                <option value="2" ${pager.searchVocStatus eq 2 ? 'selected' : ''}>처리 완료</option>
 							            </select>
 							        </div>
 							
@@ -134,7 +134,7 @@
 							            <label class="form-label small">가맹점명</label>
 							            <div class="input-group">
 					                    	<span class="input-group-text"><i class="bx bx-store"></i></span>
-					                        <input type="text" class="form-control" placeholder="가맹점명" id="storeName" name="storeName" value="${pager.storeName}" />
+					                        <input type="text" class="form-control" placeholder="가맹점명" id="searchStoreName" name="searchStoreName" value="${pager.searchStoreName}" />
 					                    </div>
 							        </div>
 							
@@ -142,7 +142,7 @@
 							            <label class="form-label small">제목</label>
 							            <div class="input-group">
 							            	<span class="input-group-text"><i class='bx bx-detail'></i></span>
-								            <input type="text" class="form-control" placeholder="제목 검색" id="vocTitle" name="vocTitle" value="${pager.vocTitle}" />
+								            <input type="text" class="form-control" placeholder="제목 검색" id="searchVocTitle" name="searchVocTitle" value="${pager.searchVocTitle}" />
 							            </div>
 							        </div>
 							
