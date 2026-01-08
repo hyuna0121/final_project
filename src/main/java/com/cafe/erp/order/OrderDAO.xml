@@ -31,4 +31,9 @@
     		)
     		values(null, #{hqOrderQty}, #{hqOrderPrice}, #{hqOrderAmount}, now(), #{vendorCode}, #{hqOrderId}, #{itemId}, #{hqOrderItemCode}, #{hqOrderItemName});
     	</insert>
+    	
+    	<!-- 발주 목록 요청 -->
+    	<select id="listRequest" resultType="OrderDTO">
+    		select * from order_hq
+    	</select>
     </mapper>

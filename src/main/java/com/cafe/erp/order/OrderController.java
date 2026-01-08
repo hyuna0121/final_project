@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cafe.erp.item.ItemDTO;
 import com.cafe.erp.item.ItemService;
+import com.cafe.erp.store.StoreService;
 import com.cafe.erp.vendor.VendorService;
 
 @Controller
 @RequestMapping("/order/*")
 public class OrderController {
+
+    private final StoreService storeService;
 	
 	private final ItemService itemService;
 	private final VendorService vendorService;
@@ -26,12 +29,13 @@ public class OrderController {
 	private OrderService orderService;
 	
 	@Autowired
-    public OrderController(ItemService itemService, VendorService vendorService) {
+    public OrderController(ItemService itemService, VendorService vendorService, StoreService storeService) {
         this.itemService = itemService;
         this.vendorService = vendorService;
+        this.storeService = storeService;
     }
 	
-	// 발주 등록 페이지 요청
+	// 본사 발주 등록 페이지 요청
 	@GetMapping("request")
 	public String request(Model model) {
 		model.addAttribute("showVendorSelect", true);
@@ -49,18 +53,18 @@ public class OrderController {
 	    return itemService.searchForOrder(vendorCode, keyword);
 	}
 	
-	// 발주 목록 요청
+	// 본사 발주 등록
 	@PostMapping("request")
 	public String request(OrderDTO orderDTO) {
-		System.out.println(orderDTO.getItems().iterator().next().getItemCode());
-		System.out.println(orderDTO.getItems().iterator().next().getItemId());
-		System.out.println(orderDTO.getItems().iterator().next().getItemSupplyPrice());
-		System.out.println(orderDTO.getItems().iterator().next().getItemQuantity());
-		System.out.println(orderDTO.getItems().iterator().next().getVendorCode());
 		orderService.requestOrder(orderDTO);
-		
-		return "redirect:./request";
-		
+		return "redirect:./approval";
+	}
+	
+	// 발주 목록 요청
+	@GetMapping("approval")
+	public void approval(Model model) {
+		List<OrderDTO> orderList = orderService.listRequest();
+		model.addAttribute("orderList", orderList);
 	}
 
 }

@@ -34,6 +34,14 @@
   background-color: rgba(108, 117, 125, 0.15);
 }
 
+.btn-outline-dnager:active {
+  background-color: rgba(255, 62, 29, 0.15);
+}
+
+.btn-outline-warning:active {
+  background-color: rgba(255, 171, 0, 0.15);
+}
+
 .btn-outline-primary:focus,
 .btn-outline-primary:focus-visible {
   background-color: transparent !important;
@@ -46,6 +54,16 @@
 
 .btn-outline-secondary:focus,
 .btn-outline-secondary:focus-visible {
+  background-color: transparent !important;
+}
+
+.btn-outline-danger:focus,
+.btn-outline-danger:focus-visible {
+  background-color: transparent !important;
+}
+
+.btn-outline-warning:focus,
+.btn-outline-warning:focus-visible {
   background-color: transparent !important;
 }
 
@@ -65,7 +83,17 @@
   color: #6c757d !important;
 }
 
+.btn-outline-danger:focus,
+.btn-outline-danger:focus-visible {
+  color: #ff3e1d !important;
+}
+
+.btn-outline-warning:focus,
+.btn-outline-warning:focus-visible {
+  color: #ffab00 !important;
+}
 .card-border{
 	border: 1px solid #eee;
 	box-shadow: none;
 }
+	

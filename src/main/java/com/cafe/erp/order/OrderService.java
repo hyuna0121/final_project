@@ -2,9 +2,11 @@ package com.cafe.erp.order;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 @Service
 public class OrderService {
@@ -41,10 +43,8 @@ public class OrderService {
 		      // 발주 상세 insert
 		      orderDAO.insertOrderDetail(detail);
 		}
-		
-		
 	}
-	
+	// orderId 생성
 	public String generateOrderId(boolean isHqOrder) {
 
 	    // R / P 구분
@@ -71,5 +71,10 @@ public class OrderService {
 	    // 최종 발주번호
 	    return prefix + orderDate + seq;
 	  }
+	
+	// 발주 목록 
+	public List<OrderDTO> listRequest() {
+		return orderDAO.listRequest();
+	}
 
 }
