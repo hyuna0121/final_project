@@ -143,6 +143,8 @@ async function submitVocRegistration() {
     const vocContact = document.getElementById('vocContact').value;
 	const vocTitle = document.getElementById('vocTitle').value;
 	const vocContents = document.getElementById('vocContents').value;
+	
+	console.log(vocType);
     
     if (!storeId) {
         alert("가맹점명을 선택해주세요.");

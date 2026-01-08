@@ -99,36 +99,71 @@
                 <h4 class="fw-bold py-3 mb-3"><a href="/store/list" class="text-muted fw-normal">가맹점 /</a> 상세 정보</h4>
                	<div class="col-md-6 col-lg-6 mb-4">
 				    <div class="card h-100">
-				        <div class="card-header d-flex justify-content-between align-items-center">
+				        <div class="card-header">
 				            <h5 class="mb-0"><i class="bx bx-detail text-primary" style="margin-right: 10px"></i> 상세 정보</h5>
-				            <button type="button" class="btn btn-outline-warning btn-sm">
-				                <span class="tf-icons bx bx-edit-alt"></span> 정보 수정
-				            </button>
 				        </div>
 				        <div class="card-body">
 				            <div class="info-container">
-				                <ul class="list-unstyled">
-				                    <li class="mb-3">
-				                        <span class="fw-bold me-2">가맹점명:</span>
-				                        <span>${store.storeName}</span> 
-				                    </li>
-				                    <li class="mb-3">
-				                        <span class="fw-bold me-2">상태:</span>
-				                        <span class="badge bg-label-success">${store.storeStatus}</span>
-				                    </li>
-				                    <li class="mb-3">
-				                        <span class="fw-bold me-2">영업 시간:</span>
-				                        <span>${store.storeStartTime} ~ ${store.storeCloseTime}</span> 
-				                    </li>
-				                    <li class="mb-3">
-				                        <span class="fw-bold me-2">등록일:</span>
-				                        <span>${store.storeCreatedAt}</span> 
-				                    </li>
-				                    <li class="mb-3">
-				                        <span class="fw-bold me-2">최종 수정일:</span>
-				                        <span>${store.storeUpdatedAt}</span> 
-				                    </li>
-				                </ul>
+				            	<div class="d-flex justify-content-between align-items-center">
+					            	<h5 class="ps-md-2 mb-0"><span class="fw-bold text-primary">${store.storeName}</span></h5>
+					            	<button type="button" class="btn btn-outline-warning btn-sm" id="btnEditInfo">
+						                <span class="tf-icons bx bx-edit-alt" id="btnIcon"></span> <span id="btnText">정보 수정</span>
+						            </button>
+				            	</div>
+				                <div class="bg-white border rounded-3 p-3 mt-3 mb-3">
+							    	<h6 class="fw-bold mb-3"><i class='bx bx-info-circle'></i> 상태</h6>
+								    <div class="row g-3">
+				                        <div class="col-md-3 mb-2 ps-md-4">
+				                            <span class="text-muted small d-block mb-1">현재 상태</span>
+				                            <div>
+				                            	<c:if test="${store.storeStatus eq '오픈'}"><span class="badge bg-label-info">${store.storeStatus}</span></c:if>
+								            	<c:if test="${store.storeStatus eq '오픈 준비'}"><span class="badge bg-label-warning">${store.storeStatus}</span></c:if>
+								            	<c:if test="${store.storeStatus eq '폐업'}"><span class="badge bg-label-danger">${store.storeStatus}</span></c:if>
+				                            </div>
+				                        </div>
+				                        <div class="col-md-9">
+				                            <span class="text-muted small d-block mb-1">영업시간</span>
+				                            <div id="viewTime">
+				                            	<c:if test="${store.storeStatus eq '오픈'}"><span>${store.storeStartTime} ~ ${store.storeCloseTime}</span></c:if>
+								            	<c:if test="${store.storeStatus ne '오픈'}"><span>-</span></c:if>
+				                            </div>
+				                            
+				                            <div id="editTime" class="d-none">
+					                            <div class="d-flex align-items-center gap-2">
+					                                <div class="input-group input-group-sm">
+					                                    <input type="time" class="form-control" id="inputStartTime" name="storeStartTime" value="${store.storeStartTime}" aria-label="오픈 시간" />
+					                                </div>
+					                                <span>~</span>
+					                                <div class="input-group input-group-sm">
+					                                    <input type="time" class="form-control" id="inputCloseTime" name="storeCloseTime" value="${store.storeCloseTime}" aria-label="종료 시간" />
+					                                </div>
+					                            </div>
+					                        </div>
+				                        </div>
+								    </div>
+			                    </div>
+				                
+				                <div class="col-12">
+			                        <div class="p-3 border rounded-3">
+			                            <h6 class="fw-bold mb-3"><i class="bx bx-user me-1"></i> 점주</h6>
+			                            <div class="row g-3">
+			                                <div class="col-md-3 ps-md-4">
+			                                    <label class="text-muted small d-block">이름</label>
+			                                    <span class="fw-semibold fs-6">${store.memName}</span>
+			                                </div>
+			                                <div class="col-md-3">
+			                                    <label class="text-muted small d-block">전화번호</label>
+			                                    <span class="fw-semibold fs-6">${store.memPhone}</span>
+			                                </div>
+			                                <div class="col-md-6">
+			                                    <label class="text-muted small d-block">이메일</label>
+			                                    <span class="fw-semibold fs-6">${store.memEmail}</span>
+			                                </div>
+			                            </div>
+			                        </div>
+			                    </div>
+			                    
+			                    
 				            </div>
 				        </div>
 				    </div>

@@ -15,13 +15,13 @@ import lombok.ToString;
 @ToString
 public class VocSearchDTO extends Pager {
 	
-	private String vocType;
-	private Integer vocStatus;
+	private String searchVocType;
+	private Integer searchVocStatus;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate searchStartDate;
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate searchEndDate;
-	private String storeName;
-	private String vocTitle;
+	private String searchStoreName;
+	private String searchVocTitle;
 
 }

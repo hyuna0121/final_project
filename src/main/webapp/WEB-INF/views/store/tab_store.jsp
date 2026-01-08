@@ -184,6 +184,7 @@
 								            <td>
 								            	<c:if test="${dto.storeStatus eq '오픈'}"><span class="badge bg-label-info">${dto.storeStatus}</span></c:if>
 								            	<c:if test="${dto.storeStatus eq '오픈 준비'}"><span class="badge bg-label-warning">${dto.storeStatus}</span></c:if>
+								            	<c:if test="${dto.storeStatus eq '폐업'}"><span class="badge bg-label-danger">${dto.storeStatus}</span></c:if>
 								            </td>
 								            <td>${dto.storeStartTime} ~ ${dto.storeCloseTime}</td>
 					                        <td>
