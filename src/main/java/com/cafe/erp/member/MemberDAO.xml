@@ -94,7 +94,7 @@
 		INSERT INTO member 
 		(member_id, mem_password, mem_name, mem_zip_code, mem_address, mem_address_detail, mem_email, mem_phone, mem_hire_date, mem_is_active, dept_code, position_code)
 		VALUES
-		(#{memberId}, 1234, #{memName}, #{memZipCode}, #{memAddress}, #{memAddressDetail}, #{memEmail}, #{memPhone},  #{memHireDate}, 1,  #{deptCode}, #{positionCode})
+		(#{memberId}, #{memPassword}, #{memName}, #{memZipCode}, #{memAddress}, #{memAddressDetail}, #{memEmail}, #{memPhone},  #{memHireDate}, 1,  #{deptCode}, #{positionCode})
 	</insert>
 	
 	
@@ -189,12 +189,44 @@
 		WHERE member_id = #{memberId}
 	</update>
 	
+	<select id="getMemberPassword" parameterType="int" resultType="String">
+		SELECT mem_password
+		FROM member
+		WHERE member_id = #{memberId}
+		
+	</select>
+	
+	
+	<update id="changePassword" parameterType="MemberChangePasswordDTO">
+		UPDATE member
+		SET
+			mem_password = #{changePassword}
+		WHERE
+			member_id = #{memberId}
+	</update>
+	
+	
 	
 	<select id="searchOwner" parameterType="String" resultType="MemberDTO"> 
 		SELECT m.member_id, m.mem_name 
 		FROM member m LEFT JOIN store s ON m.member_id = s.member_id 
-		WHERE m.mem_name LIKE CONCAT(#{keyword}, '%') AND s.member_id IS NULL AND m.member_id LIKE '2%' 
+		WHERE m.mem_name LIKE CONCAT('%', #{keyword}, '%') AND s.member_id IS NULL AND m.member_id LIKE '2%' 
 	</select>
 	
-	
+	<select id="searchManager" parameterType="String" resultType="MemberDTO"> 
+		SELECT 
+		    m.member_id,
+		    m.mem_name,
+			m.mem_email,
+			m.mem_phone,
+		    COUNT(CASE WHEN smh.manage_end_date IS NULL THEN smh.manage_id END) AS dept_code
+		FROM member m 
+		LEFT JOIN store_manager_history smh ON smh.member_id = m.member_id
+		WHERE 
+			m.dept_code = 13 
+			AND m.mem_is_active = 1  
+			AND m.mem_name LIKE CONCAT('%', #{keyword}, '%')
+		GROUP BY m.member_id
+		ORDER BY dept_code, m.mem_name
+	</select>
 </mapper>

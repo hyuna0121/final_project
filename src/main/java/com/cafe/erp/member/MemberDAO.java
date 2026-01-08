@@ -45,4 +45,14 @@ public interface MemberDAO {
 
 	public int countActiveMember(MemberDTO memberDTO) throws Exception;
 
+	
+	public int changePassword(MemberChangePasswordDTO changePasswordDTO) throws Exception;
+	public String getMemberPassword(int memberId) throws Exception;
+	
+	public List<MemberDTO> searchManager(String keyword) throws Exception;
 	}
+
+
+
+
+

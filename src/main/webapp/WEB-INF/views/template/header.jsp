@@ -1,10 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <nav
   class="layout-navbar  navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
   id="layout-navbar"
 >
+
   <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
 
    <!-- ⏰ 날짜 / 시간 -->
@@ -52,34 +54,38 @@
 
       <!-- 👤 사용자 -->
       
-      
+          <sec:authentication property="principal.member" var="Info"/>
       <div class="profile_img">
+	      	<input type="hidden" id="loggedInMemberId" value="${Info.memberId}">
             <c:choose>
-                <c:when test="${sessionScope.login.memProfileSavedName == null}">
+                <c:when test="${empty Info.memProfileSavedName}">
                     <img src="/fileDownload/profile?fileSavedName=default_img.jpg"
                         alt="user-avatar" 
                         class="d-block object-fit-cover rounded-circle"
-                        id="profileImage" 
+                        id="headerProfileImage" 
                         style="width: 32px; height: 32px; border: 1px solid #eee;">
                 </c:when>
                 <c:otherwise>
-                    <img src="/fileDownload/profile?fileSavedName=${sessionScope.login.memProfileSavedName}"
+                    <img src="/fileDownload/profile?fileSavedName=${Info.memProfileSavedName}"
                         alt="user-avatar" 
                         class="d-block object-fit-cover rounded-circle"
-                        id="profileImage" 
+                        id="headerProfileImage" 
                         style="width: 32px; height: 32px; border: 1px solid #eee;">
                 </c:otherwise>
+                
+                
+                
             </c:choose>
           </div>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
           <span class="fw-semibold">
-          	${sessionScope.login.memName} 님
+          	${Info.memName}님 
           </span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
           <li>
-            <a class="dropdown-item" href="./logout">로그아웃</a>
+            <a class="dropdown-item" href="/member/logout">로그아웃</a>
           </li>
         </ul>
       </li>
@@ -87,5 +93,6 @@
     </ul>
   </div>
 </nav>
-
+<script src="/vendor/libs/jquery/jquery.js"></script>
 <script type="text/javascript" src="/js/member/header.js"></script>
+

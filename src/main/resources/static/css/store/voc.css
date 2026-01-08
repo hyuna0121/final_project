@@ -11,10 +11,16 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     
     display: inline-block;
-    width: fit-content;
+    width: auto;
     max-width: 75%;
+   	min-width: 100px;
    	
-    word-break: normal;
+    word-break: keep-all;
+    white-space: normal;
+}
+
+.chat-bubble.has-file {
+    min-width: 300px;
 }
 
 .chat-left {

@@ -178,7 +178,7 @@
 					            	<c:forEach items="${list}" var="dto">
 					       				<tr>
 					         				<td class="fw-bold">${dto.storeId}</td>
-								            <td><span class="fw-bold text-primary">${dto.storeName}</span></td>
+								            <td><a class="fw-bold text-primary" href="/store/detail?storeId=${dto.storeId}">${dto.storeName}</a></td>
 								            <td>${dto.memName}</td>
 								            <td>${dto.storeAddress}</td>
 								            <td>
@@ -187,7 +187,7 @@
 								            </td>
 								            <td>${dto.storeStartTime} ~ ${dto.storeCloseTime}</td>
 					                        <td>
-					                        	<button class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></button>
+					                        	<button class="btn btn-sm btn-icon btn-outline-secondary" onclick="location.href='/store/detail?storeId=${dto.storeId}'"><i class="bx bx-edit"></i></button>
 					                     	</td>
 					                    </tr>
 					                </c:forEach>

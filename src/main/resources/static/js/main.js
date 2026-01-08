@@ -103,7 +103,7 @@ let menu, animate;
   // Speech To Text
   window.Helpers.initSpeechToText();
 
-  // Manage menu expanded/collapsed with templateCustomizer & local storage
+  // Manage menu expanded/collapsed with templateCustomizer	 & local storage
   //------------------------------------------------------------------
 
   // If current layout is horizontal OR current window screen is small (overlay menu) than return from here
@@ -116,3 +116,63 @@ let menu, animate;
   // Auto update menu collapsed/expanded based on the themeConfig
   window.Helpers.setCollapsed(true, false);
 })();
+
+
+
+
+
+/* 로그인 확인 */
+	setInterval(function(){
+		fetch('/member/sessionCheck',{
+			method: 'GET',
+			headers: { 'Content-Type': 'application/json' }
+		})
+		.then(response => {
+			if(response.url.includes('/member/login')){
+				alert("다른 기기에서 접속중 입니다.");
+				location.href = '/member/login';
+			}
+		});
+	}, 10000);
+	
+	
+	
+	
+	let timeLeft = 1800;
+	let timerInterval = null;
+	
+	function timer(){
+		if(timerInterval){
+		clearInterval(timerInterval);
+		}
+		
+		timeLeft = 1800; 
+		timerInterval = setInterval(() => {
+			timeLeft--;
+			if(timeLeft === 60){
+				if(confirm("장시간 활동이 없어 로그아웃 됩니다. 연장하시겠습니까?")){
+					resetTimer();
+			}
+		}
+		if(timeLeft <= 0) {
+		clearInterval(timerInterval);
+			location.href = "/member/logout";
+			}
+		}, 1000);	
+	}
+	
+	
+	function resetTimer(){
+	    console.log("연장 요청 보냄!"); 
+	    
+	    fetch('/member/sessionCheck?_=' + new Date().getTime())
+	    .then(response => {
+	        if(response.ok){
+	            alert("연장되었습니다. (새 코드 적용됨)");
+	            timer(); 
+	        }
+	    })
+	    .catch(err => console.error(err));
+	}
+	
+	timer();

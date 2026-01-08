@@ -59,7 +59,7 @@
 	
 	<insert id="add" parameterType="storeDTO">
 		INSERT INTO store 
-		VALUE(#{storeId}, #{storeName}, #{memberId}, #{storeAddress}, #{storeLatitude}, #{storeLongitude}, "오픈 준비", null, null, now(), now(), #{storeZonecode});
+		VALUE (#{storeId}, #{storeName}, #{memberId}, #{storeAddress}, #{storeLatitude}, #{storeLongitude}, "오픈 준비", null, null, now(), now(), #{storeZonecode});
 	</insert>
 	
 	<select id="searchStore" parameterType="String">
@@ -107,5 +107,50 @@
       		<include refid="searchCondition" />
            ORDER BY s.store_id
 	</select>
+	
+	<select id="detail" parameterType="StoreDTO" resultType="StoreDTO">
+		SELECT  
+			s.store_id,
+			s.store_name,
+			s.store_address,
+			s.store_latitude,
+			s.store_longitude,
+			store_zonecode,
+			s.store_status,
+			s.store_start_time,
+			s.store_close_time,
+			s.store_created_at,
+			s.member_id,
+			m.mem_name,
+			m.mem_email,
+			m.mem_phone
+		FROM store s LEFT JOIN member m ON s.member_id = m.member_id 
+		WHERE store_id = #{storeId};
+	</select>
+	
+	<select id="manageList" parameterType="StoreDTO" resultType="StoreManageDTO">
+		SELECT 
+			smh.manage_id,
+			smh.manage_start_date,
+			smh.manage_end_date,
+			smh.member_id,
+			m.mem_name
+		FROM store_manager_history smh 
+		LEFT JOIN member m ON smh.member_id = m.member_id
+		WHERE store_id = #{storeId}
+		ORDER BY smh.manage_start_date DESC
+	</select>
+	
+	<update id="updateToEnd" parameterType="StoreManageDTO">
+		UPDATE store_manager_history
+		SET manage_end_date = DATE_SUB(#{manageStartDate}, INTERVAL 1 DAY)
+		WHERE store_id = #{storeId}
+		AND manage_end_date IS NULL
+	</update>
+	
+	<insert id="addManager" parameterType="StoreManageDTO">
+		INSERT INTO store_manager_history
+		VALUE (null, #{storeId}, #{memberId}, #{manageStartDate}, null)
+	</insert>
 	
 </mapper>

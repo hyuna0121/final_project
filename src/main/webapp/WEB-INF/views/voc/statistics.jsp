@@ -71,32 +71,47 @@
             <div class="container-xxl flex-grow-1 container-p-y">
               
               <div class="row">
-			    <div class="col-12 px-0 mb-4">
-                    <ul class="nav nav-pills" role="tablist">
+			    <div class="col-12 px-0">
+                    <ul class="nav nav-pills mb-3" role="tablist">
                         <li class="nav-item">
-                        	<a href="/store/voc/list" class="nav-link"><i class="bx bx-user-voice me-1"></i> VOC 목록</a>
+                        	<a href="/store/voc/list" class="nav-link"><i class='bx bx-support me-1'></i> VOC</a>
                         </li>
                         <li class="nav-item">
-                        	<a href="/store/voc/statistics" class="nav-link active"><i class="bx bx-bar-chart-alt-2 me-1"></i> 통계 분석</a>
+                        	<a href="/store/voc/statistics" class="nav-link active"><i class="bx bx-bar-chart-alt-2 me-1"></i> 통계</a>
                         </li>
                     </ul>
                 </div>
               </div>
-
-              <div id="tab-content-area">
+            <div class="d-flex justify-content-between align-items-center mb-4">
                 
-                <div class="row mb-4">
+                <h4 class="fw-bold py-3 mb-0">
+                    <span class="text-muted fw-normal">VOC /</span> 통계 분석
+                </h4>
+
+                <div class="d-flex gap-2">
+                    <div class="input-group" style="width: 200px;">
+                        <span class="input-group-text bg-white"><i class="bx bx-calendar"></i></span>
+                        <input type="text" id="monthPicker" class="form-control bg-white" placeholder="날짜 선택" readonly>
+                    </div>
+                </div>
+                
+            </div>
+
+              <div>
+                <div class="row">
                     <div class="col-lg-3 col-md-6 col-6 mb-4">
                         <div class="card">
                             <div class="card-body">
                                 <div class="card-title d-flex align-items-start justify-content-between">
                                     <div class="card-icon-bg bg-label-primary">
-                                        <i class="bx bx-folder-plus fs-3"></i>
+                                    	<a href="javascript:void(0);" id="btnTotalVoc">
+						                    <i class="bx bx-folder-plus fs-3"></i>
+						                </a>
                                     </div>
                                 </div>
                                 <span class="fw-semibold d-block mb-1">이번 달 접수</span>
-                                <h3 class="card-title mb-2">154건</h3>
-                                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +12.5%</small>
+                                <h3 class="card-title mb-2" id="kpiTotal">-건</h3>
+                                <small class="fw-semibold" id="kpiTotalDiff">-</small>
                             </div>
                         </div>
                     </div>
@@ -109,8 +124,8 @@
                                     </div>
                                 </div>
                                 <span class="fw-semibold d-block mb-1">처리 완료</span>
-                                <h3 class="card-title mb-2">140건</h3>
-                                <small class="text-muted">처리율 91%</small>
+                                <h3 class="card-title mb-2" id="kpiResolved">-건</h3>
+                                <small class="text-muted" id="kpiRate">처리율 -%</small>
                             </div>
                         </div>
                     </div>
@@ -123,7 +138,7 @@
                                     </div>
                                 </div>
                                 <span class="fw-semibold d-block mb-1">미처리 / 진행중</span>
-                                <h3 class="card-title mb-2">14건</h3>
+                                <h3 class="card-title mb-2" id="kpiPending">-건</h3>
                                 <small class="text-danger fw-semibold">집중 관리 필요</small>
                             </div>
                         </div>
@@ -137,8 +152,8 @@
                                     </div>
                                 </div>
                                 <span class="fw-semibold d-block mb-1">평균 처리 시간</span>
-                                <h3 class="card-title mb-2">4.5시간</h3>
-                                <small class="text-success fw-semibold">-30분 단축</small>
+                                <h3 class="card-title mb-2" id="kpiAvgTime">-시간</h3>
+                                <small class="fw-semibold" id="kpiAvgTimeDiff">-</small>
                             </div>
                         </div>
                     </div>
@@ -149,7 +164,7 @@
                         <div class="card h-100">
                             <div class="card-header">
                                 <h5 class="card-title m-0 me-2">일별 VOC 접수 추이</h5>
-                                <small class="text-muted">최근 30일 데이터</small>
+                                <small class="text-muted">최근 한달 데이터</small>
                             </div>
                             <div class="card-body px-0">
                                 <div id="vocTrendChart" class="px-2" style="min-height: 300px;"></div>
@@ -168,7 +183,25 @@
                                 <ul class="p-0 m-0">
                                     <li class="d-flex mb-4 pb-1">
                                         <div class="avatar flex-shrink-0 me-3">
-                                            <span class="avatar-initial rounded bg-label-primary"><i class="bx bx-user-voice"></i></span>
+                                        	<a href="javascript:void(0);" class="voc-link" data-type="HYGIENE">
+								                <span class="avatar-initial rounded bg-label-primary"><i class='bx bx-spray-can'></i></span>
+								            </a>
+                                        </div>
+                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                                            <div class="me-2">
+                                                <h6 class="mb-0">HYGIENE</h6>
+                                                <small class="text-muted">위생, 청결</small>
+                                            </div>
+                                            <div class="user-progress">
+                                                <small class="fw-semibold" id="hygieneProgress"></small>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="d-flex mb-4 pb-1">
+                                        <div class="avatar flex-shrink-0 me-3">
+                                        	<a href="javascript:void(0);" class="voc-link" data-type="SERVICE">
+	                                            <span class="avatar-initial rounded bg-label-success"><i class="bx bx-user-voice"></i></span>
+								            </a>
                                         </div>
                                         <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                             <div class="me-2">
@@ -176,13 +209,15 @@
                                                 <small class="text-muted">직원 태도, 불친절</small>
                                             </div>
                                             <div class="user-progress">
-                                                <small class="fw-semibold">45%</small>
+                                                <small class="fw-semibold" id="serviceProgress"></small>
                                             </div>
                                         </div>
                                     </li>
-                                    <li class="d-flex mb-4 pb-1">
+                                    <li class="d-flex">
                                         <div class="avatar flex-shrink-0 me-3">
-                                            <span class="avatar-initial rounded bg-label-success"><i class="bx bx-bowl-rice"></i></span>
+                                        	<a href="javascript:void(0);" class="voc-link" data-type="TASTE">
+	                                            <span class="avatar-initial rounded bg-label-info"><i class='bx bx-coffee'></i></span>
+								            </a>
                                         </div>
                                         <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                             <div class="me-2">
@@ -190,21 +225,7 @@
                                                 <small class="text-muted">음식 맛, 온도</small>
                                             </div>
                                             <div class="user-progress">
-                                                <small class="fw-semibold">30%</small>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="d-flex">
-                                        <div class="avatar flex-shrink-0 me-3">
-                                            <span class="avatar-initial rounded bg-label-info"><i class="bx bx-package"></i></span>
-                                        </div>
-                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                            <div class="me-2">
-                                                <h6 class="mb-0">DELIVERY</h6>
-                                                <small class="text-muted">배달 지연/사고</small>
-                                            </div>
-                                            <div class="user-progress">
-                                                <small class="fw-semibold">25%</small>
+                                                <small class="fw-semibold" id="tasteProgress">25%</small>
                                             </div>
                                         </div>
                                     </li>
@@ -221,36 +242,8 @@
                                 <h5 class="card-title m-0 me-2">불만 다발 가맹점 (Top 5)</h5>
                             </div>
                             <div class="card-body">
-                                <ul class="p-0 m-0">
-                                    <li class="d-flex mb-4 pb-1">
-                                        <div class="avatar flex-shrink-0 me-3">
-                                            <span class="avatar-initial rounded bg-label-danger"><i class='bx bx-store-alt'></i></span>
-                                        </div>
-                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                            <div class="me-2">
-                                                <h6 class="mb-0">한양대점</h6>
-                                                <small class="text-muted">서울 성동구</small>
-                                            </div>
-                                            <div class="user-progress d-flex align-items-center gap-1">
-                                                <h6 class="mb-0 text-danger">12건</h6>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="d-flex mb-4 pb-1">
-                                        <div class="avatar flex-shrink-0 me-3">
-                                            <span class="avatar-initial rounded bg-label-secondary"><i class='bx bx-store-alt'></i></span>
-                                        </div>
-                                        <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
-                                            <div class="me-2">
-                                                <h6 class="mb-0">강남역점</h6>
-                                                <small class="text-muted">서울 강남구</small>
-                                            </div>
-                                            <div class="user-progress d-flex align-items-center gap-1">
-                                                <h6 class="mb-0">8건</h6>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    </ul>
+                                <ul class="p-0 m-0" id="topStoreList">
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -266,37 +259,12 @@
                                         <tr>
                                             <th>담당자</th>
                                             <th>처리 완료</th>
-                                            <th>진행중</th>
+                                            <th>처리 중</th>
+                                            <th>처리 대기</th>
                                             <th>평균시간</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-xs me-2">
-                                                        <span class="avatar-initial rounded-circle bg-label-primary">정</span>
-                                                    </div>
-                                                    <span>정CS</span>
-                                                </div>
-                                            </td>
-                                            <td>54</td>
-                                            <td>2</td>
-                                            <td><span class="badge bg-label-success">빠름</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="avatar avatar-xs me-2">
-                                                        <span class="avatar-initial rounded-circle bg-label-warning">이</span>
-                                                    </div>
-                                                    <span>이매니저</span>
-                                                </div>
-                                            </td>
-                                            <td>42</td>
-                                            <td>5</td>
-                                            <td><span class="badge bg-label-warning">보통</span></td>
-                                        </tr>
+                                    <tbody id="managerTableBody">
                                     </tbody>
                                 </table>
                             </div>
@@ -322,118 +290,12 @@
     <script src="/vendor/libs/apex-charts/apexcharts.js"></script>
     
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 
     <script src="/js/main.js"></script>
-    
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // 색상 설정 (Sneat 테마 변수 활용)
-        let cardColor, headingColor, axisColor, borderColor;
-        cardColor = config.colors.white;
-        headingColor = config.colors.headingColor;
-        axisColor = config.colors.axisColor;
-        borderColor = config.colors.borderColor;
+    <script src="/js/store/voc/statistics.js"></script>
 
-        // 1. VOC 접수 추이 그래프 (Line Chart)
-        const vocTrendEl = document.querySelector('#vocTrendChart'),
-        vocTrendConfig = {
-            series: [{
-                name: 'VOC 접수',
-                data: [10, 15, 8, 12, 20, 25, 18, 22, 16, 14, 28, 30] // TODO: 서버 데이터 연동
-            }],
-            chart: {
-                height: 300,
-                type: 'area',
-                toolbar: { show: false }
-            },
-            dataLabels: { enabled: false },
-            stroke: {
-                curve: 'smooth',
-                width: 2
-            },
-            grid: {
-                borderColor: borderColor,
-                strokeDashArray: 3,
-                xaxis: { lines: { show: false } }
-            },
-            colors: [config.colors.primary],
-            fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'light',
-                    shadeIntensity: 0.8,
-                    opacityFrom: 0.6,
-                    opacityTo: 0.1
-                }
-            },
-            xaxis: {
-                categories: ['1일', '3일', '5일', '7일', '9일', '11일', '13일', '15일', '17일', '19일', '21일', '23일'],
-                axisBorder: { show: false },
-                axisTicks: { show: false },
-                labels: { style: { colors: axisColor, fontSize: '13px' } }
-            },
-            yaxis: {
-                labels: { style: { colors: axisColor, fontSize: '13px' } }
-            }
-        };
-        if (typeof vocTrendEl !== undefined && vocTrendEl !== null) {
-            const vocTrend = new ApexCharts(vocTrendEl, vocTrendConfig);
-            vocTrend.render();
-        }
-
-        // 2. 불만 유형 도넛 차트 (Donut Chart)
-        const vocCategoryEl = document.querySelector('#vocCategoryChart'),
-        vocCategoryConfig = {
-            series: [45, 30, 25], // TODO: 서버 데이터 연동 (Service, Taste, Delivery 순)
-            labels: ['Service', 'Taste', 'Delivery'],
-            chart: {
-                height: 250,
-                type: 'donut'
-            },
-            colors: [config.colors.primary, config.colors.success, config.colors.info],
-            stroke: { show: false, curve: 'straight' },
-            dataLabels: {
-                enabled: true,
-                formatter: function (val) {
-                    return parseInt(val) + '%';
-                }
-            },
-            legend: { show: false }, // 하단 리스트로 대체
-            plotOptions: {
-                pie: {
-                    donut: {
-                        labels: {
-                            show: true,
-                            name: { fontSize: '1.5rem', fontFamily: 'Public Sans' },
-                            value: {
-                                fontSize: '1.5rem',
-                                color: headingColor,
-                                fontFamily: 'Public Sans',
-                                formatter: function (val) {
-                                    return parseInt(val) + '%';
-                                }
-                            },
-                            total: {
-                                show: true,
-                                fontSize: '0.8125rem',
-                                color: axisColor,
-                                label: 'Service',
-                                formatter: function (w) {
-                                    return '45%';
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        };
-        if (typeof vocCategoryEl !== undefined && vocCategoryEl !== null) {
-            const vocCategory = new ApexCharts(vocCategoryEl, vocCategoryConfig);
-            vocCategory.render();
-        }
-    });
-    </script>
-    
   </body>
 </html>

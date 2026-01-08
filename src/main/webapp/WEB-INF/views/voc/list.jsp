@@ -84,13 +84,10 @@
 			    <div class="col-12 px-0">
                     <ul class="nav nav-pills mb-3" role="tablist">
                         <li class="nav-item">
-                        	<a href="/store/voc/list" class="nav-link active"><i class="bx bx-user-voice me-1"></i> VOC </a>
+                        	<a href="/store/voc/list" class="nav-link active"><i class="bx bx-support me-1"></i> VOC</a>
                         </li>
                         <li class="nav-item">
-                        	<a href="/store/contract/list" class="nav-link"><i class="bx bx-message-detail me-1"></i> 계약 기록</a>
-                        </li>
-                        <li class="nav-item">
-                        	<a href="/store/evaluation" class="nav-link"><i class="bx bx-conversation me-1"></i> 평가 현황</a>
+                        	<a href="/store/voc/statistics" class="nav-link"><i class="bx bx-bar-chart-alt-2 me-1"></i> 통계</a>
                         </li>
                     </ul>
                 </div>

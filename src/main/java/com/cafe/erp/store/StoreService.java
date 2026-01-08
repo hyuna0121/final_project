@@ -76,5 +76,19 @@ public class StoreService {
 	public List<StoreDTO> excelList(StoreSearchDTO searchDTO) throws Exception {
 		return storeDAO.excelList(searchDTO);
 	}
+
+	public StoreDTO detail(StoreDTO storeDTO) throws Exception {
+		return storeDAO.detail(storeDTO);
+	}
+
+	public List<StoreManageDTO> manageList(StoreDTO storeDTO) throws Exception {
+		return storeDAO.manageList(storeDTO);
+	}
+
+	@Transactional
+	public int updateManager(StoreManageDTO managerDTO) throws Exception {
+		storeDAO.updateToEnd(managerDTO);
+		return storeDAO.addManager(managerDTO);
+	}
 	
 }

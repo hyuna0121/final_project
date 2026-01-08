@@ -14,4 +14,13 @@ public class MemberCommuteService {
 	public List<MemberCommuteDTO> attendanceList(MemberCommuteDTO commuteDTO)throws Exception{
 		return commuteDAO.attendanceList(commuteDTO);
 	}
+
+
+	public int checkOut(MemberCommuteDTO commuteDTO) throws Exception{
+		return commuteDAO.checkOut(commuteDTO);
+	}
+
+	public int checkIn(MemberCommuteDTO commuteDTO) throws Exception {
+		return commuteDAO.checkIn(commuteDTO);
+	}
 }

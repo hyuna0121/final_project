@@ -1,16 +1,10 @@
 package com.cafe.erp.store.voc;
 
-import java.net.URLEncoder;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cafe.erp.store.StoreDTO;
-import com.cafe.erp.store.StoreSearchDTO;
 import com.cafe.erp.util.ExcelUtil;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -57,14 +49,15 @@ public class VocController {
 		List<VocProcessDTO> processList = vocService.processList(vocId);
 		model.addAttribute("dto", vocDTO);
 		model.addAttribute("list", processList);
+		model.addAttribute("listSize", processList.size());
 		
 		return "voc/detail";
 	}
 	
 	@PostMapping("addProcess")
 	@ResponseBody
-	public Map<String, Object> addVocProcess(@ModelAttribute VocProcessDTO processDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception { 
-		return result(vocService.addProcess(processDTO, files));
+	public Map<String, Object> addVocProcess(Integer isFirst, @ModelAttribute VocProcessDTO processDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception { 
+		return result(vocService.addProcess(isFirst, processDTO, files));
 	}
 	
 	private Map<String, Object> result(int result) {
@@ -105,6 +98,56 @@ public class VocController {
 			row.createCell(13).setCellValue(dto.getVocCreatedAtStr());
 			row.createCell(14).setCellValue(dto.getVocUpdatedAtStr());
 		});
+	}
+	
+	@GetMapping("statistics")
+	public String statistics() throws Exception {
+		return "voc/statistics";
+	}
+	
+	@GetMapping(value = "statistics", params = "year")
+	@ResponseBody
+	public Map<String, Object> statistics(@RequestParam("year") String year, @RequestParam(value = "month") String month) throws Exception { 
+		Map<String, Object> resultMap = new HashMap<>();
+		
+		// 일별 추이
+		List<VocStatDTO> trendList = vocService.trend(year, month);
+		
+		List<String> trendLabels = new ArrayList<>();
+		List<Integer> trendCounts = new ArrayList<>();
+		for (VocStatDTO dto : trendList) {
+			String label = (dto.getCategory() == null) ? "기타" : dto.getCategory();
+			
+			trendLabels.add(label);
+			trendCounts.add(dto.getCount());
+		}
+		
+		resultMap.put("trendLabels", trendLabels);
+        resultMap.put("trendCounts", trendCounts);
+        
+        // 유형별 건수
+        List<VocStatDTO> typeList = vocService.countByType(year, month);
+        
+        List<Integer> typeCounts = new ArrayList<>();
+        for (VocStatDTO dto : typeList) {
+        	typeCounts.add(dto.getCount());
+        }
+        
+        resultMap.put("categoryCounts", typeCounts);
+        
+        // 불만 다발 가맹점
+        List<VocStatDTO> topStores = vocService.topComplaintStores(year, month);
+        resultMap.put("topStores", topStores);
+        
+        // summary
+        Map<String, Object> summary = vocService.summary(year, month);
+        resultMap.put("summary", summary);
+        
+        // managerPerformance
+        List<VocStatDTO> managerList = vocService.managerPerformance(year, month);
+        resultMap.put("managerList", managerList);
+        
+		return resultMap;
 	}
 
 }

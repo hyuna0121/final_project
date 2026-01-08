@@ -2,7 +2,7 @@ let originalImageSrc = '';
 
 $(document).ready(function() {
     
-    originalImageSrc = $("#profileImage").attr("src");
+    originalImageSrc = $("#detailProfileImage").attr("src");
 
     $(".profile-image-container").click(function() {
         if ($(this).hasClass("editable")) {
@@ -16,7 +16,7 @@ $(document).ready(function() {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                $("#profileImage").attr("src", e.target.result);
+                $("#detailProfileImage").attr("src", e.target.result);
             }
             reader.readAsDataURL(file);
         } else {
@@ -117,6 +117,56 @@ function resetPassword(memberId) {
         }
     });
 }
+
+function changePassword(memberId){
+	$('#changePasswordModal').modal('show');
+}	
+
+function submitPasswordChange(){
+	let nowPassword = $('#nowPassword').val();
+	let changePassword = $('#newPassword').val();
+	let confirmPassword = $('#confirmPassword').val();
+	let $pwErrorMsg = $('#pwErrorMsg');
+	
+	if(!nowPassword){
+		$pwErrorMsg.text("현재 비밀번호를 입력해 주세요").show();
+		$('#nowPassword').focus();
+		return;
+	}
+	
+	if(!changePassword){
+		$pwErrorMsg.text("새 비밀번호를 입력해 주세요").show();
+		$('#newPassword').focus();
+		return;
+	}
+	
+	if(confirmPassword != changePassword){
+		$pwErrorMsg.text("비밀번호가 일치하지 않습니다.").show();
+		$('#confirmPassword').focus();
+		return;
+	}
+	
+	$.ajax({
+	        url: '/member/changePassword', 
+	        type: 'POST',
+	        data: { 
+	            nowPassword: nowPassword,
+	            changePassword: changePassword
+	        },
+	        success: function(response) {
+	            if(response === "success") {
+	                alert('비밀번호가 변경되었습니다.');
+	                location.reload();
+	            } else {
+	                $pwErrorMsg.text(response).show();
+	            }
+	        },
+	        error: function() {
+	            $pwErrorMsg.text('서버 통신 중 오류가 발생했습니다.').show();
+	        }
+	    });
+}
+
 
 function InActive(memberId){
     if(!confirm('정말 퇴직 처리하시겠습니까?')) return;

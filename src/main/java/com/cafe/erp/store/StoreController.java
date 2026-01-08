@@ -81,6 +81,36 @@ public class StoreController {
 		});
 	}
 	
+	@GetMapping("detail")
+	public String detail(StoreDTO storeDTO, Model model) throws Exception {
+		storeDTO = storeService.detail(storeDTO);
+		List<StoreManageDTO> manageList = storeService.manageList(storeDTO);
+		
+		model.addAttribute("store", storeDTO);
+		model.addAttribute("kakaoKey", kakaoKey);
+		model.addAttribute("manageList", manageList);
+		
+		return "store/detail";
+	}
+	
+	@PostMapping("manage/update")
+	@ResponseBody
+	public Map<String, Object> addStore(@RequestBody StoreManageDTO managerDTO) throws Exception { 
+		int result = storeService.updateManager(managerDTO);
+	 
+		Map<String, Object> response = new HashMap<>();
+	 
+		if (result > 0) {  
+			response.put("message", "등록 완료"); 
+			response.put("status", "success");
+		} else {
+			response.put("status", "error");
+			response.put("message", "등록 실패");
+		}
+		
+		return response; 
+	}
+	
 	
 	// contract list tab
 	@GetMapping("search")

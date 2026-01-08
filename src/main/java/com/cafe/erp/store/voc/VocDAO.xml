@@ -151,4 +151,93 @@
 		INSERT INTO voc_process_file VALUE(null, #{processId}, #{fileOriginalName}, #{fileSavedName})	
 	</insert>
 	
+	
+	<sql id="statCondition">
+        <where>
+	        <if test="year != null and year != ''">
+	            AND DATE_FORMAT(voc_created_at, '%Y') = #{year}
+	        </if>
+	        
+	        <if test="month != null and month != ''">
+	            AND DATE_FORMAT(voc_created_at, '%m') = #{month}
+	        </if>
+    	</where>
+    </sql>
+
+	<select id="trend" resultType="VocStatDTO">
+        SELECT 
+            DATE_FORMAT(voc_created_at, '%d') AS category,
+            COUNT(*) AS count
+        FROM voc
+		<include refid="statCondition" />
+        GROUP BY DATE_FORMAT(voc_created_at, '%Y-%m-%d')
+        ORDER BY category ASC
+    </select>
+    
+    <select id="countByType" resultType="VocStatDTO">
+        SELECT 
+            voc_type AS category,
+            COUNT(*) AS count
+        FROM voc
+		<include refid="statCondition" />        
+        GROUP BY voc_type
+        ORDER BY voc_type, count DESC
+    </select>
+    
+    <select id="topComplaintStores" resultType="VocStatDTO">
+	    SELECT 
+	    	s.store_id AS active_count,
+	        s.store_name AS category,      
+	        s.store_address AS description, 
+	        COUNT(v.voc_id) AS count
+	    FROM voc v
+	    JOIN store s ON v.store_id = s.store_id
+		<include refid="statCondition" />
+	    GROUP BY s.store_id
+	    ORDER BY count DESC, category ASC
+	    LIMIT 5
+	</select>
+	
+	<select id="summary" resultType="map">
+	    SELECT 
+	        COUNT(voc_id) AS total,
+	        COUNT(CASE WHEN voc_status = 2 THEN 1 END) AS resolved,
+	        COUNT(CASE WHEN voc_status != 2 THEN 1 END) AS pending,
+	        IFNULL(ROUND(AVG(
+	            CASE WHEN voc_status = 2 
+	            THEN TIMESTAMPDIFF(HOUR, voc_created_at, voc_updated_at) 
+	            ELSE NULL END
+	        ), 1), 0) AS avgTime
+	    FROM voc
+	    <include refid="statCondition" />
+	</select>
+	
+	<update id="updateToActive" parameterType="Integer">
+		UPDATE voc 
+		SET voc_status = 1, voc_updated_at = now()
+		WHERE voc_id = #{vocId}
+	</update>
+	
+	<select id="managerPerformance" resultType="VocStatDTO">
+	    SELECT 
+	        m.mem_name AS category,  
+	        COUNT(CASE WHEN v.voc_status = 2 THEN 1 END) AS count,
+	        COUNT(CASE WHEN v.voc_status = 1 THEN 1 END) AS activeCount,
+			COUNT(CASE WHEN v.voc_status = 0 THEN 1 END) AS pendingCount,
+	        IFNULL(ROUND(AVG(
+	            CASE WHEN v.voc_status = 2 
+	            THEN TIMESTAMPDIFF(HOUR, v.voc_created_at, v.voc_updated_at) 
+	            ELSE NULL END
+	        ), 1), 0) AS avgTime
+	    FROM voc v
+	    JOIN store_manager_history h 
+	      ON v.store_id = h.store_id
+	      AND v.voc_created_at >= h.manage_start_date 
+	      AND (h.manage_end_date IS NULL OR v.voc_created_at &lt;= h.manage_end_date)
+	    JOIN member m ON h.member_id = m.member_id
+		<include refid="statCondition" />
+	    GROUP BY m.member_id
+	    ORDER BY count DESC 
+	    LIMIT 6
+    </select>
 </mapper>

@@ -24,9 +24,9 @@ public class ReceivableService {
 	
 	
 	@Transactional
-	public void collectReceivable(ReceivableCollectionRequestDTO receivableCollectionRequestDTO) {
+	public void collectReceivable(ReceivableCollectionRequestDTO receivableCollectionRequestDTO , Integer memberId) {
 		
-		receivableCollectionRequestDTO.setMemberId(999999);
+		receivableCollectionRequestDTO.setMemberId(memberId);
 		
 		
 		// 지급 내역 DB반영

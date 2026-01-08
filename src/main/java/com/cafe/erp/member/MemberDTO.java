@@ -1,6 +1,7 @@
 package com.cafe.erp.member;
 
 import java.sql.Date;
+import java.util.Objects;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +34,7 @@ public class MemberDTO {
 	
 	private String memProfileSavedName;
 	private String memProfileOriginalName;
+	
 
     
 }
