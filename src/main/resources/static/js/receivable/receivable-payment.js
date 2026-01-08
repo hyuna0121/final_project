@@ -20,11 +20,12 @@ function formatNumber(value) {
 /* 가맹점 채권 목록 로딩 */
 function loadReceivables() {
 	const storeIdEl = document.getElementById('storeId')
+	const baseMonthEl = document.getElementById('baseMonth');
 	if(!storeIdEl) return;
 	
 	const storeId = storeIdEl.value;
-	
-	fetch(`/receivable/avilable?storeId=${storeId}`)
+	const baseMonth = baseMonthEl.value;
+	fetch(`/receivable/avilable?storeId=${storeId}&baseMonth=${baseMonth}`)
 		.then(res => res.json())
 		.then(data => renderReceivableOptions(data))
 		.catch(err => console.error('채권 조회 실패', err));

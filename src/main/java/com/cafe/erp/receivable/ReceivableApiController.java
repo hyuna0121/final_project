@@ -32,9 +32,9 @@ public class ReceivableApiController {
 	
 	@GetMapping("avilable")
 	public List<ReceivableAvailableDTO> getAvailableReceivables(
-			@RequestParam("storeId")String storeId
+			ReceivableSummaryDTO receivableSummaryDTO
 			) {
-		return service.getAvailableReceivables(storeId);
+		return service.getAvailableReceivables(receivableSummaryDTO);
 	}
 	
 	@PostMapping("collection")

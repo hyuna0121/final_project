@@ -263,6 +263,7 @@
 				        <thead>
 				          <tr>
 				            <th class="text-first">지급일</th>
+				            <th class="text-first">담당자명</th>
 				            <th class="text-center">지급 금액</th>
 				            <th class="text-center">지급 구분</th>
 				            <th class="text-center">비고</th>
@@ -272,7 +273,7 @@
 							  <c:choose>
 							    <c:when test="${empty receivableTransactionDTO}">
 							      <tr>
-							        <td colspan="4" class="text-center text-muted">
+							        <td colspan="5" class="text-center text-muted">
 							          데이터가 없습니다.
 							        </td>
 							      </tr>
@@ -284,6 +285,13 @@
 							          <td class="text-first">
 							            <fmt:formatDate value="${paid.transactionDate}" pattern="yyyy-MM-dd" />
 							          </td>
+							          <!-- 담당자명 -->
+									  <td class="text-first">
+										<span class="badge bg-label-primary">
+										  <i class="bx bx-user me-1"></i>
+										  ${paid.memberName}
+										</span>
+									  </td>
 							          <td class="text-center">
 							            <fmt:formatNumber value="${paid.transactionAmount}" pattern="#,###" />
 							          </td>
@@ -452,6 +460,7 @@
 	      <div class="modal-body">
 			<form id="paymentForm">
 			  <input type="hidden" id="storeId" value="${receivableSummaryDTO.storeId}" />
+			  <input type="hidden" id="baseMonth" value="${receivableSummaryDTO.baseMonth}" />
 			  <!-- 채권 선택 -->
 			  <div class="mb-3">
 			    <label class="form-label">채권 선택</label>

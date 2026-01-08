@@ -15,7 +15,7 @@ public class ReceivableTransactionDTO {
 	private Integer transactionAmount;
 	private String transactionMemo;
 	private String sourceType;
-	
+	private String memberName;
 	
 	
 	

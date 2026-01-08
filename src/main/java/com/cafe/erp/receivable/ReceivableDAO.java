@@ -40,7 +40,7 @@ public interface ReceivableDAO {
 	public List<ReceivableTransactionDTO> paidAmount(ReceivableSummaryDTO receivableSummaryDTO);
 	
 	//detail page 지급 버튼 클릭 시 채권 목록
-	public List<ReceivableAvailableDTO> getAvailableReceivables(String storeId);
+	public List<ReceivableAvailableDTO> getAvailableReceivables(ReceivableSummaryDTO receivableSummaryDTO);
 	
 	// 지급 이력 DB에 삽입
 	public void insertCollection(ReceivableCollectionRequestDTO receivableCollectionRequestDTO);
@@ -50,6 +50,8 @@ public interface ReceivableDAO {
     public Integer selectTotalAmount(String receivableId);
     // 채권의 status 업데이트
     public void updateReceivableStatus(ReceivableCollectionRequestDTO receivableCollectionRequestDTO);
-
-	
+    
+    
+    // 채권 매월 1일에 자동 생성
+    public int insertMonthlyRoyaltyReceivable();
 }

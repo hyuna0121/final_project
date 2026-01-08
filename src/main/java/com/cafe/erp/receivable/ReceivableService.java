@@ -53,8 +53,19 @@ public class ReceivableService {
 		
 	}
 	
-	
-	
+	// 가맹비 채권 자동 생성
+	@Transactional
+	public void createMonlyRoyaltyReceivable() {
+		
+		int insertCount = dao.insertMonthlyRoyaltyReceivable();
+
+	    if (insertCount == 0) {
+	        System.out.println("[ReceivableService] 생성된 채권 없음 (이미 생성됨)");
+	    } else {
+	        System.out.println("[ReceivableService] 월초 가맹비 채권 생성 완료: " + insertCount + "건");
+	    }
+		
+	}
 	
 	
 	public List<ReceivableSummaryDTO> receivableSearchList(
@@ -139,8 +150,8 @@ public class ReceivableService {
 	}
 	
 	// detail page 지급 버튼 클릭 시 채권목록
-	public List<ReceivableAvailableDTO> getAvailableReceivables(String storeId) {
-		return dao.getAvailableReceivables(storeId);
+	public List<ReceivableAvailableDTO> getAvailableReceivables(ReceivableSummaryDTO receivableSummaryDTO) {
+		return dao.getAvailableReceivables(receivableSummaryDTO);
 	}
 	
 	

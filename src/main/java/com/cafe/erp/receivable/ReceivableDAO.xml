@@ -120,7 +120,7 @@
 		HAVING SUM(rb.remain_amount) > 0
 	  ) t
 	  <include refid="receivableSourceTypeFilter"/>
-	
+	  ORDER BY t.base_month DESC
 	  LIMIT #{pager.perPage}
 	  OFFSET #{pager.startNum}
 	</select>
@@ -252,7 +252,7 @@
 		ORDER BY r.receivable_date DESC
   	</select>
   	
-  <!-- 상세 가맹비 합계 -->
+  <!-- 상세 금액 요약 -->
   <select id="selectAmountSummary"
         parameterType="ReceivableSummaryDTO"
         resultType="com.cafe.erp.receivable.detail.ReceivableAmountSummaryDTO">
@@ -282,6 +282,7 @@
 	         OR (r.store_order_id IS NOT NULL AND os.store_id = #{storeId})
 	        )
 	      AND r.receivable_type = 'R'
+		  AND DATE_FORMAT(r.receivable_date, '%Y-%m') = #{baseMonth}
 	</select>
 
 	<!-- 지급 내역 출력 -->
@@ -290,7 +291,7 @@
 	    rt.transaction_date,
 	    rt.transaction_amount,
 	    rt.transaction_memo,
-	    
+	    m.mem_name AS memberName,
 	    CASE
 	        WHEN r.contract_id IS NOT NULL THEN 'CONTRACT'
 	        WHEN r.store_order_id IS NOT NULL THEN 'ORDER'
@@ -303,14 +304,17 @@
 		  ON r.contract_id = sc.contract_id
 		LEFT JOIN order_store os
 		  ON r.store_order_id = os.store_order_id
+		LEFT JOIN member m
+		  ON rt.member_id = m.member_id
 		JOIN store s
 		  ON s.store_id = COALESCE(sc.store_id, os.store_id)
 		WHERE s.store_id = #{storeId}
+		AND DATE_FORMAT(r.receivable_date, '%Y-%m') = #{baseMonth}
 		ORDER BY rt.transaction_date DESC;
   	</select>
   	
   	<!-- 지급 처리 폼 목록 -->
-  	<select id="getAvailableReceivables" parameterType="String" resultType="com.cafe.erp.receivable.detail.ReceivableAvailableDTO">
+  	<select id="getAvailableReceivables" parameterType="ReceivableSummaryDTO" resultType="com.cafe.erp.receivable.detail.ReceivableAvailableDTO">
 		  	SELECT
 		    	r.receivable_id,
 		    	r.receivable_total_amount
@@ -335,6 +339,8 @@
 		        WHERE o.store_id = #{storeId}
 		    )
 		)
+      	  AND r.receivable_type = 'R'
+      	  AND DATE_FORMAT(r.receivable_date, '%Y-%m') = #{baseMonth}
 		GROUP BY r.receivable_id, r.receivable_total_amount,
 		         r.contract_id, r.store_order_id
 		HAVING remain_amount > 0;
@@ -383,5 +389,56 @@
 	    SET receivable_status = #{status}
 	    WHERE receivable_id = #{receivableId}
 	</update>
-
+	
+	<!-- 매월 1일 채권 자동생성 -->
+	<insert id="insertMonthlyRoyaltyReceivable">
+	
+		INSERT INTO receivable (
+		    receivable_id,
+		    receivable_type,
+		    receivable_supply_amount,
+		    receivable_tax_amount,
+		    receivable_total_amount,
+		    receivable_date,
+		    receivable_status,
+		    contract_id
+		)SELECT
+			CONCAT(
+			'RCV-',
+			'R',
+			'-',
+			DATE_FORMAT(CURDATE(), '%Y%m'),
+			'-',
+			sc.contract_id
+		    ) AS receivable_id,
+		    'R' AS receivable_type,                     
+		    sc.contract_royalti AS supply_amount,       
+		    sc.contract_royalti * 0.1 AS tax_amount,
+		    sc.contract_royalti * 1.1 AS total_amount,
+		    DATE_FORMAT(CURDATE(), '%Y-%m-01') AS receivable_date,
+		    'O' AS receivable_status,
+		    sc.contract_id
+		FROM store_contract sc
+		LEFT JOIN receivable r
+		    ON r.contract_id = sc.contract_id
+		   AND r.receivable_type = 'R'
+		   AND r.receivable_date = DATE_FORMAT(CURDATE(), '%Y-%m-01')
+		WHERE sc.contract_status = 1
+		  AND DATE_FORMAT(CURDATE(), '%Y-%m-01')
+		      BETWEEN sc.contract_start_date AND sc.contract_end_date
+		  AND r.receivable_id IS NULL;
+	</insert>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 </mapper>
