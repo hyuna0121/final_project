@@ -186,6 +186,7 @@
     
     <select id="topComplaintStores" resultType="VocStatDTO">
 	    SELECT 
+	    	s.store_id AS active_count,
 	        s.store_name AS category,      
 	        s.store_address AS description, 
 	        COUNT(v.voc_id) AS count

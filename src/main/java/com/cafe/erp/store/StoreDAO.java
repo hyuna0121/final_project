@@ -20,5 +20,13 @@ public interface StoreDAO {
 	public Long count(StoreSearchDTO searchDTO) throws Exception;
 
 	public List<StoreDTO> excelList(StoreSearchDTO searchDTO) throws Exception;
+
+	public StoreDTO detail(StoreDTO storeDTO) throws Exception;
+
+	public List<StoreManageDTO> manageList(StoreDTO storeDTO) throws Exception;
+
+	public int updateToEnd(StoreManageDTO managerDTO) throws Exception;
+
+	public int addManager(StoreManageDTO managerDTO) throws Exception;
 	
 }

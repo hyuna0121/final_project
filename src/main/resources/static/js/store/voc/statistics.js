@@ -260,9 +260,11 @@ function fetchStatistics(year, month) {
                     const li = `
                         <li class="d-flex mb-4 pb-1">
                             <div class="avatar flex-shrink-0 me-3">
-                                <span class="avatar-initial rounded ${badgeClass}">
-                                    <i class='bx bx-store-alt'></i>
-                                </span>
+								<a href="/store/detail?storeId=${store.activeCount}">
+	                                <span class="avatar-initial rounded ${badgeClass}">
+	                                    <i class='bx bx-store-alt'></i>
+	                                </span>
+								</a>
                             </div>
                             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                                 <div class="me-2">

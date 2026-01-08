@@ -27,5 +27,11 @@ public class StoreDTO {
 	
 	// member table column
 	private String memName;
+	private String memEmail;
+	private String memPhone;
+	
+	public String getStoreZonecodeStr() {
+		return String.format("%05d", storeZonecode);
+	}
 	
 }
