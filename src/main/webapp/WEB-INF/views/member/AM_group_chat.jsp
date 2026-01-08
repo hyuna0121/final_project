@@ -463,6 +463,8 @@
 <script src="/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="/vendor/js/menu.js"></script>
 <script src="/js/main.js"></script>
+<script src="/js/member/AM_member_detail.js"></script>
+
 
 <script src="/js/member/AM_group_chat.js"></script>
 </body>

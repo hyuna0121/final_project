@@ -15,11 +15,12 @@ public class MemberCommuteService {
 		return commuteDAO.attendanceList(commuteDTO);
 	}
 
-	public int checkIn(int memberId) throws Exception {
-		return commuteDAO.checkIn(memberId);
+
+	public int checkOut(MemberCommuteDTO commuteDTO) throws Exception{
+		return commuteDAO.checkOut(commuteDTO);
 	}
 
-	public int checkOut(int memberId) throws Exception{
-		return commuteDAO.checkOut(memberId);
+	public int checkIn(MemberCommuteDTO commuteDTO) throws Exception {
+		return commuteDAO.checkIn(commuteDTO);
 	}
 }

@@ -9,9 +9,9 @@ public interface MemberCommuteDAO {
 
 	public List<MemberCommuteDTO> attendanceList(MemberCommuteDTO commuteDTO)throws Exception;
 
-	public int checkIn(int memberId)throws Exception;
+	public int checkIn(MemberCommuteDTO commuteDTO) throws Exception;
 
-	public int checkOut(int memberId) throws Exception;
+	public int checkOut(MemberCommuteDTO commuteDTO) throws Exception;
 
 
 	

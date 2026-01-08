@@ -9,14 +9,14 @@
 	    </select>
 	    
 	    
-	    <insert id="checkIn" parameterType="int">
+	    <insert id="checkIn" parameterType="MemberCommuteDTO">
 	    	INSERT INTO member_commute (
 	        mem_commute_work_date, 
 	        mem_commute_in_time, 
 	        mem_commute_state, 
 	        member_id
 	    )
-	    SELECT CURDATE(), NOW(), '출근', #{memberId}
+	    SELECT CURDATE(), #{memCommuteInTime}, '출근', #{memberId}
 	    FROM DUAL
 	    WHERE NOT EXISTS (
 	        SELECT 1 
@@ -26,9 +26,9 @@
 	    );
 	    </insert>
 	    
-	     <update id="checkOut" parameterType="int">
+	     <update id="checkOut" parameterType="MemberCommuteDTO">
 		    UPDATE member_commute
-		    SET mem_commute_out_time = NOW(),
+		    SET mem_commute_out_time = #{memCommuteOutTime},
 		        mem_commute_state = '퇴근'
 		    WHERE member_id = #{memberId}
 		      AND mem_commute_work_date = CURDATE()

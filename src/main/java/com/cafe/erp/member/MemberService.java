@@ -9,11 +9,14 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cafe.erp.files.FileUtils;
+
+import jakarta.validation.Valid;
 
 
 @Service
@@ -26,6 +29,10 @@ public class MemberService {
 	
 	@Autowired
 	private FileUtils fileUtils;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
 
     MemberService(EmailService emailService) {
         this.emailService = emailService;
@@ -86,6 +93,13 @@ public class MemberService {
 
 		memberDTO.setMemberId(Integer.parseInt(finalId));
 		
+		String pw = memberDTO.getMemPassword();		
+		if(pw == null) pw = "1234";
+		
+		String bcpw = passwordEncoder.encode(pw);
+		
+		memberDTO.setMemPassword(bcpw);
+		
 		int result = memberDAO.add(memberDTO);
 		return result;
 	}
@@ -103,8 +117,8 @@ public class MemberService {
 
 
 	@Transactional
-	public void update(MemberDTO memberDTO, MultipartFile file) throws Exception {
-	    memberDAO.update(memberDTO); 
+	public String update(MemberDTO memberDTO, MultipartFile file) throws Exception {
+		String savedFileName = null;
 
 	    if(file != null && !file.isEmpty()) {
 	        int memberId = memberDTO.getMemberId();
@@ -114,18 +128,28 @@ public class MemberService {
 	            fileUtils.deleteFile(oldSavedName);
 	        }
 	        
-	        String savedName = fileUtils.uploadFile(file);
+	        savedFileName = fileUtils.uploadFile(file);
 	        String originalName = file.getOriginalFilename();
 	        
 	        if(memberDAO.checkProfileExist(memberId) > 0) {
-	            memberDAO.updateProfile(originalName, savedName, memberId);
+	            memberDAO.updateProfile(originalName, savedFileName, memberId);
 	        } else {
-	            memberDAO.insertProfile(originalName, savedName, memberId);
+	            memberDAO.insertProfile(originalName, savedFileName, memberId);
 	        }
 	    }
+	    memberDAO.update(memberDTO); 
+	    return savedFileName;
 	}
 
 	public int resetPw(MemberDTO memberDTO) throws Exception{
+		
+		String pw = memberDTO.getMemPassword();		
+		
+		String bcpw = passwordEncoder.encode(pw);
+		
+		memberDTO.setMemPassword(bcpw);
+		
+		
 		return memberDAO.resetPw(memberDTO);
 	}
 
@@ -141,13 +165,32 @@ public class MemberService {
 	}
 
 
-
+	public int changePassword(int memberId, @Valid MemberChangePasswordDTO changePasswordDTO) throws Exception{
+		String db = memberDAO.getMemberPassword(memberId);
+		
+		if(!passwordEncoder.matches(changePasswordDTO.getNowPassword(), db)) {
+			return -1;
+		};
+		
+		if(passwordEncoder.matches(changePasswordDTO.getChangePassword(), db)) {
+			return 2;
+		}
+		
+		String newPassWordEn = passwordEncoder.encode(changePasswordDTO.getChangePassword());
+		changePasswordDTO.setChangePassword(newPassWordEn);
+		return memberDAO.changePassword(changePasswordDTO);
+	}
 	
 	
+	public Boolean pwPass(int memberId) throws Exception{
+		String db = memberDAO.getMemberPassword(memberId);
+		return passwordEncoder.matches("1234", db);
+	}
 	
 	
-	
-	
+	public List<MemberDTO> searchManager(String keyword) throws Exception {
+		return memberDAO.searchManager(keyword);
+	}
 	
 	
 

@@ -1,12 +1,16 @@
 package com.cafe.erp.member.commute;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cafe.erp.member.MemberDTO;
+import com.cafe.erp.security.UserDTO;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -19,15 +23,20 @@ public class MemberCommuteController {
 	
 	@PostMapping("checkIn")
 	@ResponseBody
-	public String checkIn(HttpSession session) throws Exception{
-		MemberDTO login = (MemberDTO)session.getAttribute("login");
+	public String checkIn(@AuthenticationPrincipal UserDTO userDTO) throws Exception{
 		
-		if(login == null) {
+		if(userDTO == null) {
 			return "fail";
 		}
 		
+		int memberId = userDTO.getMember().getMemberId();
 		
-		int result = commuteService.checkIn(login.getMemberId());
+		MemberCommuteDTO commuteDTO = new MemberCommuteDTO();
+		commuteDTO.setMemberId(memberId);
+		
+		commuteDTO.setMemCommuteInTime(LocalDateTime.now());
+		
+		int result = commuteService.checkIn(commuteDTO);
 		
 		if(result > 0) {
 			return "success";
@@ -38,15 +47,21 @@ public class MemberCommuteController {
 	
 	@PostMapping("checkOut")
 	@ResponseBody
-	public String checkOut(HttpSession session) throws Exception{
-		MemberDTO login = (MemberDTO)session.getAttribute("login");
+	public String checkOut(@AuthenticationPrincipal UserDTO userDTO) throws Exception{
 		
-		if(login == null) {
+		if(userDTO == null) {
 			return "fail";
 		}
 		
+		int memberId = userDTO.getMember().getMemberId();
 		
-		int result = commuteService.checkOut(login.getMemberId());
+		MemberCommuteDTO commuteDTO = new MemberCommuteDTO();
+		
+		commuteDTO.setMemberId(memberId);
+		commuteDTO.setMemCommuteOutTime(LocalDateTime.now());
+		
+		
+		int result = commuteService.checkOut(commuteDTO);
 		
 		if(result > 0) {
 			return "success";

@@ -100,6 +100,7 @@ function drawTable(memberList) {
     });
 }
 
+
 function openMemberDetail(id) {
     console.log("상세보기 클릭:", id);
     const myModal = new bootstrap.Modal(document.getElementById('modalMemberDetail'));

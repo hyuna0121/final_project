@@ -46,7 +46,7 @@
 
               <div class="card mb-4">
                 <div class="card-body">
-                    <form action="./list" method="get" class="row gx-3 gy-2 align-items-center">
+                    <form action="./admin_member_list" method="get" class="row gx-3 gy-2 align-items-center">
                         <div class="col-md-3">
                             <label class="form-label" for="selectTypeOpt">부서 선택</label>
                             <select id="selectTypeOpt" class="form-select color-dropdown">

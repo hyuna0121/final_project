@@ -69,7 +69,7 @@
 												    <img src="/fileDownload/profile?fileSavedName=default_img.jpg"
 												        alt="user-avatar" 
 												        class="d-block w-100 h-100 object-fit-cover" 
-												        id="profileImage" 
+												        id="detailProfileImage" 
 												        style="width: 120px; height: 120px; object-fit: cover;"
 												    >
 									    		</c:when>
@@ -77,7 +77,7 @@
 												    <img src="/fileDownload/profile?fileSavedName=${dto.memProfileSavedName}"
 												        alt="user-avatar" 
 												        class="d-block w-100 h-100 object-fit-cover" 
-												        id="profileImage" 
+												        id="detailProfileImage" 
 												        style="width: 120px; height: 120px; object-fit: cover;"
 												    >
 									    		</c:otherwise>
@@ -103,13 +103,27 @@
                                             	</c:choose>
                                             </div>
 
-                                            <a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm" onclick="resetPassword(${dto.memberId})">
-											    <i class="bx bx-reset me-1"></i> 비밀번호 초기화
-											</a>
 											
-											<a href="javascript:void(0);" class="btn btn-danger me-2" onclick="InActive(${dto.memberId})">
-											    퇴직
-											</a>
+											<div class="d-inline-block">
+											    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm" onclick="resetPassword(${dto.memberId})">
+											        <i class="bx bx-reset me-1"></i> 비밀번호 초기화
+											    </a>
+											    <a href="javascript:void(0);" class="btn btn-outline-secondary btn-sm" onclick="changePassword(${dto.memberId})">
+											        <i class="bx bx-edit me-1"></i> 비밀번호 변경
+											    </a>
+											
+											    <button type="button" class="btn btn-icon  btn-sm hide-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+											        <i class="bx bx-dots-vertical-rounded"></i>
+											    </button>
+											    
+											    <ul class="dropdown-menu dropdown-menu-end">
+											        <li>
+											            <a class="dropdown-item text-danger" href="javascript:void(0);" onclick="InActive(${dto.memberId})">
+											                <i class="bx bx-trash me-1"></i> 퇴직 처리
+											            </a>
+											        </li>
+											    </ul>
+											</div>
 									
                                         </div>
                                     </div>
@@ -631,6 +645,44 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
                 <button type="button" class="btn btn-primary" onclick="saveAttendanceChanges()">수정 내용 저장</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered  modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCenterTitle">비밀번호 변경</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalMemberId">
+
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="nowPassword" class="form-label">현재 비밀번호</label>
+                        <input type="password" id="nowPassword" class="form-control" placeholder="현재 비밀번호를 입력하세요">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-3">
+                        <label for="newPassword" class="form-label">새 비밀번호</label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="새로운 비밀번호">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mb-0">
+                        <label for="confirmPassword" class="form-label">새 비밀번호 확인</label>
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="새로운 비밀번호 확인">
+                        <div id="pwErrorMsg" class="form-text text-danger mt-1" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" onclick="submitPasswordChange()">변경 저장</button>
             </div>
         </div>
     </div>
