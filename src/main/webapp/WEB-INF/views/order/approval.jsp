@@ -88,10 +88,25 @@
 				              <div class="card h-100 d-flex flex-column">
 				
 				                <div class="card-header d-flex justify-content-between">
-				                  <h5 class="mb-0">발주 목록</h5>
+				                  <c:choose>
+									<c:when test="${status == 100}">
+									  <h5 class="mb-0">발주 승인</h5>
+									</c:when>
+									<c:when test="${status == 200}">
+									  <h5 class="mb-0">입고 관리</h5>
+									</c:when>
+								  </c:choose>
 				                  <div class="d-flex gap-2">
-				                    <button class="btn btn-success btn-sm" id="approveBtn">승인</button>
-				                    <button class="btn btn-warning btn-sm">반려</button>
+				                  <c:choose>
+									 <c:when test="${status == 100}">
+									   <button type="button" class="btn btn-sm btn-success btn-sm" id="approveBtn">승인</button>
+								       <button type="button" class="btn btn-sm btn-warning btn-sm">반려</button>
+									 </c:when>
+									 <c:when test="${status == 200}">
+									   <button class="btn btn-success btn-sm" id="receiveBtn">입고</button>
+								       <button type="button" class="btn btn-sm btn btn-danger btn-sm">승인취소</button>
+									 </c:when>
+								   </c:choose>
 				                  </div>
 				                </div>
 				
@@ -137,7 +152,26 @@
 				                              <fmt:formatNumber value="${o.hqOrderTotalAmount}"/>원
 				                            </td>
 				                            <td>${o.memberId}</td>
-				                            <td><span class="badge bg-label-warning">요청</span></td>
+				                            <c:choose>
+				                            	<c:when test="${o.hqOrderStatus == 100}">
+						                            <td><span class="badge bg-label-warning">요청</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 150}">
+						                            <td><span class="badge bg-label-warning">반려</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 200}">
+						                            <td><span class="badge bg-label-success">승인</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 300}">
+						                            <td><span class="badge bg-label-warning">취소</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 350}">
+						                            <td><span class="badge bg-label-warning">출고</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 300}">
+						                            <td><span class="badge bg-label-warning">입고</span></td>
+				                            	</c:when>
+				                            </c:choose>
 				                          </tr>
 				                        </c:forEach>
 				                      </tbody>
@@ -168,8 +202,27 @@
 				                              <fmt:formatNumber value="${o.hqOrderTotalAmount}"/>원
 				                            </td>
 				                            <td>${o.memberId}</td>
-				                            <td><span class="badge bg-label-warning">요청</span></td>
-				                            <td></span></td>
+				                            <c:choose>
+				                            	<c:when test="${o.hqOrderStatus == 100}">
+						                            <td><span class="badge bg-label-warning">요청</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 150}">
+						                            <td><span class="badge bg-label-warning">반려</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 200}">
+						                            <td><span class="badge bg-label-success">승인</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 300}">
+						                            <td><span class="badge bg-label-warning">취소</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 350}">
+						                            <td><span class="badge bg-label-warning">출고</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 300}">
+						                            <td><span class="badge bg-label-warning">입고</span></td>
+				                            	</c:when>
+				                            </c:choose>
+				                            <td></td>
 				                          </tr>
 				                        </c:forEach>
 				                      </tbody>
@@ -186,14 +239,28 @@
 				              <!-- 승인 리스트 -->
 				              <div class="card approval-list">
 				                <div class="card-header">
-				                  <h5 class="mb-0">승인 리스트</h5>
+				                <c:choose>
+								    <c:when test="${status == 100}">
+					                  <h5 class="mb-0">승인 리스트</h5>
+									</c:when>
+									<c:when test="${status == 200}">
+									  <h5 class="mb-0">입고 리스트</h5>
+								    </c:when>
+								</c:choose>
 				                </div>
 				                <div class="order-scroll">
 				                  <table class="table table-sm table-bordered text-center mb-0">
 				                    <thead>
 				                      <tr>
 				                        <th>발주번호</th>
-				                        <th>승인일자</th>
+				                        <c:choose>
+										    <c:when test="${status == 100}">
+					                          <th>승인일자</th>
+											</c:when>
+											<c:when test="${status == 200}">
+					                          <th>입고일자</th>
+										    </c:when>
+									    </c:choose>
 				                        <th>총금액</th>
 				                      </tr>
 				                    </thead>
@@ -211,7 +278,14 @@
 				              <!-- 발주 상세 -->
 				              <div class="card order-detail">
 				                <div class="card-header">
-				                  <h5 class="mb-1">발주 상세</h5>
+				                  <c:choose>
+								    <c:when test="${status == 100}">
+					                  <h5 class="mb-1">승인 상세</h5>
+									</c:when>
+									<c:when test="${status == 200}">
+									  <h5 class="mb-1">입고 상세</h5>
+								    </c:when>
+								  </c:choose>
 				                  <small class="text-muted">
 				                    발주번호: <span id="selectedOrderId">-</span>
 				                  </small>

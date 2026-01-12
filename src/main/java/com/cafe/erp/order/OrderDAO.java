@@ -22,8 +22,8 @@ public interface OrderDAO {
 	public void insertHqOrderItemDetail(OrderDetailDTO orderDetailDTO);
 	public void insertStoreOrderItemDetail(OrderDetailDTO orderDetailDTO);
 	
-	public List<OrderDTO> listHq();
-	public List<OrderDTO> listStore();
+	public List<OrderDTO> listHq(@Param("status") int status);
+	public List<OrderDTO> listStore(@Param("status") int status);
 
 	public List<OrderDetailDTO> getHqOrderDetail(@Param("orderNo") String orderNo);
 	public List<OrderDetailDTO> getStoreOrderDetail(@Param("orderNo") String orderNo);
@@ -31,4 +31,7 @@ public interface OrderDAO {
 	public void approveHqOrder(@Param("orderNo") String orderNo);
 	public void approveStoreOrder(@Param("orderNo") String orderNo);
 	
+	public List<OrderDTO> getApprovedOrder();
+	public List<OrderDetailDTO> getApprovedOrderDetail();
+
 }

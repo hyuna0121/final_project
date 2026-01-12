@@ -126,11 +126,11 @@ public class OrderService {
 
 	
 	// 발주 목록 
-	public List<OrderDTO> listHq() {
-		return orderDAO.listHq();
+	public List<OrderDTO> listHq(int status) {
+		return orderDAO.listHq(status);
 	}
-	public List<OrderDTO> listStore() {
-		return orderDAO.listStore();
+	public List<OrderDTO> listStore(int status) {
+		return orderDAO.listStore(status);
 	}
 	
 	public List<OrderDetailDTO> getHqOrderDetail(String orderNo) {
@@ -151,5 +151,11 @@ public class OrderService {
 		}
 	}
 	
+	public List<OrderDTO> getApprovedOrder() {
+		return orderDAO.getApprovedOrder();
+	}
+	public List<OrderDetailDTO> getApprovedOrderDetail() {
+		return orderDAO.getApprovedOrderDetail();
+	}
 
 }

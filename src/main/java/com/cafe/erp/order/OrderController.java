@@ -48,7 +48,6 @@ public class OrderController {
 		model.addAttribute("vendorList", vendorService.findAll());
 		MemberDTO member = userDTO.getMember();
 		model.addAttribute("member", member);
-		System.out.println(userDTO.getMember().getMemberId());
 		return "order/hqOrder";
 	}
 	
@@ -70,15 +69,39 @@ public class OrderController {
 		return "redirect:./approval";
 	}
 	
+	// 목록 요청 
+	@GetMapping("list")
+	@Transactional
+	public String orderList(
+			@RequestParam Integer status,
+			Model model) {
+		
+		List<OrderDTO> orderHqList = orderService.listHq(status);
+		List<OrderDTO> orderStoreList = orderService.listStore(status);
+		
+		model.addAttribute("orderHqList", orderHqList);
+		model.addAttribute("orderStoreList", orderStoreList);
+		model.addAttribute("status", status);
+		
+		return "order/approval"; // JSP 하나만 사용
+	}
 	// 발주 목록 요청
 	@GetMapping("approval")
-	@Transactional
-	public void approval(Model model) {
-		List<OrderDTO> orderHqList = orderService.listHq();
-		model.addAttribute("orderHqList", orderHqList);
-		List<OrderDTO> orderStoreList = orderService.listStore();
-		model.addAttribute("orderStoreList", orderStoreList);
+	public String approval(Model model) {
+		return orderList(100, model);
 	}
+	// 입고 목록 요청
+	@GetMapping("receive")
+	public String receive(Model model) {
+		return orderList(200, model);
+	}
+	
+	//출고 목록 요청
+	@GetMapping("release")
+	public void release() {
+		
+	}
+	
 	//발주 상세 목록 요청
 	@GetMapping("detail")
 	@Transactional
@@ -102,16 +125,5 @@ public class OrderController {
 		return "order/approval";
 	}
 	
-	// 입고 목록 요청
-	@GetMapping("receive")
-	public String receive() {
-		return "order/inOut";
-	}
-	
-	//출고 목록 요청
-	@GetMapping("release")
-	public void release() {
-		
-	}
 
 }
