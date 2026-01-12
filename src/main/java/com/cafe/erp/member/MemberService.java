@@ -48,8 +48,8 @@ public class MemberService {
 	}
 	
 	// 부서별 사원 수 조회
-	public List<Map<String, Object>> deptMemberCount(){
-	    return memberDAO.deptMemberCount();
+	public List<Map<String, Object>> deptMemberCount(Map<String, Object> checkMem){
+	    return memberDAO.deptMemberCount(checkMem);
 	}
 	
 	// 전체 사원 수

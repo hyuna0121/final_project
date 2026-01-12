@@ -34,7 +34,18 @@ public class MemberCommuteController {
 		MemberCommuteDTO commuteDTO = new MemberCommuteDTO();
 		commuteDTO.setMemberId(memberId);
 		
-		commuteDTO.setMemCommuteInTime(LocalDateTime.now());
+		// 현재 시간
+		LocalDateTime now = LocalDateTime.now();
+		commuteDTO.setMemCommuteInTime(now);
+		
+		LocalDateTime in = now.withHour(9).withMinute(0).withSecond(0);
+		
+		if(now.isAfter(in)) {
+			commuteDTO.setMemCommuteState("지각");
+		} else {
+			commuteDTO.setMemCommuteState("출근");
+			
+		}
 		
 		int result = commuteService.checkIn(commuteDTO);
 		
@@ -58,7 +69,18 @@ public class MemberCommuteController {
 		MemberCommuteDTO commuteDTO = new MemberCommuteDTO();
 		
 		commuteDTO.setMemberId(memberId);
-		commuteDTO.setMemCommuteOutTime(LocalDateTime.now());
+		
+		LocalDateTime now = LocalDateTime.now();
+		commuteDTO.setMemCommuteOutTime(now);
+		
+		LocalDateTime hour1730 = now.withHour(17).withMinute(30).withSecond(0);
+		
+		if(now.isBefore(hour1730)) {
+			commuteDTO.setMemCommuteState("조퇴");
+		} else if(now.isAfter(hour1730)) {
+			commuteDTO.setMemCommuteState("퇴근");
+			
+		}
 		
 		
 		int result = commuteService.checkOut(commuteDTO);

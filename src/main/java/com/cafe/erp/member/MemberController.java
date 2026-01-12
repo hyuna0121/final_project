@@ -51,6 +51,11 @@ public class MemberController {
 	public void login() throws Exception {
 
 	}
+	
+	@GetMapping("member_mypage")
+	public void mypage() throws Exception{
+		
+	}
 
 	@GetMapping("AM_group_chart")
 	public String chatList(Model model, @AuthenticationPrincipal UserDTO userDTO, MemberDTO memberDTO)
@@ -58,16 +63,17 @@ public class MemberController {
 		// 로그인 한 유저 확인
 		int memberId = userDTO.getMember().getMemberId();
 
-		// 부서별 활성 인원 수
-		List<Map<String, Object>> deptCount = memberService.deptMemberCount();
-
-		// 전체 활성 사원 수
-		int totalCount = memberService.countActiveMember(memberDTO);
-
+		
 		// 초기 조직도 목록
 		Map<String, Object> startChart = new HashMap<>();
 		startChart.put("deptCode", 0); // 전체 부서
-		startChart.put("check", false); // 활성 사원만
+		startChart.put("includeRetired", false); // 활성 사원만
+		startChart.put("keyword", ""); // 검색어 X
+		// 부서별 활성 인원 수
+		List<Map<String, Object>> deptCount = memberService.deptMemberCount(startChart);
+
+		// 전체 활성 사원 수
+		int totalCount = memberService.countActiveMember(memberDTO);
 
 		List<MemberDTO> startViewChart = memberService.chatList(startChart);
 
@@ -80,18 +86,27 @@ public class MemberController {
 
 	@GetMapping("checkCount")
 	@ResponseBody
-	public List<MemberDTO> checkMemberCount(@RequestParam(name = "deptCode", defaultValue = "0") int deptCode,
-			@RequestParam(name = "check", defaultValue = "false") boolean check,
+	public Map<String, Object> checkMemberCount(@RequestParam(name = "deptCode", defaultValue = "0") int deptCode,
+			@RequestParam(name = "includeRetired", defaultValue = "false") boolean includeRetired,
 			@RequestParam(defaultValue = "") String keyword) throws Exception {
 
 		Map<String, Object> checkMem = new HashMap<>();
 		checkMem.put("deptCode", deptCode);
-		checkMem.put("check", check);
+		checkMem.put("includeRetired", includeRetired);
+	    checkMem.put("keyword", keyword);
 
+	    Map<String, Object> resultMem = new HashMap<>();
+	    
+	    List<MemberDTO> memberList = memberService.chatList(checkMem);
+	    resultMem.put("memberList", memberList);
+	    
 		if (!keyword.isEmpty()) {
 			checkMem.put("keyword", keyword);
 		}
-		return memberService.chatList(checkMem);
+		
+		List<Map<String, Object>> deptCounts = memberService.deptMemberCount(checkMem); 
+	    resultMem.put("deptCounts", deptCounts);
+		return resultMem;
 	}
 
 	@GetMapping("admin_member_list")
@@ -205,6 +220,26 @@ public class MemberController {
 		}
 		return result > 0 ? "success" : "fail";
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	@PostMapping("InActive")
 	@ResponseBody

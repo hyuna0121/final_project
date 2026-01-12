@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <html lang="ko" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/assets/" data-template="vertical-menu-template-free">
 <head>
@@ -460,24 +461,35 @@
 												    <c:forEach items="${attendanceList}" var="attendance">
 												        <tr>
 												            <td>${attendance.memCommuteWorkDate}</td>
+												            
 												            <td class="in-time">${attendance.formattedInTime}</td>
+												            
 												            <td class="out-time">${attendance.formattedOutTime}</td>
+												            
 												            <td>
 												                <c:choose>
-												                    <c:when test="${attendance.memCommuteState eq '정상'}">
-												                        <span class="badge bg-label-success status-badge">${attendance.memCommuteState}</span>
-												                    </c:when>
-												                    <c:when test="${attendance.memCommuteState eq '지각'}">
+												                    <c:when test="${fn:contains(attendance.memCommuteState, '지각') or fn:contains(attendance.memCommuteState, '조퇴')}">
 												                        <span class="badge bg-label-warning status-badge">${attendance.memCommuteState}</span>
 												                    </c:when>
-												                     <c:when test="${attendance.memCommuteState eq '결근'}">
+												
+												                    <c:when test="${fn:contains(attendance.memCommuteState, '결근') or fn:contains(attendance.memCommuteState, '무단')}">
 												                        <span class="badge bg-label-danger status-badge">${attendance.memCommuteState}</span>
 												                    </c:when>
-												                    <c:otherwise>
+												                    
+												                    <c:when test="${fn:contains(attendance.memCommuteState, '반차') or fn:contains(attendance.memCommuteState, '휴가')}">
 												                        <span class="badge bg-label-primary status-badge">${attendance.memCommuteState}</span>
+												                    </c:when>
+												
+												                    <c:when test="${fn:contains(attendance.memCommuteState, '출근') or fn:contains(attendance.memCommuteState, '퇴근')}">
+												                        <span class="badge bg-label-secondary status-badge">${attendance.memCommuteState}</span>
+												                    </c:when>
+												
+												                    <c:otherwise>
+												                        <span class="badge bg-label-success status-badge">${attendance.memCommuteState}</span>
 												                    </c:otherwise>
 												                </c:choose>
 												            </td>
+												            
 												            <td></td> 
 												            
 												            <td class="text-center">
