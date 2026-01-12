@@ -104,8 +104,8 @@ public class OrderController {
 	
 	// 입고 목록 요청
 	@GetMapping("receive")
-	public void receive() {
-		
+	public String receive() {
+		return "order/inOut";
 	}
 	
 	//출고 목록 요청
