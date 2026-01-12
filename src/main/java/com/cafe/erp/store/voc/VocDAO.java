@@ -12,7 +12,9 @@ public interface VocDAO {
 
 	public int add(VocDTO vocDTO) throws Exception;
 	
-	public VocDTO vocOnwerId(VocDTO vocDTO) throws Exception;
+	public VocDTO vocOnwerInfo(VocDTO vocDTO) throws Exception;
+	
+	public String findWriterName (int memberId);
 
 	public VocDTO detail(Integer vocId) throws Exception;
 

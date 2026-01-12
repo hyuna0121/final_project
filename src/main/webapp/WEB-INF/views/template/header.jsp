@@ -2,6 +2,8 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<link rel="stylesheet" href="/css/notification/notification.css" />
+
 <nav
   class="layout-navbar  navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
   id="layout-navbar"
@@ -119,6 +121,7 @@
     </ul>
   </div>
 </nav>
+<div id="toast-container"></div>
 <script src="/vendor/libs/jquery/jquery.js"></script>
 <script type="text/javascript" src="/js/member/header.js"></script>
 <!-- 🔔 전체 알림 모달 -->
@@ -204,4 +207,11 @@
     </div>
   </div>
 </div>
+
+<!-- WebSocket -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+
 <script type="text/javascript" src="/js/notification/notification.js"></script>
+<script type="text/javascript" src="/js/notification/notification-realtime.js"></script>

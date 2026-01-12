@@ -66,14 +66,15 @@
         		AND M.dept_code = #{deptCode}
     	    </if>
 
-	        <if test="check != true">
+	        <if test="includeRetired != true">
 	       		AND  M.mem_is_active = '1' 
 	       	</if>
 	       	
 	       	<if test="keyword != null and keyword != ''">
 	       		AND(
 	       			M.mem_name LIKE CONCAT ('%', #{keyword}, '%') OR
-	       			M.member_id LIKE CONCAT ('%', #{keyword}, '%')
+	       			M.member_id LIKE CONCAT ('%', #{keyword}, '%') OR
+	       			D.mem_dept_name LIKE CONCAT ('%', #{keyword}, '%') 
 	       		)
 	       	</if>
         </where>
@@ -88,22 +89,34 @@
 	</select>
 	
 	<select id="deptMemberCount" resultType="DeptCountDTO">
-		SELECT
-			 M.dept_code, 
-			 D.mem_dept_name, 
-			 COUNT(M.member_id) as count
-		 FROM
-			 member M
-		 JOIN 
-			 member_dept D ON M.dept_code = D.member_dept_code
-		 WHERE
-			mem_is_active = '1'
-		 GROUP BY 
-		 	dept_code, D.mem_dept_name
-		 ORDER BY
-		 	M.dept_code ASC
-	</select>
+	    SELECT
+	         M.dept_code, 
+	         D.mem_dept_name, 
+	         COUNT(M.member_id) as count
+	     FROM
+	         member M
+	     JOIN 
+	         member_dept D ON M.dept_code = D.member_dept_code
+	     
+	     <where>
+	         <if test="includeRetired != true">
+	            AND M.mem_is_active = '1'
+	         </if>
+	         
+	         <if test="keyword != null and keyword != ''">
+	            AND(
+	                M.mem_name LIKE CONCAT ('%', #{keyword}, '%') OR
+	                M.member_id LIKE CONCAT ('%', #{keyword}, '%') OR
+	       			D.mem_dept_name LIKE CONCAT ('%', #{keyword}, '%') 
+	            )
+	         </if>
+	     </where>
 	
+	     GROUP BY 
+	        dept_code, D.mem_dept_name
+	     ORDER BY
+	        M.dept_code ASC
+	</select>
 	
 	<!-- 사원 추가 시 자동 증가 -->
 	<select id="getMemberId" parameterType="String" resultType="String">

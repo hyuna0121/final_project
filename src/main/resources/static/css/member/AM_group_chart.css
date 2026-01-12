@@ -32,22 +32,31 @@
             font-weight: 700;
         }
 
-        .sub-dept { 
-            padding-left: 1.5rem !important; 
-            position: relative;
-        }
-        .sub-dept::before {
-            content: '';
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            width: 4px;
-            height: 4px;
-            background-color: #b4bdc6;
-            border-radius: 50%;
-            transform: translateY(-50%);
-        }
-        .dept-item.active.sub-dept::before { background-color: #696cff; }
+		.sub-dept { 
+		    padding-left: 2.5rem !important; 
+		    position: relative;
+		}
+		
+		.sub-dept::before {
+		    content: '';
+		    position: absolute;
+		    left: 1.5rem; 
+		    top: 0.4rem;  
+		    
+		    width: 10px;  
+		    height: 12px; 
+		    
+		    border-left: 2px solid #b4bdc6;
+		    border-bottom: 2px solid #b4bdc6;
+		    
+		    background-color: transparent; 
+		    transform: none; 
+		}
+		
+		.dept-item.active.sub-dept::before { 
+		    background-color: transparent; 
+		    border-color: #696cff; 
+		}
 
         /* [2] 메인 테이블 디자인 */
         .table-responsive { overflow-x: visible; }

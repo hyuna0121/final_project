@@ -73,7 +73,14 @@
             <!-- Content -->	
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
-	            <h4 class="fw-bold mb-3">물품 목록</h4>
+	            <div class="d-flex justify-content-between mb-3">
+				  <h4 class="fw-bold mb-0">물품 목록</h4>
+				  <button class="btn btn-primary"
+				          data-bs-toggle="modal"
+				          data-bs-target="#itemAddModal">
+				    <i class="bx bx-plus"></i> 물품 추가
+				  </button>
+				</div>
 	            
 	            <!-- 검색 영역 -->
 				<div class="card mb-4">
@@ -272,6 +279,94 @@
 	  </div>
 	</div>
 	
+	<!-- 물품 등록 모달 -->
+	<div class="modal fade" id="itemAddModal" tabindex="-1" aria-hidden="true">
+	  <div class="modal-dialog modal-lg modal-dialog-centered">
+	    <div class="modal-content">
+	
+	      <!-- 모달 헤더 -->
+	      <div class="modal-header">
+	        <h5 class="modal-title">원재료 등록</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+	      </div>
+	
+	      <!-- 모달 바디 -->
+	      <div class="modal-body">
+	        <form action="/item/add" method="post" id="itemAddForm">
+	
+	          <!-- 거래처 코드 -->
+	          <div class="mb-3">
+	            <label class="form-label">거래처</label>
+	            <select class="form-select" name="vendorId" required>
+	              <c:forEach var="v" items="${vendorList}">
+	                <option value="${v.vendorId}">
+	                  ${v.vendorName}
+	                </option>
+	              </c:forEach>
+	            </select>
+	          </div>
+	
+	          <!-- 카테고리 -->
+	          <div class="mb-3">
+	            <label class="form-label">카테고리</label>
+	            <select class="form-select" name="itemCategory" required>
+	              <option value="원두">원두</option>
+	              <option value="유제품">유제품</option>
+	              <option value="시럽/파우더">시럽/파우더</option>
+	              <option value="음료원료">음료원료</option>
+	              <option value="베이커리">베이커리</option>
+	              <option value="포장재">포장재</option>
+	              <option value="소모품">소모품</option>
+	              <option value="장비">장비</option>
+	            </select>
+	          </div>
+	
+	          <!-- 물품명 -->
+	          <div class="mb-3">
+	            <label class="form-label">물품명</label>
+	            <input type="text" class="form-control" name="itemName" required>
+	          </div>
+	
+	          <!-- 단가 -->
+	          <div class="mb-3">
+	            <label class="form-label">단가</label>
+	            <input type="number" class="form-control" name="itemSupplyPrice" required>
+	          </div>
+	
+	          <!-- 사용 여부 -->
+	          <div class="mb-3">
+	            <label class="form-label">사용 여부</label>
+	            <select class="form-select" name="itemEnable">
+	              <option value="0">사용</option>
+	              <option value="1">미사용</option>
+	            </select>
+	          </div>
+	
+	          <!-- 자동 발주 승인 -->
+	          <div class="mb-3">
+	            <label class="form-label">자동 발주 승인</label>
+	            <select class="form-select" name="itemAutoOrder">
+	              <option value="0">승인</option>
+	              <option value="1">미승인</option>
+	            </select>
+	          </div>
+	
+	        </form>
+	      </div>
+	
+	      <!-- 모달 푸터 -->
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+	          취소
+	        </button>
+	        <button type="submit" class="btn btn-primary" form="itemAddForm">
+	          등록
+	        </button>
+	      </div>
+	
+	    </div>
+	  </div>
+	</div>
 
 
     <!-- Core JS -->

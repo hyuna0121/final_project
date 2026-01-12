@@ -33,7 +33,7 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     
                     <h4 class="fw-bold py-3 mb-4">
-                        <span class="text-muted fw-light">조직 관리 /</span> 조직도 및 부서 관리
+                        <span class="text-muted fw-light">부서 관리 /</span> 조직도 및 부서 관리
                     </h4>
 
                     <div class="row">
@@ -51,7 +51,7 @@
                                     <div class="list-group list-group-flush" id="deptList">
                                         <a class="list-group-item list-group-item-action dept-item active mb-2" data-dept="0">
                                             <div class="d-flex w-100 justify-content-between align-items-center">
-                                                <span><i class='bx bx-globe me-2'></i>전체 조직</span>
+                                                <span><i class='bx bx-globe me-2'></i>전체 부서</span>
                                                 <span class="badge bg-white text-primary shadow-sm rounded-pill">${totalCount}</span>
                                             </div>
                                         </a>
@@ -112,7 +112,7 @@
 
                                     <div class="input-group input-group-merge shadow-sm" style="width: 280px; border-radius: 10px; overflow: hidden; height: 45px;">
                                         <span class="input-group-text border-0 ps-3 bg-white"><i class="bx bx-search"></i></span>
-                                        <input type="text" class="form-control border-0 bg-white" placeholder="이름, 직급, 사번 검색" id="searchMember">
+                                        <input type="text" class="form-control border-0 bg-white" placeholder="이름, 부서, 사번 검색" id="searchMember">
                                     </div>
                                 </div>
                             </div>
@@ -124,17 +124,15 @@
                                         <col style="width: 15%;">
                                         <col style="width: 15%;">
                                         <col style="width: 15%;">
-                                        <col style="width: 20%;">
-                                        <col style="width: 10%;">
+                                        <col style="width: 30%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
                                             <th>이름 / 사번</th>
                                             <th>부서</th>
-                                            <th>직급</th>
+                                            <th class="text-center">직급</th>
                                             <th class="text-center">상태</th>
-                                            <th>연락처</th>
-                                            <th class="text-center">상세</th>
+                                            <th class="text-center">연락처 / 이메일</th>
                                         </tr>
                                     </thead>
                                     <tbody id="memberTableBody">

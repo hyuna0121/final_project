@@ -3,19 +3,31 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
     <mapper namespace="com.cafe.erp.order.OrderDAO">
-    	<select id="selectMaxOrderId" resultType="String">
+    	<select id="selectMaxOrderHqId" resultType="String">
 			select MAX(hq_order_id)
 			from order_hq
 			where hq_order_id LIKE CONCAT(#{prefix}, #{orderDate}, '%')    	
     	</select>
+    	<select id="selectMaxOrderStoreId" resultType="String">
+			select MAX(store_order_id)
+			from order_store
+			where store_order_id LIKE CONCAT(#{prefix}, #{orderDate}, '%')    	
+    	</select>
+    	
+    	<select id="selectStoreId" parameterType="Integer" resultType="Integer">
+    		select store_id from store where member_id = #{memberId}
+    	</select>
     	
     	<!-- 발주 추가 -->
-    	<insert id="insertOrder" parameterType="OrderDTO">
-    		insert into order_hq values(#{hqOrderId}, now(), null, 100, 118001);
+    	<insert id="insertHqOrder" parameterType="OrderDTO">
+    		insert into order_hq values(#{hqOrderId}, now(), null, 100, #{memberId}, #{hqOrderTotalAmount});
+    	</insert>
+    	<insert id="insertStoreOrder" parameterType="OrderDTO">
+    		insert into order_store values(#{hqOrderId}, now(), null, 100, null, #{storeId}, #{memberId}, #{hqOrderTotalAmount}, null);
     	</insert>
     	
     	<!-- 발주 상세 추가 -->
-    	<insert id="insertOrderDetail" parameterType="OrderDetailDTO">
+    	<insert id="insertHqOrderItemDetail" parameterType="OrderDetailDTO">
     		insert into order_hq_detail 
     		(
     			hq_order_detail_id,
@@ -31,9 +43,54 @@
     		)
     		values(null, #{hqOrderQty}, #{hqOrderPrice}, #{hqOrderAmount}, now(), #{vendorCode}, #{hqOrderId}, #{itemId}, #{hqOrderItemCode}, #{hqOrderItemName});
     	</insert>
+    	<insert id="insertStoreOrderItemDetail" parameterType="OrderDetailDTO">
+    		insert into order_store_detail 
+    		(
+    			store_order_detail_id,
+			    store_order_qty,
+			    store_order_price,
+			    store_order_amount,
+			    store_order_created_at,
+			    vendor_code,
+			    store_order_id,
+			    item_id,
+			    store_order_item_code,
+			    store_order_item_name
+    		)
+    		values(null, #{hqOrderQty}, #{hqOrderPrice}, #{hqOrderAmount}, now(), #{vendorCode}, #{hqOrderId}, #{itemId}, #{hqOrderItemCode}, #{hqOrderItemName});
+    	</insert>
     	
     	<!-- 발주 목록 요청 -->
-    	<select id="listRequest" resultType="OrderDTO">
-    		select * from order_hq
+    	<select id="listHq" resultType="OrderDTO">
+    		select * from order_hq where hq_order_status = 100
     	</select>
+    	<select id="listStore" resultType="OrderDTO">
+    		select
+    			s.store_order_id as hqOrderId,
+    			s.store_order_total_amount as hqOrderTotalAmount,
+    			s.member_id as memberId,
+    			s.store_order_approver as storeOrderApprover,
+    			s.store_rejection_reason as storeRejectionReason 
+    		from order_store s where store_order_status = 100
+    	</select>
+    	<!-- 발주 상세 목록 요청 -->
+    	<select id="getHqOrderDetail" resultType="OrderDetailDTO">
+    		select * from order_hq_detail where hq_order_id = #{orderNo}
+    	</select>
+    	<select id="getStoreOrderDetail" resultType="OrderDetailDTO">
+    		select 
+    		store_order_item_name as hqOrderItemName,
+    		store_order_qty as hqOrderQty,
+    		store_order_price as hqOrderPrice,
+    		store_order_amount as hqOrderAmount
+    		from order_store_detail where store_order_id = #{orderNo}
+    	</select>
+    	
+    	<!-- 발주 승인 처리 -->
+    	<update id="approveHqOrder" parameterType="String">
+    		update order_hq set hq_order_status = 400 where hq_order_id = #{orderNo}
+    	</update>
+    	<update id="approveStoreOrder" parameterType="String">
+    		update order_store set store_order_status = 400 where store_order_id = #{orderNo}
+    	</update>
     </mapper>

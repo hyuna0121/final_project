@@ -1,0 +1,203 @@
+@charset "UTF-8";
+
+/* 모든 탭 공통 */
+.nav-tabs .nav-link {
+  color: #6B7280;
+  background: transparent !important;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px 12px 0 0;
+}
+
+/* hover */
+.nav-tabs .nav-link:hover {
+  color: #6C63FF;
+  background: #F3F4FF !important;
+}
+
+/* ✅ 활성 탭 (이게 제일 중요) */
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-link.show {
+  color: #6C63FF !important;      /* 글자 보라 */
+  background: #ffffff !important; /* 회색 제거 */
+  border: 1px solid #E2E5FF;
+  border-bottom-color: #ffffff;
+  border-radius: 12px 12px 0 0;
+}
+
+/* focus, active 눌림 상태 제거 */
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:active {
+  box-shadow: none !important;
+}
+
+/* ===== 전체 발주 페이지 고정 높이 ===== */
+.order-container {
+  height: 720px;              /* 🔥 여기서 전체 높이 조절 */
+}
+
+/* 오른쪽 컬럼 */
+.order-right {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 12px;
+}
+
+/* 승인 리스트 : 40% */
+.approval-list {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 발주 상세 : 60% */
+.order-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 스크롤 영역 */
+.approval-body,
+.order-detail-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* table 기본 정리 */
+.approval-body table,
+.order-detail-body table {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+/* hover */
+.order-row:hover {
+  background: #f3f4ff;
+  cursor: pointer;
+}
+
+/* ===============================
+   전체 기본
+================================ */
+.order-container {
+  background: #f5f7fb;
+}
+
+/* 좌/우 컬럼 높이 고정 */
+.order-container .col-md-7,
+.order-container .col-md-5 {
+  height: 720px;
+}
+
+/* ===============================
+   왼쪽: 발주 목록 (스크롤 ❌)
+================================ */
+.order-container .col-md-7 > .card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 왼쪽 목록은 overflow 주지 않는다 */
+.order-left-body {
+  flex: 1;
+  overflow: visible !important; /* 🔥 핵심 */
+  padding: 0 1.5rem 1.5rem;
+}
+
+/* ===============================
+   오른쪽: 승인 + 상세
+================================ */
+.order-right {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 승인 리스트 (상단) */
+.approval-list {
+  height: 260px;           /* 고정 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 발주 상세 (하단) */
+.order-detail {
+  height: 380px;           /* 🔥 무조건 고정 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===============================
+   발주 상세 스크롤 (여기만)
+================================ */
+.order-detail-body,
+.order-scroll {
+  flex: 1;
+  overflow-y: auto;        /* 🔥 상세만 스크롤 */
+  padding: 0 16px 16px;
+}
+
+/* 테이블 기본 */
+.order-detail-body table,
+.order-scroll table {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+/* ===============================
+   UI 디테일
+================================ */
+.order-row:hover {
+  background: #f3f4ff;
+  cursor: pointer;
+}
+
+/* ❌ 완전 금지 */
+.table-responsive {
+  display: none !important;
+}
+
+
+.card-body {
+	flex: none;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+th, td {
+  white-space: normal;
+  word-break: break-word;
+  font-size: 0.875rem;
+}
+
+/* content-wrapper 높이 정상화 */
+.content-wrapper {
+  justify-content: flex-start !important;
+  min-height: auto !important;
+}
+
+/* 레이아웃 강제 min-height 제거 */
+.layout-page,
+.layout-content-navbar,
+.content-wrapper {
+  min-height: auto;
+}
+
+.card{
+	box-shadow: none;
+	border: 1px solid #d9dee3;
+}
+
+@media (min-width: 1200px) {
+  .layout-menu-fixed:not(.layout-menu-collapsed) .layout-page,
+  .layout-menu-fixed-offcanvas:not(.layout-menu-collapsed) .layout-page {
+    padding-left: 8.25rem;
+  }
+}

@@ -33,7 +33,7 @@ public class ItemController {
 	
 	@PostMapping("add")
 	@Transactional
-	public void add(ItemDTO itemDTO) {
+	public String add(ItemDTO itemDTO) {
 		// itemId null -> add() 실행되면서 itemId 삽입
 		itemService.add(itemDTO);
 		
@@ -42,6 +42,8 @@ public class ItemController {
 		itemDTO.setItemId(itemId);
 		
 		itemService.priceAdd(itemDTO);
+		
+		return "redirect:./list";
 	}
 	
 	@GetMapping("list")

@@ -34,7 +34,7 @@ public class VendorController {
 	}
 	
 	@PostMapping("add")
-	public void add(@Valid VendorDTO vendorDTO, 
+	public String add(@Valid VendorDTO vendorDTO, 
 			@RequestParam String vendorBusinessNumber1,
 	        @RequestParam String vendorBusinessNumber2,
 	        @RequestParam String vendorBusinessNumber3,
@@ -58,6 +58,8 @@ public class VendorController {
 	    // 2. DTO에 세팅
 	    vendorDTO.setVendorBusinessNumber(businessNumber);
 		vendorService.add(vendorDTO);
+		
+		return "redirect:./list";
 	}
 	
 	@PostMapping("update")

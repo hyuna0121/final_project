@@ -1,11 +1,14 @@
 package com.cafe.erp.security.websocket;
 
-
 import org.springframework.messaging.*;
 import org.springframework.messaging.simp.stomp.*;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
+import com.cafe.erp.member.MemberDTO;
 
 @Component
 public class StompAuthChannelInterceptor implements ChannelInterceptor {
@@ -13,19 +16,38 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
 
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        StompHeaderAccessor accessor =
+            MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+
+        if (accessor == null) return message;
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 
             Authentication authentication =
-                (Authentication) accessor.getUser();
+                SecurityContextHolder.getContext().getAuthentication();
 
-            if (authentication == null) {
-                throw new IllegalStateException("인증되지 않은 WebSocket 접근");
+            if (authentication == null || !authentication.isAuthenticated()) {
+                // ❌ 예외 던지지 말 것
+                System.out.println("⚠️ [WS] Authentication 없음");
+                return message;
             }
 
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof MemberDTO member) {
+
+                String memberId = String.valueOf(member.getMemberId());
+                accessor.setUser(() -> memberId);
+
+                System.out.println("✅ [WS] Principal set to memberId=" + memberId);
+
+            } else {
+                // ❌ 예외 던지지 말 것
+                System.out.println("⚠️ [WS] Unknown principal type: " + principal);
+            }
         }
 
         return message;
     }
 }
+

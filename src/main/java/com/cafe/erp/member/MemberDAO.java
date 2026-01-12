@@ -36,7 +36,7 @@ public interface MemberDAO {
 	public List<MemberDTO> chatList(Map<String, Object> val);
 	
 	// 부서별 인원 수
-	public List<Map<String, Object>> deptMemberCount();
+	public List<Map<String, Object>> deptMemberCount(Map<String, Object> checkMem);
 	
 	// DB에 있는 전체 사원 수
 	public int countAllMember(MemberDTO memberDTO) throws Exception;

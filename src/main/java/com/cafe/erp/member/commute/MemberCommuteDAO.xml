@@ -16,7 +16,7 @@
 	        mem_commute_state, 
 	        member_id
 	    )
-	    SELECT CURDATE(), #{memCommuteInTime}, '출근', #{memberId}
+	    SELECT CURDATE(), #{memCommuteInTime}, #{memCommuteState}, #{memberId}
 	    FROM DUAL
 	    WHERE NOT EXISTS (
 	        SELECT 1 
@@ -29,7 +29,7 @@
 	     <update id="checkOut" parameterType="MemberCommuteDTO">
 		    UPDATE member_commute
 		    SET mem_commute_out_time = #{memCommuteOutTime},
-		        mem_commute_state = '퇴근'
+		        mem_commute_state = #{memCommuteState}
 		    WHERE member_id = #{memberId}
 		      AND mem_commute_work_date = CURDATE()
 		      AND mem_commute_out_time IS NULL  

@@ -73,7 +73,14 @@
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">	
               
-			  <h5 class="card-header">거래처 목록</h5>
+			  <div class="d-flex justify-content-between align-items-center mb-3">
+				  <h4 class="fw-bold mb-0">거래처 목록</h4>
+				  <button class="btn btn-primary"
+				          data-bs-toggle="modal"
+				          data-bs-target="#vendorAddModal">
+				    <i class="bx bx-plus"></i> 거래처 추가
+				  </button>
+				</div>
 			  				
               <!-- 검색 영역 -->
 				<div class="card mb-4">
@@ -164,7 +171,6 @@
 				</div>
 			  </div>
 			</div>
-
             <!-- / Content -->
 
             <!-- Footer -->
@@ -219,7 +225,114 @@
 	  </div>
 	</div>
 
+	<!-- 거래처 등록 모달 -->
+	<div class="modal fade" id="vendorAddModal" tabindex="-1" aria-hidden="true">
+	  <div class="modal-dialog modal-lg modal-dialog-centered modal-scrollable">
+	    <div class="modal-content">
 	
+	      <!-- 헤더 -->
+	      <div class="modal-header">
+	        <h5 class="modal-title">거래처 등록</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+	      </div>
+	
+	      <!-- 바디 -->
+	      <div class="modal-body">
+	        <form action="add" method="post" id="vendorAddForm">
+	
+	          <div class="row">
+	
+	            <!-- 사업자 번호 -->
+	            <div class="col-md-12 mb-3">
+	              <label class="form-label">사업자 번호</label>
+	              <div class="d-flex gap-2">
+	                <input type="text" class="form-control"
+	                       name="vendorBusinessNumber1"
+	                       maxlength="3" placeholder="123" required>
+	                <span class="align-self-center">-</span>
+	                <input type="text" class="form-control"
+	                       name="vendorBusinessNumber2"
+	                       maxlength="2" placeholder="45" required>
+	                <span class="align-self-center">-</span>
+	                <input type="text" class="form-control"
+	                       name="vendorBusinessNumber3"
+	                       maxlength="5" placeholder="67890" required>
+	              </div>
+	            </div>
+	
+	            <!-- 사업자명 -->
+	            <div class="col-md-12 mb-3">
+	              <label class="form-label">사업자 이름</label>
+	              <input type="text" class="form-control" name="vendorName" required>
+	            </div>
+	
+	            <!-- 주소 -->
+	            <div class="col-md-12 mb-3">
+	              <label class="form-label">사업자 주소</label>
+	              <div class="input-group mb-2">
+	                <input type="text" class="form-control"
+	                       id="vendorAddress"
+	                       name="vendorAddress"
+	                       placeholder="주소 검색 버튼을 눌러주세요"
+	                       readonly required>
+	                <button type="button"
+	                        class="btn btn-outline-secondary"
+	                        onclick="execDaumPostcode()">
+	                  주소 검색
+	                </button>
+	              </div>
+	              <input type="text"
+	                     class="form-control"
+	                     id="vendorAddressDetail"
+	                     name="vendorAddressDetail"
+	                     placeholder="상세주소 입력">
+	            </div>
+	
+	            <!-- 대표자명 -->
+	            <div class="col-md-6 mb-3">
+	              <label class="form-label">대표자명</label>
+	              <input type="text" class="form-control" name="vendorCeoName" required>
+	            </div>
+	
+	            <!-- 업태 -->
+	            <div class="col-md-6 mb-3">
+	              <label class="form-label">업태명</label>
+	              <input type="text" class="form-control" name="vendorBusinessType">
+	            </div>
+	
+	            <!-- 담당자 -->
+	            <div class="col-md-6 mb-3">
+	              <label class="form-label">담당자명</label>
+	              <input type="text" class="form-control" name="vendorManagerName">
+	            </div>
+	
+	            <div class="col-md-6 mb-3">
+	              <label class="form-label">담당자 번호</label>
+	              <input type="text" class="form-control" name="vendorManagerTel">
+	            </div>
+	
+	            <div class="col-md-6 mb-3">
+	              <label class="form-label">담당자 이메일</label>
+	              <input type="email" class="form-control" name="vendorManagerEmail">
+	            </div>
+	
+	          </div>
+	        </form>
+	      </div>
+	
+	      <!-- 푸터 -->
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+	          취소
+	        </button>
+	        <button type="submit" class="btn btn-primary" form="vendorAddForm">
+	          등록
+	        </button>
+	      </div>
+	
+	    </div>
+	  </div>
+	</div>
 
 
     <!-- Core JS -->
@@ -244,6 +357,8 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     
+    <!-- 카카오 API -->
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     
     <!-- js -->
     <script src="/js/vendor/main.js"></script>

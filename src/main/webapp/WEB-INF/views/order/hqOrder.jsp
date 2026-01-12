@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 
 <html
@@ -110,23 +111,28 @@
 							      <div class="col-md-4">
 							        <div class="text-muted small">발주 요청일</div>
 							        <div class="fw-semibold">
-							          <fmt:formatDate value="${now}" pattern="yyyy-MM-dd"/>
+							          <fmt:formatDate value="<%= new java.util.Date() %>" pattern="yyyy-MM-dd"/>
 							        </div>
 							      </div>
 								  <!-- 발주 요청자 -->
 							      <div class="col-md-4">
 							        <div class="text-muted small">요청자</div>
 							        <div class="fw-semibold">
-							          <%-- ${loginMember.memberName} --%>
-							          123456
+							          ${member.memberId}
 							        </div>
 							      </div>
 								  <!-- 창고정보 -->
 							      <div class="col-md-4">
 							        <div class="text-muted small">입고 창고</div>
 							        <select class="form-select form-select-sm w-75 mt-1">
-							          <option>가맹점 창고</option>
-							          <option>본사 창고</option>
+							        <c:choose>
+							          <c:when test = "${fn:startsWith(member.memberId, 1)}">
+							          	<option>본사 창고</option>							          
+							          </c:when>
+							          <c:otherwise>
+								        <option>가맹점 창고</option>							          
+							          </c:otherwise>
+							        </c:choose>
 							        </select>
 							      </div>
 							    </div>
@@ -169,7 +175,7 @@
 						    <table class="table table-bordered table-hover text-center">
 						      <thead class="table-light">
 						        <tr>
-						          <th style="width:40px;">
+						          <th class="chk-td">
 								      <input type="checkbox" id="checkAll" onclick="toggleAllCheckboxes()">
 								  </th>
 						          <th>물품코드</th>
@@ -189,7 +195,13 @@
 						  <div class="card-body text-end">
 						    <h5 class="mb-0">
 						      총 발주 금액 :
-						      <span class="text-primary fw-bold" id="grandTotal"></span> 원
+						      <!-- 화면 표시용 -->
+							  <input type="text"
+								     class="text-primary fw-bold totalAmount"
+								     id="grandTotalView"
+								       readonly>
+						      <!-- 서버 전송용 (순수 숫자) -->
+							  <input type="hidden" id="grandTotal" name="hqOrderTotalAmount">
 						    </h5>
 						  </div>
 						</div>
@@ -241,12 +253,8 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     
-    
-    <!--  -->
-    <script src="/js/order/search.js"></script>
-    <script src="/js/order/orderListAdd.js"></script>
-    <script src="/js/order/totalCalculator.js"></script>
-    <script src="/js/order/removeItem.js"></script>
-    
+
+    <!-- order JS -->
+    <script src="/js/order/orderRequest.js"></script>
   </body>
 </html>
