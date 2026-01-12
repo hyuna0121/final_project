@@ -53,6 +53,35 @@ public class QscController {
         return result(qscService.addQsc(qscDTO));
     }
 
+    @GetMapping("detail")
+    public String qscDetail(Integer qscId, Model model) throws Exception {
+        QscDTO qscDTO = qscService.qscDetail(qscId);
+        model.addAttribute("dto", qscDTO);
+
+        return "qsc/detail";
+    }
+
+    @GetMapping("/downloadExcel")
+    public void downloadExcel(QscSearchDTO searchDTO, HttpServletResponse response) throws Exception {
+        List<QscDTO> list = qscService.excelList(searchDTO);
+        String[] headers = {"ID", "가맹점명", "점주명", "가맹점주소", "점검담당자명", "제목", "점검일시", "만점", "총점", "환산점수", "등급", "종합의견"};
+
+        ExcelUtil.download(list, headers, "QSC 목록", response, (row, dto) -> {
+            row.createCell(0).setCellValue(dto.getQscId());
+            row.createCell(1).setCellValue(dto.getStoreName());
+            row.createCell(2).setCellValue(dto.getOwnerName());
+            row.createCell(3).setCellValue(dto.getStoreAddress());
+            row.createCell(4).setCellValue(dto.getMemName());
+            row.createCell(5).setCellValue(dto.getQscTitle());
+            row.createCell(6).setCellValue(dto.getQscDateStr());
+            row.createCell(7).setCellValue(dto.getQscQuestionTotalScore());
+            row.createCell(8).setCellValue(dto.getQscTotalScore());
+            row.createCell(9).setCellValue(dto.getQscScore());
+            row.createCell(10).setCellValue(dto.getQscGrade());
+            row.createCell(11).setCellValue(dto.getQscOpinion());
+        });
+    }
+
     @GetMapping("admin/question")
     public String questionList(QscQuestionSearchDTO searchDTO, Authentication authentication, Model model) throws Exception {
         String memberId = authentication.getName();
@@ -69,6 +98,12 @@ public class QscController {
     @ResponseBody
     public Map<String, Object> addQuestion(@RequestBody QscQuestionDTO questionDTO) throws Exception {
         return result(qscService.addQuestion(questionDTO));
+    }
+
+    @PostMapping("admin/question/update")
+    @ResponseBody
+    public Map<String, Object> updateQuestion(@RequestBody QscQuestionDTO questionDTO) throws Exception {
+        return result(qscService.updateQuestion(questionDTO));
     }
 
     @GetMapping("question/downloadExcel")

@@ -38,8 +38,8 @@ public class QscService {
 
     @Transactional
     public int addQsc(QscDTO qscDTO) throws Exception {
-        QscDetailDTO[] qscDetailDTOS = qscDTO.getQscDetailDTOS();
-        List<Integer> questionIds = Arrays.stream(qscDetailDTOS)
+        List<QscDetailDTO> qscDetailDTOS = qscDTO.getQscDetailDTOS();
+        List<Integer> questionIds = qscDetailDTOS.stream()
                 .map(QscDetailDTO::getListId)
                 .collect(Collectors.toList());
         List<QscQuestionDTO> questionList = qscDAO.questionListById(questionIds);
@@ -75,5 +75,17 @@ public class QscService {
         }
 
         return result;
+    }
+
+    public QscDTO qscDetail(Integer qscId) throws Exception {
+        return qscDAO.qscDetail(qscId);
+    }
+
+    public List<QscDTO> excelList(QscSearchDTO searchDTO) throws Exception {
+        return qscDAO.excelList(searchDTO);
+    }
+
+    public int updateQuestion(QscQuestionDTO questionDTO) throws Exception {
+        return qscDAO.updateQuestion(questionDTO);
     }
 }

@@ -81,9 +81,12 @@
               
 			    <div class="col-12 px-0">
                     <ul class="nav nav-pills mb-3" role="tablist">
-                        <li class="nav-item">
-                        	<a href="/store/qsc/admin/question" class="nav-link active"><i class="bx bx-store me-1"></i> QSC 질문목록</a>
-                        </li>
+						<li class="nav-item">
+							<a href="/store/qsc/list" class="nav-link active"><i class="bx bx-task me-1"></i> QSC</a>
+						</li>
+						<li class="nav-item">
+							<a href="/store/qsc/admin/question" class="nav-link active"><i class="bx bx-list-check me-1"></i> QSC 질문</a>
+						</li>
                     </ul>
                 </div>
                 <h4 class="fw-bold py-3 mb-3"><span class="text-muted fw-normal">QSC /</span> 질문 목록</h4>
@@ -154,6 +157,7 @@
 					              		<th>질문</th>
 						                <th>배점</th>
 						              	<th>사용여부</th>
+										<th>변경</th>
 						            </tr>
 					          	</thead>
 					            
@@ -172,6 +176,17 @@
 								            	<c:if test="${dto.listIsUse eq true}"><span class="badge bg-label-success">사용</span></c:if>
 								            	<c:if test="${dto.listIsUse eq false}"><span class="badge bg-label-danger">미사용</span></c:if>
 								            </td>
+											<td>
+												<button class="btn btn-sm btn-icon btn-outline-secondary"
+														data-id="${dto.listId}"
+														data-category="${dto.listCategory}"
+														data-question="${dto.listQuestion}"
+														data-score="${dto.listMaxScore}"
+														data-status="${dto.listIsUse}"
+														onclick="openUpdateModal(this)">
+													<i class="bx bx-edit"></i>
+												</button>
+											</td>
 					                    </tr>
 					                </c:forEach>
 					            </tbody>
@@ -204,7 +219,7 @@
 		                </div>
 		                
 		                <div class="modal-body">
-		                    <form id="registerStoreForm">
+		                    <form id="registerQuestionForm">
 		                        <div class="row g-3">
 									<div class="col-md-6">
 										<label class="form-label" for="listCategory">카테고리 <span class="text-danger">*</span></label>
@@ -246,6 +261,70 @@
 		            </div>
 		        </div>
 		    </div>
+
+			<div class="modal fade" id="updateQuestionModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+					<div class="modal-content">
+
+						<div class="modal-header">
+							<h5 class="modal-title">QSC 질문 수정</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+
+						<div class="modal-body">
+							<form id="updateQuestionForm">
+								<input type="hidden" id="updateListId">
+								<div class="row g-3">
+									<div class="col-md-4">
+										<label class="form-label" for="updateListCategory">카테고리 <span class="text-danger">*</span></label>
+										<div class="input-group">
+											<select class="form-select" id="updateListCategory">
+												<option value="Quality" selected>Quality</option>
+												<option value="Service">Service</option>
+												<option value="Cleanliness">Cleanliness</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="col-md-4">
+										<label class="form-label" for="listMaxScore">배점 <span class="text-danger">*</span></label>
+										<div class="input-group">
+											<span class="input-group-text"><i class="bx bx-star"></i></span>
+											<input type="text" id="updateListMaxScore" name="updateListMaxScore" class="form-control" placeholder="1 ~ 10" oninput="handleMaxScore(this)" required />
+										</div>
+									</div>
+
+									<div class="col-md-4">
+										<label class="form-label" for="listStatus">사용여부 <span class="text-danger">*</span></label>
+										<div class="input-group">
+											<select class="form-select" id="listStatus">
+												<option value="true" selected>사용</option>
+												<option value="false">미사용</option>
+											</select>
+										</div>
+									</div>
+
+									<div class="col-md-12">
+										<label class="form-label" for="updateListQuestion">질문 <span class="text-danger">*</span></label>
+										<div class="input-group">
+											<span class="input-group-text"><i class='bx bx-detail'></i></span>
+											<input type="text" id="updateListQuestion" name="updateListQuestion" class="form-control" placeholder="질문 입력" required />
+										</div>
+									</div>
+
+
+								</div>
+							</form>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+							<button type="button" class="btn btn-primary" onclick="submitQuestionUpdate()">저장</button>
+						</div>
+
+					</div>
+				</div>
+			</div>
 			  	
      
             </div>

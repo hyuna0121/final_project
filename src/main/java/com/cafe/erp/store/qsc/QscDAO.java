@@ -24,4 +24,10 @@ public interface QscDAO {
     public int addQsc(QscDTO qscDTO) throws Exception;
 
     public int addDetail(QscDetailDTO detail) throws Exception;
+
+    public QscDTO qscDetail(Integer qscId) throws Exception;
+
+    public List<QscDTO> excelList(QscSearchDTO searchDTO) throws Exception;
+
+    public int updateQuestion(QscQuestionDTO questionDTO) throws Exception;
 }

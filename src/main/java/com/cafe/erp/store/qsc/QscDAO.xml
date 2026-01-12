@@ -21,7 +21,7 @@
 		</where>
 	</sql>
 
-	<select id="questionList" parameterType="QscQuestionSearchDTO" resultType="QscQuestionDTO">
+    <select id="questionList" parameterType="QscQuestionSearchDTO" resultType="QscQuestionDTO">
 		SELECT * FROM qsc_list
 		<include refid="searchQuestionCondition" />
 		ORDER BY list_id
@@ -38,6 +38,12 @@
 		INSERT INTO qsc_list VALUE (null, #{listCategory}, #{listQuestion}, #{listMaxScore}, 1)
 	</insert>
 
+	<update id="updateQuestion" parameterType="QscQuestionDTO">
+		UPDATE qsc_list
+		SET list_category = #{listCategory}, list_question = #{listQuestion}, list_max_score = #{listMaxScore}, list_is_use= #{listIsUse}
+		WHERE list_id = #{listId}
+	</update>
+
 	<select id="excelQuestionList" parameterType="QscQuestionSearchDTO" resultType="QscQuestionDTO">
 		SELECT * FROM qsc_list
 		<include refid="searchQuestionCondition" />
@@ -51,11 +57,11 @@
 			</if>
 
 			<if test="searchStoreName != null and searchStoreName != ''">
-				AND s.store_name = #{searchStoreName}
+				AND s.store_name LIKE CONCAT('%', #{searchStoreName}, '%')
 			</if>
 
-			<if test="searchMemberId != null">
-				AND q.member_id = #{searchMemberId}
+			<if test="searchMemname != null and searchMemname != ''">
+				AND m.mem_name LIKE CONCAT('%', #{searchMemname}, '%')
 			</if>
 
 			<if test="searchQscTitle != null and searchQscTitle != ''">
@@ -78,7 +84,9 @@
 
 	<select id="qscCount" parameterType="QscSearchDTO" resultType="Long">
 		SELECT COUNT(q.qsc_id)
-		FROM qsc q LEFT JOIN store s ON q.store_id = s.store_id
+		FROM qsc q
+		LEFT JOIN store s ON q.store_id = s.store_id
+		LEFT JOIN member m ON q.member_id = m.member_id
 		<include refid="searchQscCondition" />
 	</select>
 
@@ -119,5 +127,79 @@
 		VALUE (null, #{qscId}, #{listId}, #{detailScore})
 	</insert>
 
+	<select id="qscDetail" parameterType="Integer" resultMap="QscDetailMap">
+		SELECT
+			q.qsc_id,
+			q.store_id,
+			q.member_id,
+			q.qsc_title,
+			q.qsc_date,
+			q.qsc_grade,
+			q.qsc_question_total_score,
+			q.qsc_total_score,
+			q.qsc_opinion,
+			s.store_name,
+			m.mem_name,
+			qd.detail_id,
+			qd.list_id,
+			qd.detail_score,
+			ql.list_category,
+			ql.list_question,
+			ql.list_max_score
+		FROM qsc q
+		LEFT JOIN store s ON q.store_id = s.store_id
+		LEFT JOIN member m ON q.member_id = m.member_id
+		LEFT JOIN qsc_detail qd ON q.qsc_id = qd.qsc_id
+		LEFT JOIN qsc_list ql ON qd.list_id = ql.list_id
+		WHERE q.qsc_id = #{qscId};
+	</select>
+
+	<resultMap id="QscDetailMap" type="QscDTO">
+		<id property="qscId" column="qsc_id"/>
+		<result property="storeId" column="store_id"/>
+		<result property="memberId" column="member_id"/>
+		<result property="qscTitle" column="qsc_title"/>
+		<result property="qscDate" column="qsc_date"/>
+		<result property="qscGrade" column="qsc_grade"/>
+		<result property="qscQuestionTotalScore" column="qsc_question_total_score"/>
+		<result property="qscTotalScore" column="qsc_total_score"/>
+		<result property="qscOpinion" column="qsc_opinion"/>
+		<result property="storeName" column="store_name"/>
+		<result property="memName" column="mem_name"/>
+
+		<collection property="qscDetailDTOS" javaType="List" ofType="QscDetailDTO">
+			<id property="detailId" column="detail_id"/>
+			<result property="listId" column="list_id"/>
+			<result property="detailScore" column="detail_score"/>
+
+			<association property="questionDTO" javaType="QscQuestionDTO">
+				<id property="listId" column="list_id"/>
+				<result property="listCategory" column="list_category"/>
+				<result property="listQuestion" column="list_question"/>
+				<result property="listMaxScore" column="list_max_score"/>
+			</association>
+		</collection>
+	</resultMap>
+
+	<select id="excelList" resultType="QscDTO">
+		SELECT
+			q.qsc_id,
+			s.store_name,
+			o.mem_name AS owner_name,
+			s.store_address,
+			m.mem_name,
+			q.qsc_title,
+			q.qsc_date,
+			q.qsc_question_total_score,
+			q.qsc_total_score,
+			q.qsc_grade,
+			q.qsc_opinion
+			FROM qsc q
+		LEFT JOIN store s ON q.store_id = s.store_id
+		LEFT JOIN member m ON q.member_id = m.member_id
+		LEFT JOIN member o ON s.member_id = o.member_id
+		<include refid="searchQscCondition" />
+		ORDER BY q.qsc_id DESC
+	</select>
 
 </mapper>

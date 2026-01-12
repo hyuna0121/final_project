@@ -51,6 +51,7 @@
     <link rel="stylesheet" href="/css/store/main.css">
 
     <!-- Page CSS -->
+	  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <!-- Helpers -->
     <script src="/vendor/js/helpers.js"></script>
@@ -82,10 +83,10 @@
 			    <div class="col-12 px-0">
                     <ul class="nav nav-pills mb-3" role="tablist">
 						<li class="nav-item">
-							<a href="/store/qsc/list" class="nav-link active"><i class="bx bx-store me-1"></i> QSC 목록</a>
+							<a href="/store/qsc/list" class="nav-link active"><i class="bx bx-task me-1"></i> QSC</a>
 						</li>
                         <li class="nav-item">
-                        	<a href="/store/qsc/admin/question" class="nav-link active"><i class="bx bx-store me-1"></i> QSC 질문목록</a>
+                        	<a href="/store/qsc/admin/question" class="nav-link active"><i class="bx bx-list-check me-1"></i> QSC 질문</a>
                         </li>
                     </ul>
                 </div>
@@ -96,7 +97,7 @@
 					    	<form id="qscSearchForm" method="get" action="/store/qsc/list">
 					    		<input type="hidden" name="page" id="page" value="1">
 					      		<div class="row g-3">
-					        		<div class="col-12 col-sm-6 col-md-4 col-lg-2">
+					        		<div class="col-12 col-sm-6 col-lg-2">
 					          			<label class="form-label small">평가등급</label>
 								        	<select class="form-select" id="searchQscGrade" name="searchQscGrade">
 								            	<option value="">전체</option>
@@ -107,6 +108,30 @@
 								            </select>
 					        		</div>
 
+									<div class="col-12 col-sm-6 col-lg-4">
+										<label class="form-label small">점검 기간</label>
+										<div class="input-group">
+											<span class="input-group-text"><i class="bx bx-calendar"></i></span>
+											<input type="text" class="form-control" id="daterange" placeholder="기간을 선택하세요" />
+										</div>
+
+										<input type="hidden" id="searchStartDate" name="searchStartDate" value="${pager.searchStartDate}" />
+										<input type="hidden" id="searchEndDate" name="searchEndDate" value="${pager.searchEndDate}" />
+									</div>
+									<div class="col-12 col-sm-6 col-lg-3">
+										<label class="form-label small">담당자명</label>
+										<div class="input-group">
+											<span class="input-group-text"><i class="bx bx-user"></i></span>
+											<input type="text" class="form-control" placeholder="담당자명" id="searchMemname" name="searchMemname" value="${pager.searchMemname}" />
+										</div>
+									</div>
+									<div class="col-12 col-sm-6 col-lg-3">
+										<label class="form-label small">가맹점명</label>
+										<div class="input-group">
+											<span class="input-group-text"><i class="bx bx-store"></i></span>
+											<input type="text" class="form-control" placeholder="가맹점명" id="searchStoreName" name="searchStoreName" value="${pager.searchStoreName}" />
+										</div>
+									</div>
 									<div class="col-12 col-md-6 col-lg-4">
 										<label class="form-label small">제목</label>
 										<div class="input-group">
@@ -116,7 +141,7 @@
 									</div>
 
 
-							        <div class="col-12 col-lg-4 d-flex align-items-end justify-content-end gap-2 mt-4">
+							        <div class="col-12 col-md-6 col-lg-8 d-flex align-items-end justify-content-end gap-2 mt-4">
 										<button class="btn btn-outline-secondary text-nowrap" type="button" onclick="resetSearchForm()"><i class="bx bx-refresh"></i> 초기화</button>
 							            <button class="btn btn-primary text-nowrap" onclick="searchQsc()">
 							            	<i class="bx bx-search me-1"></i> 조회
@@ -161,7 +186,7 @@
 					         				<td class="fw-bold">${dto.qscId}</td>
 											<td>${dto.memName}</td>
 											<td>${dto.storeName}</td>
-											<td><a href="/store/qsc/detail?qscId=${qscId}" class="text-primary">${dto.qscTitle}</a></td>
+											<td><a href="/store/qsc/detail?qscId=${dto.qscId}" class="text-primary">${dto.qscTitle}</a></td>
 								            <td>
 												<c:if test="${dto.qscGrade eq 'A'}"><span class="badge bg-label-primary">A</span></c:if>
 												<c:if test="${dto.qscGrade eq 'B'}"><span class="badge bg-label-success">B</span></c:if>
@@ -235,6 +260,8 @@
 
     <!-- Vendors JS -->
     <script src="/vendor/libs/apex-charts/apexcharts.js"></script>
+	<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 
     <!-- Main JS -->
     <script src="/js/main.js"></script>
@@ -249,6 +276,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     
-    <script type="text/javascript" src="/js/store/qsc/question.js"></script>
+    <script type="text/javascript" src="/js/store/qsc/list.js"></script>
   </body>
 </html>

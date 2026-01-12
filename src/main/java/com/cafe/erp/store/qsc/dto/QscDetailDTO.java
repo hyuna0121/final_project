@@ -13,5 +13,6 @@ public class QscDetailDTO {
     private Integer qscId;
     private Integer listId;
     private Integer detailScore;
+    private QscQuestionDTO questionDTO;
 
 }

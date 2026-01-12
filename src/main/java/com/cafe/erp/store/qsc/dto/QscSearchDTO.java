@@ -16,7 +16,7 @@ public class QscSearchDTO extends Pager {
 
     private Integer searchStoreId;
     private String searchStoreName;
-    private Integer searchMemberId;
+    private String searchMemname;
     private String searchQscTitle;
     private LocalDate searchStartDate;
     private LocalDate searchEndDate;
