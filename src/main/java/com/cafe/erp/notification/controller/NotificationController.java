@@ -22,7 +22,7 @@ public class NotificationController {
     private NotificationDAO notificationDAO;
 
     /**
-     * 🔔 내 알림 목록 조회
+     *  내 알림 목록 조회
      */
     @GetMapping
     public List<NotificationDTO> getMyNotifications(
@@ -33,7 +33,7 @@ public class NotificationController {
     }
 
     /**
-     * 🔔 알림 읽음 처리
+     *  알림 읽음 처리
      */
     @PatchMapping("/{notificationId}/read")
     public void readNotification(
@@ -43,7 +43,7 @@ public class NotificationController {
     }
 
     /**
-     * 🔔 안 읽은 알림 개수 (헤더용)
+     *  안 읽은 알림 개수 (헤더용)
      */
     @GetMapping("/unread-count")
     public int getUnreadCount(

@@ -8,9 +8,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.cafe.erp.files.FileManager;
+import com.cafe.erp.notification.service.NotificationService;
 
 @Service
 public class VocService {
@@ -19,6 +21,9 @@ public class VocService {
 	private VocDAO vocDAO;
 	@Autowired
 	private FileManager fileManager;
+	
+	@Autowired
+	private NotificationService notificationService;
 	
 	@Value("${erp.upload.voc}")
 	private String uploadPath;
@@ -30,13 +35,24 @@ public class VocService {
 		
 		return vocDAO.list(searchDTO);
 	}
-
+	@Transactional
 	public int add(VocDTO vocDTO , Integer memberId) throws Exception {
 		vocDTO.setMemberId(memberId);
-		VocDTO onwer = vocDAO.vocOnwerId(vocDTO);
-		vocDTO.setMemName(onwer.getMemName());
-		vocDTO.setOwnerId(onwer.getOwnerId());
-		return vocDAO.add(vocDTO);
+		
+		// 가맹점 점주 정보 조회
+		VocDTO owner = vocDAO.vocOnwerInfo(vocDTO);
+		vocDTO.setOwnerId(owner.getOwnerId());
+		vocDTO.setOwnerName(owner.getOwnerName());
+		
+		// 작성자 이름 조회
+		vocDTO.setMemName(vocDAO.findWriterName(memberId));
+		// voc 저장
+		vocDAO.add(vocDTO);
+		int vocId = vocDTO.getVocId(); 
+		vocDTO.setVocId(vocId);
+		notificationService.sendVocNotification(vocDTO);
+		
+		return vocId;
 	}
 
 	public VocDTO detail(Integer vocId) throws Exception {

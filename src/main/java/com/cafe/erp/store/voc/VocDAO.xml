@@ -55,23 +55,26 @@
 		LIMIT #{startNum}, #{perPage}
 	</select>
 	
-	<insert id="add" parameterType="VocDTO">
+	<insert id="add" parameterType="VocDTO" useGeneratedKeys="true" keyProperty="vocId">
 		INSERT INTO voc(member_id, store_id, voc_title , voc_type, voc_contact, voc_contents, voc_status, voc_created_at, voc_updated_at) 
 		VALUES (#{memberId}, #{storeId}, #{vocTitle}, #{vocType}, #{vocContact}, #{vocContents}, 0, now(), now())
 	</insert>
-	<!-- 알림 용 가맹점주 아이디 -->
-	<select id="vocOnwerId" parameterType="VocDTO" resultType="VocDTO">
-		SELECT 
-			m.member_id,
-			m.mem_name
-		FROM
-		 store s
-		JOIN member m
-		ON m.member_id = s.member_id
-		WHERE s.store_id = #{storeId}
+	<!-- 알림 용 가맹점주 정보 -->
+	<select id="vocOnwerInfo" parameterType="VocDTO" resultType="VocDTO">
+	    SELECT
+	        m.member_id AS ownerId,
+	        m.mem_name  AS ownerName
+	    FROM store s
+	    JOIN member m
+	        ON m.member_id = s.member_id
+	    WHERE s.store_id = #{storeId}
 	</select>
-	
-	
+	<!-- 알림 용 voc 작성자 조회 -->
+	<select id="findWriterName" parameterType="int" resultType="string">
+	    SELECT mem_name
+	    FROM member
+	    WHERE member_id = #{memberId}
+	</select>
 	
 	<select id="detail" parameterType="Integer" resultType="VocDTO">
 		SELECT 
