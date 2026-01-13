@@ -164,7 +164,6 @@ function resetPaymentForm() {
 function resetPayAmount() {
   const payInput = document.getElementById('payAmount');
   if (!payInput) return;
-  console.log('click')
   payInput.value = formatNumber(0);
 }
 

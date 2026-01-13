@@ -117,9 +117,24 @@ function createNotificationItem(n) {
     </div>
   `;
 
-  li.onclick = () => (location.href = n.notificationLink);
+  li.addEventListener("click", async () => {
+    if (n.notificationReadYn === "N") {
+      try {
+        await markNotificationAsRead(n.notificationId);
+        n.notificationReadYn = "Y";
+        li.classList.remove("unread");
+        loadUnreadCount();
+      } catch (e) {
+        console.error("읽음 처리 실패", e);
+      }
+    }
+
+    location.href = n.notificationLink;
+  });
+
   return li;
 }
+
 
 function renderEmptyModal() {
   document.getElementById("modalNotificationList").innerHTML = `
@@ -162,3 +177,9 @@ document.querySelectorAll(".notification-tabs button").forEach(btn => {
     loadModalNotifications();
   });
 });
+
+function markNotificationAsRead(notificationId) {
+  return fetch(`/api/notifications/${notificationId}/read`, {
+    method: "PATCH"
+  });
+}
