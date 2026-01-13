@@ -33,7 +33,7 @@
     </insert>
 	
 	<select id="selectNotificationPage"
-        resultType="com.cafe.erp.notification.NotificationDTO">
+	        resultType="com.cafe.erp.notification.NotificationDTO">
 	    SELECT
 	        notification_id,
 	        notification_type,
@@ -41,11 +41,17 @@
 	        notification_content,
 	        notification_link,
 	        notification_read_yn,
-	        notification_created_at,
-	        sender_member_id,
-	        receiver_member_id
+	        notification_created_at
 	    FROM notification
 	    WHERE receiver_member_id = #{memberId}
+	
+	    <if test="filter == 'UNREAD'">
+	        AND notification_read_yn = 'N'
+	    </if>
+	    <if test="filter == 'READ'">
+	        AND notification_read_yn = 'Y'
+	    </if>
+	
 	    ORDER BY notification_created_at DESC
 	    LIMIT #{size} OFFSET #{offset}
 	</select>
