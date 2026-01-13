@@ -2,20 +2,56 @@
  * 
  */
 
-
+let notificationPage = 0;
+const notificationSize = 5;
+let notificationLoading = false;
+let notificationHasMore = true;
 
 document.addEventListener("DOMContentLoaded", () => {
+  notificationPage = 0;
+  notificationHasMore = true;
+  loadUnreadCount();
   loadNotifications();
 });
 
+const notificationList = document.getElementById("notificationList");
+
+notificationList.addEventListener("scroll", () => {
+  const nearBottom =
+    notificationList.scrollTop +
+    notificationList.clientHeight >=
+    notificationList.scrollHeight - 20;
+
+  if (nearBottom) {
+    loadNotifications();
+  }
+});
+
 function loadNotifications() {
-  fetch("/api/notifications")
-    .then(res => res.json())
+	
+	if(notificationLoading || !notificationHasMore) return;
+	
+	notificationLoading = true;
+	
+  fetch(`/api/notifications?page=${notificationPage}&size=${notificationSize}`)
+    .then(res => {
+		if(!res.ok) throw new Error("알림 조회 실패");
+		return res.json()
+	})
     .then(data => {
+		
+		if(data.length === 0){
+			notificationHasMore = false;
+			return;
+		}
+		
       renderNotifications(data);
-      updateNotificationBadge(data);
+	  notificationPage++;
     })
-    .catch(err => console.error("알림 조회 실패", err));
+    .catch(err => console.error(err))
+	.finally(() => {
+		notificationLoading = false;
+	});
 }
 
 function createNotificationItem(n) {
@@ -24,7 +60,6 @@ function createNotificationItem(n) {
 
   li.innerHTML = `
     <div class="notify-signal"></div>
-
     <div class="notify-icon">
       <i class="bx bx-message-rounded-detail"></i>
     </div>
@@ -40,37 +75,52 @@ function createNotificationItem(n) {
     </div>
   `;
 
-  li.onclick = () => {
-    fetch(`/api/notifications/${n.notificationId}/read`, { method: "PATCH" });
+  li.onclick = async () => {
+    if (n.notificationReadYn === 'N') {
+      await fetch(`/api/notifications/${n.notificationId}/read`, {
+        method: "PATCH"
+      });
+
+      n.notificationReadYn = 'Y';
+
+      li.classList.remove("unread");
+      li.querySelector(".notify-signal")?.remove();
+
+      updateNotificationBadgeAfterClick();
+    }
+
     location.href = n.notificationLink;
   };
+
 
   return li;
 }
 
 function renderNotifications(notifications) {
   const list = document.getElementById("notificationList");
-  list.innerHTML = "";
 
   notifications.forEach(n => {
-    const item = createNotificationItem(n);
-    list.appendChild(item);
+    list.appendChild(createNotificationItem(n));
   });
 }
 
 
-/* 🔔 안 읽은 알림 개수 */
-function updateNotificationBadge(notifications) {
+function updateNotificationBadge(count) {
   const badge = document.getElementById("notificationBadge");
-  const unread = notifications.filter(n => n.notificationReadYn === "N").length;
+  if (!badge) return;
 
-  if (unread > 0) {
-    badge.textContent = unread;
+  const safeCount = Number.isInteger(count) && count > 0 ? count : 0;
+
+  if (safeCount > 0) {
+    badge.textContent = safeCount;
     badge.style.display = "inline-block";
   } else {
+    badge.textContent = "";
     badge.style.display = "none";
   }
 }
+
+
 
 function timeAgo(dateString) {
   if (!dateString) return "";
@@ -92,3 +142,25 @@ function timeAgo(dateString) {
   return past.toLocaleDateString();
 }
 
+function updateNotificationBadgeAfterClick() {
+  const badge = document.getElementById("notificationBadge");
+  if (!badge) return;
+
+  const current = Number(badge.textContent);
+
+  if (isNaN(current) || current <= 1) {
+    badge.style.display = "none";
+    badge.textContent = "";
+  } else {
+    badge.textContent = current - 1;
+  }
+}
+
+function loadUnreadCount() {
+  fetch("/api/notifications/unread-count")
+    .then(res => res.json())
+    .then(count => {
+      updateNotificationBadge(count);
+    })
+    .catch(err => console.error("안읽은 알림 개수 조회 실패", err));
+}

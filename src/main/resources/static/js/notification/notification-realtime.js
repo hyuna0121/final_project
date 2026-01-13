@@ -2,10 +2,8 @@ let stompClient = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     const memberId = document.getElementById("loggedInMemberId")?.value;
-    console.log("👤 로그인 사용자 ID:", memberId);
 
     if (!memberId) {
-        console.error("❌ memberId 없음 → WebSocket 연결 중단");
         return;
     }
 
@@ -13,19 +11,15 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function connectNotificationSocket(memberId) {
-    console.log("🔌 WebSocket 연결 시도");
 
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
 
     stompClient.connect({}, function () {
-        console.log("✅ WebSocket 연결 성공");
 
 		stompClient.subscribe(
 		    '/user/sub/notification',
 		    function (message) {
-		        console.log("🔥 [JS] STOMP 메시지 수신 RAW =", message);
-		        console.log("🔥 [JS] message.body =", message.body);
 
 		        const notification = JSON.parse(message.body);
 		        onReceiveNotification(notification);

@@ -7,7 +7,14 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface NotificationDAO {
-
+	
+	// 목록 조회 페이징
+    List<NotificationDTO> selectNotificationPage(
+            int memberId,
+            int size,
+            int offset
+    );
+	
     // 알림 저장
     int insertNotification(NotificationDTO notification);
 
@@ -19,4 +26,5 @@ public interface NotificationDAO {
 
     // 안 읽은 알림 개수
     int selectUnreadCount(int memberId);
+    
 }
