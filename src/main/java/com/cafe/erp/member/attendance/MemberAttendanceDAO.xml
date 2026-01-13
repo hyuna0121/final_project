@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="com.cafe.erp.member.attendance.MemberAttendanceDAO">
+	    <select id="attendanceList" parameterType="int" resultType="MemberAttendanceDTO">
+		    SELECT 
+		          ma.mem_attendance_start_date,
+		          ma.mem_attendance_end_date,
+		          ma.mem_attendance_type,
+		          ma.mem_attendance_used_days,
+		          ma.mem_attendance_reason,
+		          a.app_status,   a.approval_id
+		    FROM 
+		    	member_attendance ma
+		    JOIN 
+		    	approval a ON ma.approval_id = a.approval_id
+		    WHERE 
+		    	ma.member_id = #{memberId}
+		    ORDER BY 
+		    	ma.mem_attendance_start_date DESC
+	    </select>
+	    
+	  <select id="selectLeaveStats" parameterType="int" resultType="MemberLeaveStatsDTO">
+		    SELECT 
+		        ml.mem_leave_total_days,
+		        IFNULL(SUM(ma.mem_attendance_used_days), 0) <!-- 연차 개수가 없으면 0으로 바꿔 출력 -->
+		    FROM 
+		    	member_leave ml
+		    LEFT JOIN 
+		    	member_attendance ma 
+		    	ON ml.member_id = ma.member_id 
+		        AND ma.approval_id IN (SELECT approval_id FROM approval WHERE app_status = '승인')
+		    WHERE 
+		    	ml.member_id = #{memberId}
+		      AND ml.mem_leave_year = 2026
+		</select>
+	 </mapper>

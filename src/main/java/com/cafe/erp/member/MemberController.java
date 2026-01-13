@@ -1,6 +1,6 @@
 package com.cafe.erp.member;
 
-import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.service.annotation.PatchExchange;
 
+import com.cafe.erp.company.CompanyHolidayDTO;
+import com.cafe.erp.company.CompanyHolidayService;
+import com.cafe.erp.member.attendance.MemberAttendanceDAO;
+import com.cafe.erp.member.attendance.MemberAttendanceDTO;
+import com.cafe.erp.member.attendance.MemberLeaveStatsDTO;
 import com.cafe.erp.member.commute.MemberCommuteDTO;
 import com.cafe.erp.member.commute.MemberCommuteService;
 import com.cafe.erp.security.UserDTO;
 
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 @Controller
@@ -42,10 +45,19 @@ public class MemberController {
 
 	@Autowired
 	private EmailService emailService;
+	
+	@Autowired
+	private CompanyHolidayService companyHolidayService;
+	
+	@Autowired
+	private MemberAttendanceDAO memberAttendanceDAO;
 
 	MemberController(PasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
 	}
+	
+	
+	
 
 	@GetMapping("login")
 	public void login() throws Exception {
@@ -56,6 +68,74 @@ public class MemberController {
 	public void mypage() throws Exception{
 		
 	}
+	
+	
+	
+	@GetMapping("calendar")
+	@ResponseBody
+	public List<Map<String, Object>> holidayView(@AuthenticationPrincipal UserDTO userDTO) throws Exception{
+		List<CompanyHolidayDTO> list = companyHolidayService.selectHolidaysList();
+		
+		List<Map<String, Object>> view = new ArrayList<>();
+		
+		for(CompanyHolidayDTO dto : list) {
+			Map<String, Object> calendar = new HashMap<>();
+			calendar.put("title", dto.getComHolidayName()); // 휴일 이름
+			calendar.put("start", dto.getComHolidayDate().toString()); // 휴일 
+			
+			calendar.put("className", "holiday-event");
+			calendar.put("allDay", true);
+			view.add(calendar);
+		}
+		
+		
+		int memberId = userDTO.getMember().getMemberId();
+		
+		MemberCommuteDTO commuteDTO = new MemberCommuteDTO();
+		commuteDTO.setMemberId(memberId);
+		List<MemberCommuteDTO> commuteList = commuteService.attendanceList(commuteDTO);
+		
+		for(MemberCommuteDTO dto : commuteList) {
+			String state = dto.getMemCommuteState();
+			if(dto.getMemCommuteWorkDate() != null) {
+				Map<String, Object> checkIn = new HashMap<>();
+				String checkInDate = dto.getMemCommuteInTime().toString();
+				String checkInTime = checkInDate.substring(11, 16);
+				
+				if ("지각".equals(state) || checkInTime.compareTo("09:00") > 0) {
+		            checkIn.put("title", "지각 (" + checkInTime + ")");    
+		            checkIn.put("className", "commute-late-event"); 
+		        } else {
+					checkIn.put("title", "출근 (" + checkInTime + ")") ;
+					checkIn.put("className", "commute-go-event");
+				}
+				checkIn.put("start",checkInDate );
+				view.add(checkIn);
+			}
+			
+			if (dto.getMemCommuteOutTime() != null) {
+                Map<String, Object> checkout = new HashMap<>();
+                String checkOutDate = dto.getMemCommuteOutTime().toString();
+                String checkOutTime = checkOutDate.substring(11, 16);
+                
+                
+                if("조퇴".equals(state)) {
+                	checkout.put("title", "조퇴 (" + checkOutTime + ")");
+                	checkout.put("className", "commute-late-event");
+					
+				} else {
+					checkout.put("title", "퇴근 (" + checkOutTime + ")");
+					checkout.put("className", "commute-leave-event");
+					
+				}
+                checkout.put("start",checkOutDate );
+				view.add(checkout);
+			}
+		}
+		return view;
+	}
+	
+	
 
 	@GetMapping("AM_group_chart")
 	public String chatList(Model model, @AuthenticationPrincipal UserDTO userDTO, MemberDTO memberDTO)
@@ -83,6 +163,8 @@ public class MemberController {
 
 		return "member/AM_group_chart";
 	}
+	
+	
 
 	@GetMapping("checkCount")
 	@ResponseBody
@@ -108,6 +190,8 @@ public class MemberController {
 	    resultMem.put("deptCounts", deptCounts);
 		return resultMem;
 	}
+	
+	
 
 	@GetMapping("admin_member_list")
 	public String list(MemberDTO memberDTO, Model model) throws Exception {
@@ -122,6 +206,8 @@ public class MemberController {
 
 		return "member/admin_member_list";
 	}
+	
+	
 
 	@PostMapping("admin_member_add")
 	public String add(MemberDTO memberDTO, Model model) throws Exception {
@@ -146,20 +232,38 @@ public class MemberController {
 		emailService.sendPasswordEmail(memberDTO.getMemEmail(), pw, memberDTO.getMemName());
 		return "redirect:./AM_member_detail?memberId=" + memid;
 	}
+	
+	
 
 	@GetMapping("AM_member_detail")
-	public String detail(MemberDTO memberDTO, Model model) throws Exception {
-		MemberDTO member = memberService.detail(memberDTO);
-		model.addAttribute("dto", member);
+	public String detail(MemberDTO memberDTO, Model model, @AuthenticationPrincipal UserDTO userDTO) throws Exception {
+		int targetMemberId = memberDTO.getMemberId();
+	    
+	    if (targetMemberId == 0) {
+	        targetMemberId = userDTO.getMember().getMemberId();
+	        memberDTO.setMemberId(targetMemberId); 
+	    }
 
-		MemberCommuteDTO commuteDTO = new MemberCommuteDTO();
-		commuteDTO.setMemberId(member.getMemberId());
+	    MemberDTO member = memberService.detail(memberDTO);
+	    model.addAttribute("dto", member);
 
-		List<MemberCommuteDTO> attendanceList = commuteService.attendanceList(commuteDTO);
-		model.addAttribute("attendanceList", attendanceList);
+	    if (member != null) {
+	        MemberCommuteDTO commuteDTO = new MemberCommuteDTO();
+	        commuteDTO.setMemberId(targetMemberId); 
+	        List<MemberCommuteDTO> attendanceList = commuteService.attendanceList(commuteDTO);
+	        model.addAttribute("attendanceList", attendanceList);
 
-		return "member/AM_member_detail";
+	        List<MemberAttendanceDTO> vacationList = memberAttendanceDAO.attendanceList(targetMemberId);
+	        model.addAttribute("vacationList", vacationList);
+	        
+	        MemberLeaveStatsDTO stats = memberAttendanceDAO.selectLeaveStats(targetMemberId);
+	        model.addAttribute("stats", stats);
+	    }
+
+	    return "member/AM_member_detail";
 	}
+	
+	
 
 	@PostMapping("member_info_update")
 	@ResponseBody
@@ -175,6 +279,8 @@ public class MemberController {
 		return "success";
 	}
 
+	
+	
 	@PostMapping("reset_password")
 	@ResponseBody
 	public String resetPassword(@RequestParam("memberId") int memberId) throws Exception {
@@ -200,6 +306,8 @@ public class MemberController {
 		return "success";
 	}
 
+	
+	
 	@PostMapping("changePassword")
 	@ResponseBody
 	public String changePassword(@Valid MemberChangePasswordDTO changePasswordDTO, BindingResult bindingResult,
@@ -221,26 +329,14 @@ public class MemberController {
 		return result > 0 ? "success" : "fail";
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
+	
+	
+	
+	
+	
+	
+	
 	@PostMapping("InActive")
 	@ResponseBody
 	public String InActive(@RequestParam("memberId") int memberId) throws Exception {
@@ -252,18 +348,21 @@ public class MemberController {
 		return "success";
 	}
 
+	
 	@GetMapping("sessionCheck")
 	@ResponseBody
 	public String sessionCheck() {
 		return "active";
 	}
 
+	
 	@GetMapping("/search/owner")
 	@ResponseBody
 	public List<MemberDTO> searchOwner(@RequestParam String keyword) throws Exception {
 		return memberService.searchOwner(keyword);
 	}
 
+	
 	@GetMapping("/search/manager")
 	@ResponseBody
 	public List<MemberDTO> searchManager(@RequestParam String keyword) throws Exception {

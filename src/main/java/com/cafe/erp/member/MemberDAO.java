@@ -60,6 +60,9 @@ public interface MemberDAO {
 	public String getMemberPassword(int memberId) throws Exception;
 	
 	public List<MemberDTO> searchManager(String keyword) throws Exception;
+
+	// 계정 잠금
+	public void lockAccount(int memberId) throws Exception;
 	}
 
 

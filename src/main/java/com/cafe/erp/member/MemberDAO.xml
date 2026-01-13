@@ -241,6 +241,12 @@
 			member_id = #{memberId}
 	</update>
 	
+	<update id="lockAccount" parameterType="int">
+	    UPDATE member 
+	    SET mem_is_locked = 'Y'
+	    WHERE member_id = #{memberId}
+	</update>
+	
 	
 	
 	<select id="searchOwner" parameterType="String" resultType="MemberDTO"> 

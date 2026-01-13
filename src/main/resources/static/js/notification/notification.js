@@ -6,6 +6,7 @@ let notificationPage = 0;
 const notificationSize = 5;
 let notificationLoading = false;
 let notificationHasMore = true;
+let modalFilter = "ALL";
 
 document.addEventListener("DOMContentLoaded", () => {
   notificationPage = 0;
@@ -164,3 +165,100 @@ function loadUnreadCount() {
     })
     .catch(err => console.error("안읽은 알림 개수 조회 실패", err));
 }
+
+/*========== 알람 전체 보기 모달 함수 ==========*/
+
+document.getElementById("notificationModal")
+  .addEventListener("shown.bs.modal", () => {
+    resetModalNotifications();
+    loadModalNotifications();
+  });
+
+  
+  function resetModalNotifications() {
+    modalPage = 0;
+    modalHasMore = true;
+    modalLoading = false;
+  }
+
+  
+  function loadModalNotifications() {
+    if (modalLoading || !modalHasMore) return;
+    modalLoading = true;
+
+    fetch(`/api/notifications?page=${modalPage}&size=10&filter=${modalFilter}`)
+      .then(res => {
+        if (!res.ok) throw new Error("모달 알림 조회 실패");
+        return res.json();
+      })
+      .then(data => {
+        const list = document.getElementById("modalNotificationList");
+        if (!list) return;
+
+        if (modalPage === 0) {
+          list.innerHTML = "";
+        }
+
+        if (data.length === 0 && modalPage === 0) {
+          modalHasMore = false;
+          renderEmptyModal("알림이 없습니다");
+          return;
+        }
+
+        if (data.length === 0) {
+          modalHasMore = false;
+          return;
+        }
+
+        const empty = list.querySelector(".empty-notification");
+        if (empty) empty.remove();
+
+        data.forEach(n => list.appendChild(createNotificationItem(n)));
+        modalPage++;
+      })
+      .catch(err => console.error(err))
+      .finally(() => {
+        modalLoading = false;
+      });
+  }
+
+  
+  document.querySelectorAll(".notification-tabs button")
+    .forEach(btn => {
+      btn.addEventListener("click", () => {
+        modalFilter = btn.dataset.filter;
+
+        document
+          .querySelectorAll(".notification-tabs button")
+          .forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        resetModalNotifications();
+        loadModalNotifications();
+      });
+    });
+	
+	
+	const modalList = document.getElementById("modalNotificationList");
+
+	modalList.addEventListener("scroll", () => {
+	  const nearBottom =
+	    modalList.scrollTop + modalList.clientHeight >=
+	    modalList.scrollHeight - 20;
+
+	  if (nearBottom) {
+	    loadModalNotifications();
+	  }
+	});
+	
+	function renderEmptyModal(message = "알림이 없습니다") {
+	  const list = document.getElementById("modalNotificationList");
+	  if (!list) return;
+
+	  list.innerHTML = `
+	    <li class="empty-notification">
+	      <i class="bx bx-bell-off"></i>
+	      <span>${message}</span>
+	    </li>
+	  `;
+	}

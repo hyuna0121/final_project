@@ -12,7 +12,8 @@ public interface NotificationDAO {
     List<NotificationDTO> selectNotificationPage(
             int memberId,
             int size,
-            int offset
+            int offset,
+            String filter
     );
 	
     // 알림 저장

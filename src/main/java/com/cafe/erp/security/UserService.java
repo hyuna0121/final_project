@@ -35,15 +35,7 @@ public class UserService implements UserDetailsService{
 		if(dto == null) {
 			throw new UsernameNotFoundException(username + "은(는) 없는 사원입니다.");
 		}
-		System.out.println("========================================");
-        System.out.println("1. 사용자가 입력한 ID: " + username);
-        System.out.println("2. DB에서 가져온 암호: [" + dto.getMemPassword() + "]"); 
-        // ↑↑ 대괄호 [] 안에 값이 꽉 차있어야 함. 비어있으면 MyBatis 문제!
         
-        boolean isMatch = passwordEncoder.matches("1234", dto.getMemPassword());
-        System.out.println("3. 1234랑 매칭 결과: " + isMatch);
-        System.out.println("========================================");
-        // ==========================================================
 		return new UserDTO(dto);
 		
 	} 

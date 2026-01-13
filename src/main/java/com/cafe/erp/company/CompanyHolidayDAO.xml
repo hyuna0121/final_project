@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="com.cafe.erp.company.CompanyHolidayDAO">
+    	<insert id="insertHoliday" parameterType="CompanyHolidayDTO">
+    		INSERT INTO company_holiday(com_holiday_date, com_holiday_name, com_holiday_type, member_id)
+    		VALUES(#{comHolidayDate}, #{comHolidayName}, #{comHolidayType}, #{memberId})
+    	</insert>
+    	
+    	<select id="selectHolidayList" resultType="CompanyHolidayDTO">
+    		SELECT * FROM company_holiday
+    	</select>
+    </mapper>

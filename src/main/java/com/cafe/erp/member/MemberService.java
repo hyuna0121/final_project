@@ -184,6 +184,8 @@ public class MemberService {
 		return memberDAO.searchManager(keyword);
 	}
 
+	public void lockAccount(int memberId) throws Exception {}
+
 	
 	
 
