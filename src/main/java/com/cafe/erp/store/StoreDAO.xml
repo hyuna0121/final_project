@@ -49,7 +49,28 @@
             LEFT JOIN member m                
             ON s.member_id = m.member_id 
       	<include refid="searchCondition" />
-        ORDER BY s.store_id
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'storeId'"> s.store_id </when>
+						<when test="sort.field == 'storeName'"> s.store_name </when>
+						<when test="sort.field == 'storeOwnerName'"> m.mem_name </when>
+						<when test="sort.field == 'storeAddress'"> s.store_address </when>
+						<when test="sort.field == 'storeStatus'"> s.store_status </when>
+						<when test="sort.field == 'storeStartTime'"> s.store_start_time </when>
+						<when test="sort.field == 'storeCloseTime'"> s.store_close_time </when>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY s.store_id
+			</otherwise>
+		</choose>
         LIMIT #{startNum}, #{perPage}
 	</select>
 
@@ -103,9 +124,30 @@
        FROM 
            store s             
            LEFT JOIN member m                
-           ON s.member_id = m.member_id 
-      		<include refid="searchCondition" />
-           ORDER BY s.store_id
+           ON s.member_id = m.member_id
+		<include refid="searchCondition" />
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'storeId'"> s.store_id </when>
+						<when test="sort.field == 'storeName'"> s.store_name </when>
+						<when test="sort.field == 'storeOwnerName'"> m.mem_name </when>
+						<when test="sort.field == 'storeAddress'"> s.store_address </when>
+						<when test="sort.field == 'storeStatus'"> s.store_status </when>
+						<when test="sort.field == 'storeStartTime'"> s.store_start_time </when>
+						<when test="sort.field == 'storeCloseTime'"> s.store_close_time </when>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY s.store_id
+			</otherwise>
+		</choose>
 	</select>
 	
 	<select id="detail" parameterType="StoreDTO" resultType="StoreDTO">

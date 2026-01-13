@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <div class="modal fade" id="productSearchModal" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -13,18 +14,22 @@
       <div class="modal-body">
 
         <!-- 거래처 선택 (본사만 노출) -->
-        <c:if test="${showVendorSelect}">
-          <div class="row g-2 mb-2">
-            <div class="col-md-12">
-              <select class="form-select" id="vendorCode" name="vendorCode">
-                <option value="">거래처 선택</option>
-                <c:forEach var="v" items="${vendorList}">
-                  <option value="${v.vendorCode}">${v.vendorName}</option>
-                </c:forEach>
-              </select>
-            </div>
-          </div>
-        </c:if>
+        <c:choose>
+        	<c:when test = "${fn:startsWith(member.memberId, 1)}">
+		        <c:if test="${showVendorSelect}">
+		          <div class="row g-2 mb-2">
+		            <div class="col-md-12">
+		              <select class="form-select" id="vendorCode" name="vendorCode">
+		                <option value="">거래처 선택</option>
+		                <c:forEach var="v" items="${vendorList}">
+		                  <option value="${v.vendorCode}">${v.vendorName}</option>
+		                </c:forEach>
+		              </select>
+		            </div>
+		          </div>
+		        </c:if>
+        	</c:when>
+        </c:choose>
 
         <!-- 검색 -->
         <div class="row g-2 mb-3">

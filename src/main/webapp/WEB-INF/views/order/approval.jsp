@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 
 <html
@@ -68,6 +69,7 @@
 
         <!-- Layout container -->
         <div class="layout-page ">
+        <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
           <div class="content-wrapper">
             
@@ -88,32 +90,66 @@
 				              <div class="card h-100 d-flex flex-column">
 				
 				                <div class="card-header d-flex justify-content-between">
-				                  <h5 class="mb-0">발주 목록</h5>
+				                  <c:choose>
+									<c:when test="${hasRequest}">
+									  <h5 class="mb-0">발주 승인</h5>
+									</c:when>
+									<c:when test="${hasApproved}">
+									  <h5 class="mb-0">입고 관리</h5>
+									</c:when>
+								  </c:choose>
 				                  <div class="d-flex gap-2">
-				                    <button class="btn btn-success btn-sm" id="approveBtn">승인</button>
-				                    <button class="btn btn-warning btn-sm">반려</button>
+								  <!-- 본사 -->
+				                  <c:choose>
+									  <c:when test="${fn:startsWith(member.memberId, '1')}">
+									    <c:if test="${hasRequest}">
+									      <button type="button" class="btn btn-sm btn-success" id="approveBtn">승인</button>
+									      <button type="button" class="btn btn-sm btn-warning" id="rejectBtn">반려</button>
+									    </c:if>
+									    <c:if test="${hasApproved}">
+									      <button class="btn btn-success btn-sm" id="receiveBtn">입고</button>
+									      <button type="button" class="btn btn-danger btn-sm">승인취소</button>
+									    </c:if>
+									  </c:when>
+									  <c:otherwise>
+									    <c:if test="${hasApproved}">
+									      <button type="button" class="btn btn-danger btn-sm">승인취소</button>
+									    </c:if>
+									  </c:otherwise>
+									</c:choose>
 				                  </div>
 				                </div>
 				
 				                <!-- 탭 -->
 				                <div class="card-body pb-0">
 				                  <ul class="nav nav-tabs">
-				                    <li class="nav-item">
-				                      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#hqOrderTab">
-				                        본사 발주
-				                      </button>
-				                    </li>
-				                    <li class="nav-item">
-				                      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#storeOrderTab">
-				                        가맹 발주
-				                      </button>
-				                    </li>
+				                    <!-- 본사의 경우 본사/가맹 둘다 표시 -->
+								    <c:if test="${fn:startsWith(member.memberId, '1')}">
+					                    <li class="nav-item">
+					                      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#hqOrderTab">
+					                        본사 발주
+					                      </button>
+					                    </li>
+					                    <li class="nav-item">
+					                      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#storeOrderTab">
+					                        가맹 발주
+					                      </button>
+					                    </li>
+								    </c:if>
+								    <c:if test="${fn:startsWith(member.memberId, '2')}">
+					                    <li class="nav-item">
+					                      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#storeOrderTab">
+					                        가맹 발주
+					                      </button>
+					                    </li>
+								    </c:if>
+								    
 				                  </ul>
 				                </div>
 				
 				                <!-- 목록 -->
 				                <div class="tab-content order-left-body">
-				
+								  <c:if test="${fn:startsWith(member.memberId, '1')}">
 				                  <!-- 본사 발주 -->
 				                  <div class="tab-pane fade show active" id="hqOrderTab">
 				                    <table class="table table-bordered text-center align-middle mb-0">
@@ -137,15 +173,36 @@
 				                              <fmt:formatNumber value="${o.hqOrderTotalAmount}"/>원
 				                            </td>
 				                            <td>${o.memberId}</td>
-				                            <td><span class="badge bg-label-warning">요청</span></td>
+				                            <c:choose>
+				                            	<c:when test="${o.hqOrderStatus == 100}">
+						                            <td><span class="badge bg-label-warning">요청</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 150}">
+						                            <td><span class="badge bg-label-danger">반려</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 200}">
+						                            <td><span class="badge bg-label-success">승인</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 300}">
+						                            <td><span class="badge bg-label-secondary">취소</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 350}">
+						                            <td><span class="badge bg-label-info">출고</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 400}">
+						                            <td><span class="badge bg-label-primary">입고</span></td>
+				                            	</c:when>
+				                            </c:choose>
 				                          </tr>
 				                        </c:forEach>
 				                      </tbody>
 				                    </table>
 				                  </div>
-				
+								  </c:if>	
+								  
+								  
 				                  <!-- 가맹 발주 -->
-				                  <div class="tab-pane fade" id="storeOrderTab">
+				                  <div class="tab-pane fade ${fn:startsWith(member.memberId, '2') ? 'active show' : ''}" id="storeOrderTab">
 				                    <table class="table table-bordered text-center align-middle mb-0">
 				                      <thead class="table-light">
 				                        <tr>
@@ -168,8 +225,27 @@
 				                              <fmt:formatNumber value="${o.hqOrderTotalAmount}"/>원
 				                            </td>
 				                            <td>${o.memberId}</td>
-				                            <td><span class="badge bg-label-warning">요청</span></td>
-				                            <td></span></td>
+				                            <c:choose>
+				                            	<c:when test="${o.hqOrderStatus == 100}">
+						                            <td><span class="badge bg-label-warning">요청</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 150}">
+						                            <td><span class="badge bg-label-danger">반려</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 200}">
+						                            <td><span class="badge bg-label-success">승인</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 300}">
+						                            <td><span class="badge bg-label-secondary">취소</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 350}">
+						                            <td><span class="badge bg-label-info">출고</span></td>
+				                            	</c:when>
+				                            	<c:when test="${o.hqOrderStatus == 400}">
+						                            <td><span class="badge bg-label-primary">입고</span></td>
+				                            	</c:when>
+				                            </c:choose>
+				                            <td>${o.storeRejectionReason}</td>
 				                          </tr>
 				                        </c:forEach>
 				                      </tbody>
@@ -186,14 +262,28 @@
 				              <!-- 승인 리스트 -->
 				              <div class="card approval-list">
 				                <div class="card-header">
-				                  <h5 class="mb-0">승인 리스트</h5>
+				                <c:choose>
+								    <c:when test="${hasRequest}">
+					                  <h5 class="mb-0">승인 리스트</h5>
+									</c:when>
+									<c:when test="${hasApproved}">
+									  <h5 class="mb-0">입고 리스트</h5>
+								    </c:when>
+								</c:choose>
 				                </div>
 				                <div class="order-scroll">
 				                  <table class="table table-sm table-bordered text-center mb-0">
 				                    <thead>
 				                      <tr>
 				                        <th>발주번호</th>
-				                        <th>승인일자</th>
+				                        <c:choose>
+										    <c:when test="${hasRequest}">
+					                          <th>승인일자</th>
+											</c:when>
+											<c:when test="${hasApproved}">
+					                          <th>입고일자</th>
+										    </c:when>
+									    </c:choose>
 				                        <th>총금액</th>
 				                      </tr>
 				                    </thead>
@@ -211,7 +301,14 @@
 				              <!-- 발주 상세 -->
 				              <div class="card order-detail">
 				                <div class="card-header">
-				                  <h5 class="mb-1">발주 상세</h5>
+				                  <c:choose>
+								    <c:when test="${hasRequest}">
+					                  <h5 class="mb-1">승인 상세</h5>
+									</c:when>
+									<c:when test="${hasApproved}">
+									  <h5 class="mb-1">입고 상세</h5>
+								    </c:when>
+								  </c:choose>
 				                  <small class="text-muted">
 				                    발주번호: <span id="selectedOrderId">-</span>
 				                  </small>
@@ -265,7 +362,10 @@
       <div class="layout-overlay layout-menu-toggle"></div>
     </div>
     <!-- / Layout wrapper -->
-
+    
+    <!-- 모달창 -->
+	<c:import url="/WEB-INF/views/order/orderReject.jsp"></c:import>
+	
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="/vendor/libs/jquery/jquery.js"></script>
@@ -290,5 +390,6 @@
 	
 	<!-- JS -->    
     <script src="/js/order/orderApprove.js"></script>
+    <script src="/js/order/orderReject.js"></script>
   </body>
 </html>

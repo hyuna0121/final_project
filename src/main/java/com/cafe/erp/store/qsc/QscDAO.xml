@@ -24,7 +24,27 @@
     <select id="questionList" parameterType="QscQuestionSearchDTO" resultType="QscQuestionDTO">
 		SELECT * FROM qsc_list
 		<include refid="searchQuestionCondition" />
-		ORDER BY list_id
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'listId'"> list_id </when>
+						<when test="sort.field == 'category'"> list_category </when>
+						<when test="sort.field == 'question'"> list_question </when>
+						<when test="sort.field == 'score'"> list_max_score </when>
+						<when test="sort.field == 'isUsed'"> list_is_use </when>
+						<otherwise> list_id </otherwise>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY list_id
+			</otherwise>
+		</choose>
 		LIMIT #{startNum}, #{perPage}
 	</select>
 
@@ -46,7 +66,26 @@
     <select id="excelQuestionList" parameterType="QscQuestionSearchDTO" resultType="QscQuestionDTO">
 		SELECT * FROM qsc_list
 		<include refid="searchQuestionCondition" />
-		ORDER BY list_id
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'listId'"> list_id </when>
+						<when test="sort.field == 'category'"> list_category </when>
+						<when test="sort.field == 'question'"> list_question </when>
+						<when test="sort.field == 'score'"> list_max_score </when>
+						<when test="sort.field == 'isUsed'"> list_is_use </when>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY list_id
+			</otherwise>
+		</choose>
 	</select>
 
 	<sql id="searchQscCondition">
@@ -103,7 +142,27 @@
 		LEFT JOIN store s ON q.store_id = s.store_id
 		LEFT JOIN member m ON q.member_id = m.member_id
 		<include refid="searchQscCondition" />
-		ORDER BY q.qsc_id DESC
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'qscId'"> q.qsc_id </when>
+						<when test="sort.field == 'manager'"> m.mem_name </when>
+						<when test="sort.field == 'storeName'"> s.store_name </when>
+						<when test="sort.field == 'title'"> q.qsc_title </when>
+						<when test="sort.field == 'grade'"> q.qsc_grade </when>
+						<when test="sort.field == 'datetime'"> q.qsc_date </when>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY q.qsc_date DESC
+			</otherwise>
+		</choose>
 		LIMIT #{startNum}, #{perPage}
 	</select>
 
@@ -208,7 +267,27 @@
 		LEFT JOIN member m ON q.member_id = m.member_id
 		LEFT JOIN member o ON s.member_id = o.member_id
 		<include refid="searchQscCondition" />
-		ORDER BY q.qsc_id DESC
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'qscId'"> q.qsc_id </when>
+						<when test="sort.field == 'manager'"> m.mem_name </when>
+						<when test="sort.field == 'storeName'"> s.store_name </when>
+						<when test="sort.field == 'title'"> q.qsc_title </when>
+						<when test="sort.field == 'grade'"> q.qsc_grade </when>
+						<when test="sort.field == 'datetime'"> q.qsc_date </when>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY q.qsc_date DESC
+			</otherwise>
+		</choose>
 	</select>
 
 </mapper>

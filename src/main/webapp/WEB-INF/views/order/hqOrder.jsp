@@ -68,6 +68,7 @@
 
         <!-- Layout container -->
         <div class="layout-page">
+        <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
           <div class="content-wrapper">
             
@@ -209,10 +210,22 @@
 					</div>
 				</form>
 				<!-- form 끝 -->
+				
+				<c:if test="${not empty msg}">
+				  <script>
+				    alert('${msg}');
+				  </script>
+				</c:if>
+				
+				<c:if test="${not empty errorMsg}">
+				  <script>
+				    alert('${errorMsg}');
+				  </script>
+				</c:if>
 			</div>
 			
 			<!-- 모달창 -->
-			<c:import url="/WEB-INF/views/common/itemSearchModal.jsp"/>
+			<c:import url="/WEB-INF/views/order/itemSearchModal.jsp"/>
             <!-- / Content -->
 
             <!-- Footer -->

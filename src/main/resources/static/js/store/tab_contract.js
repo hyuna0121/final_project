@@ -73,7 +73,10 @@ async function searchStore() {
     }
 
     try {
-        const params = new URLSearchParams({ keyword: keyword });
+        const params = new URLSearchParams({
+            keyword: keyword,
+            isManager: 0
+        });
 		const data = await 	fetchJson(`/store/search?${params.toString()}`, {
             method: "GET",
             headers: { "Content-Type": "application/json" }
@@ -485,11 +488,51 @@ function resetSearchForm() {
 
 function movePage(page) {
     if (page < 1) page = 1;
-    document.getElementById("page").value = page;
-    document.getElementById("contractSearchForm").submit();
+
+    const form = document.getElementById('contractSearchForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    params.set('page', page);
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = form.action + '?' + params.toString();
 }
 
 function downloadExcel() {
-	var searchParams = $('#contractSearchForm').serialize();
-	location.href='/store/contract/downloadExcel?' + searchParams;
+    const form = document.getElementById('contractSearchForm');
+    const params = new URLSearchParams(new FormData(form));
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = '/store/contract/downloadExcel?' + params.toString();
+}
+
+function changePerPage(val) {
+    document.querySelector('#hiddenPerPage').value = val;
+    document.querySelector('#page').value = 1;
+    const form = document.getElementById('contractSearchForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = form.action + '?' + params.toString();
 }

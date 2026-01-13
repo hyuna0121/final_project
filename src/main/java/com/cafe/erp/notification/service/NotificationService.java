@@ -54,11 +54,11 @@ public class NotificationService {
     }
     
     public List<NotificationDTO> selectNotificationPage(
-            int memberId, int page, int size) {
+            int memberId, int page, int size, String filter) {
 
         int offset = page * size;
         return notificationDAO.selectNotificationPage(
-            memberId, size, offset
+            memberId, size, offset, filter
         );
     }
     

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import com.cafe.erp.item.ItemDTO;
+import com.cafe.erp.member.MemberDTO;
 import com.cafe.erp.security.UserDTO;
 
 @Service
@@ -18,6 +19,10 @@ public class OrderService {
 	private OrderDAO orderDAO;
 	
 	public void requestOrder(OrderDTO orderDTO, UserDTO userDTO) { 
+		
+		if (orderDTO.getHqOrderTotalAmount() == null) {
+	        throw new IllegalArgumentException("발주 금액이 없습니다.");
+	    }
 		
 		// 본사/가맹 어느쪽인지
 		int orderType = userDTO.getMember().getMemberId();
@@ -30,7 +35,7 @@ public class OrderService {
 			int storeId = orderDAO.selectStoreId(orderType);
 			orderDTO.setStoreId(storeId);
 		}
-		// orderId 기입
+		// 발주번호(orderId) 생성
 		String orderId = generateOrderId(isHqOrder);
 				
 		// 발주번호 기입
@@ -43,6 +48,10 @@ public class OrderService {
 		insertOrder(orderDTO, isHqOrder);
 		// 발주 상세 insert
 		insertOrderItemDetail(orderDTO, isHqOrder);
+		
+		
+		
+		
 	}
 	
 	// orderId 생성
@@ -79,6 +88,7 @@ public class OrderService {
 	  }
 	
 	public void insertOrder(OrderDTO orderDTO, Boolean isHqOrder) {
+		
 		if (!isHqOrder) {
 			orderDAO.insertHqOrder(orderDTO);
 		} else {
@@ -126,11 +136,11 @@ public class OrderService {
 
 	
 	// 발주 목록 
-	public List<OrderDTO> listHq() {
-		return orderDAO.listHq();
+	public List<OrderDTO> listHq(List<Integer> statuses, MemberDTO member) {
+		return orderDAO.listHq(statuses, member);
 	}
-	public List<OrderDTO> listStore() {
-		return orderDAO.listStore();
+	public List<OrderDTO> listStore(List<Integer> statuses, MemberDTO member) {
+		return orderDAO.listStore(statuses, member);
 	}
 	
 	public List<OrderDetailDTO> getHqOrderDetail(String orderNo) {
@@ -151,5 +161,15 @@ public class OrderService {
 		}
 	}
 	
+	public List<OrderDTO> getApprovedOrder() {
+		return orderDAO.getApprovedOrder();
+	}
+	public List<OrderDetailDTO> getApprovedOrderDetail() {
+		return orderDAO.getApprovedOrderDetail();
+	}
+	
+	public void rejectOrder(OrderRejectDTO orderRejectDTO) {
+		orderDAO.rejectOrder(orderRejectDTO);
+	}
 
 }

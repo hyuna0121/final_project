@@ -67,6 +67,7 @@
 
         <!-- Layout container -->
         <div class="layout-page">
+        <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
           <div class="content-wrapper">
             

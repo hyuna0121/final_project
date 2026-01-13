@@ -27,10 +27,11 @@ public class NotificationController {
     public List<NotificationDTO> selectNotificationPage(
             @AuthenticationPrincipal UserDetails user,
             @RequestParam int page,
-            @RequestParam int size) {
+            @RequestParam int size,
+            @RequestParam(defaultValue = "ALL") String filter) {
 
         int memberId = Integer.parseInt(user.getUsername());
-        return service.selectNotificationPage(memberId, page, size);
+        return service.selectNotificationPage(memberId, page, size, filter);
     }
 
     @PatchMapping("/{notificationId}/read")

@@ -1,8 +1,8 @@
 package com.cafe.erp.util;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +20,8 @@ public class Pager {
 	
 	private Long begin;
 	private Long end;
+
+	private List<SortCondition> sortConditions;
 	
 	public Long getPage() {
 		if (this.page==null || this.page < 1) {
@@ -88,7 +90,18 @@ public class Pager {
 	private void makeStartNum() throws Exception {
 		this.startNum = (this.page-1)*perPage;
 	}
-	
-	
-	
+
+
+	@Getter
+	@Setter
+	@ToString
+	@NoArgsConstructor
+	@AllArgsConstructor
+	public static class SortCondition {
+
+		private String field;
+		private String dir;
+
+	}
+
 }

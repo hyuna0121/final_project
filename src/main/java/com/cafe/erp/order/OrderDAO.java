@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.ui.Model;
 
 import com.cafe.erp.item.ItemDTO;
+import com.cafe.erp.member.MemberDTO;
 
 @Mapper
 public interface OrderDAO {
@@ -22,8 +23,8 @@ public interface OrderDAO {
 	public void insertHqOrderItemDetail(OrderDetailDTO orderDetailDTO);
 	public void insertStoreOrderItemDetail(OrderDetailDTO orderDetailDTO);
 	
-	public List<OrderDTO> listHq();
-	public List<OrderDTO> listStore();
+	public List<OrderDTO> listHq(@Param("statuses") List<Integer> statuses,@Param("member") MemberDTO member);
+	public List<OrderDTO> listStore(@Param("statuses") List<Integer> statuses,@Param("member") MemberDTO member);
 
 	public List<OrderDetailDTO> getHqOrderDetail(@Param("orderNo") String orderNo);
 	public List<OrderDetailDTO> getStoreOrderDetail(@Param("orderNo") String orderNo);
@@ -31,4 +32,8 @@ public interface OrderDAO {
 	public void approveHqOrder(@Param("orderNo") String orderNo);
 	public void approveStoreOrder(@Param("orderNo") String orderNo);
 	
+	public List<OrderDTO> getApprovedOrder();
+	public List<OrderDetailDTO> getApprovedOrderDetail();
+
+	public void rejectOrder(OrderRejectDTO OrderRejectDTO);
 }

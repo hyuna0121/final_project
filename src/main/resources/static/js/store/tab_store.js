@@ -230,8 +230,21 @@ async function submitStoreRegistration() {
 
 function movePage(page) {
     if (page < 1) page = 1;
-    document.getElementById("page").value = page;
-    document.getElementById("storeSearchForm").submit();
+
+    const form = document.getElementById('storeSearchForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    params.set('page', page);
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = form.action + '?' + params.toString();
 }
 
 function searchStores() {
@@ -258,6 +271,33 @@ function resetSearchForm() {
 }
 
 function downloadExcel() {
-	var searchParams = $('#storeSearchForm').serialize();
-	location.href='/store/downloadExcel?' + searchParams;
+    const form = document.getElementById('storeSearchForm');
+    const params = new URLSearchParams(new FormData(form));
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = '/store/downloadExcel?' + params.toString();
+}
+
+function changePerPage(val) {
+    document.querySelector('#hiddenPerPage').value = val;
+    document.querySelector('#page').value = 1;
+    const form = document.getElementById('storeSearchForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = form.action + '?' + params.toString();
 }

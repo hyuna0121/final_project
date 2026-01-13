@@ -90,11 +90,6 @@
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
-          <a href="/item/add" class="menu-link">
-            <div data-i18n="Account">물품등록</div>
-          </a>
-        </li>
-        <li class="menu-item">
           <a href="/item/list" class="menu-link">
             <div data-i18n="Notifications">물품검색</div>
           </a>
@@ -113,11 +108,6 @@
         <div data-i18n="Authentications">거래처</div>
       </a>
       <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="/vendor/add" class="menu-link">
-            <div data-i18n="Notifications">거래처등록</div>
-          </a>
-        </li>
         <li class="menu-item">
           <a href="/vendor/list" class="menu-link">
             <div data-i18n="Notifications">거래처조회</div>

@@ -1,6 +1,3 @@
-/* =====================================================
-   Toast
-===================================================== */
 #toast-container {
   position: fixed;
   top: 72px;
@@ -42,15 +39,11 @@
   line-height: 1.4;
 }
 
-/* type */
 .toast.voc {
   border-left-color: #6366f1;
 }
 
 
-/* =====================================================
-   Notification Dropdown List
-===================================================== */
 #notificationList {
   display: flex;
   flex-direction: column;
@@ -159,3 +152,100 @@
 .notify-item.unread .notify-signal {
   display: block;
 }
+
+
+.notification-modal-header {
+  border-bottom: none;
+  padding: 20px 24px 12px;
+}
+
+.notification-modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 0 24px 16px;
+}
+
+.modal-list .notify-item {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.modal-list .notify-item.unread {
+  background: #eef2ff;
+  border-left: 4px solid #6366f1;
+}
+
+.modal-list .notify-item + .notify-item {
+  margin-top: 10px;
+}
+
+/* ===== 푸터 ===== */
+.notification-modal-footer {
+  border-top: none;
+  padding: 12px 24px 20px;
+}
+
+/* ===== 알림 없음 상태 ===== */
+.empty-notification {
+  list-style: none;
+  padding: 48px 0;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.empty-notification i {
+  font-size: 28px;
+  color: #c7cbe1;
+}
+/* 모달 리스트 기본 정리 */
+#modalNotificationList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.notification-tabs {
+  display: flex;
+  gap: 6px;
+  background: #f3f4f6;
+  padding: 6px;
+  border-radius: 999px;
+  width: fit-content;
+  margin-bottom: 16px;
+}
+
+.notification-tabs button {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.notification-tabs button:hover {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+.notification-tabs button.active {
+  background: #6366f1;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.35);
+}
+
+#notificationDropdown .notification-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+

@@ -62,16 +62,33 @@
     	
     	<!-- 발주 목록 요청 -->
     	<select id="listHq" resultType="OrderDTO">
-    		select * from order_hq where hq_order_status = 100
+    		select * from order_hq
+			    where hq_order_status in
+			    <foreach collection="statuses"
+			             item="status"
+			             open="("
+			             separator=","
+			             close=")">
+			        #{status}
+			    </foreach>
     	</select>
     	<select id="listStore" resultType="OrderDTO">
     		select
-    			s.store_order_id as hqOrderId,
-    			s.store_order_total_amount as hqOrderTotalAmount,
-    			s.member_id as memberId,
-    			s.store_order_approver as storeOrderApprover,
-    			s.store_rejection_reason as storeRejectionReason 
-    		from order_store s where store_order_status = 100
+	        s.store_order_id          as hqOrderId,
+	        s.store_order_total_amount as hqOrderTotalAmount,
+	        s.member_id               as memberId,
+	        s.store_order_approver    as storeOrderApprover,
+	        s.store_rejection_reason  as storeRejectionReason,
+	        s.store_order_status      as hqOrderStatus
+	    	from order_store s
+			    where s.store_order_status in
+			    <foreach collection="statuses"
+			             item="status"
+			             open="("
+			             separator=","
+			             close=")">
+			        #{status}
+			    </foreach>
     	</select>
     	<!-- 발주 상세 목록 요청 -->
     	<select id="getHqOrderDetail" resultType="OrderDetailDTO">
@@ -92,5 +109,18 @@
     	</update>
     	<update id="approveStoreOrder" parameterType="String">
     		update order_store set store_order_status = 400 where store_order_id = #{orderNo}
+    	</update>
+    	<!-- 발주 자동 승인 처리 -->
+    	
+    	
+    	<!-- 반려 처리 -->
+    	<update id="rejectOrder" parameterType="OrderRejectDTO">
+    		update order_store set store_order_status = 150, store_rejection_reason = #{rejectReason} where store_order_id = #{rejectId}
+    	</update>
+    	
+    	
+    	<!-- 입고 처리 -->
+    	<update id="">
+    	
     	</update>
     </mapper>

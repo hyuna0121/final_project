@@ -12,7 +12,6 @@ $(document).on('click', '.order-row', function () {
     type: 'GET',
     data: { orderNo: orderNo, orderType: orderType },
     success: function (html) {
-	  console.log('🔥 detail loaded');
       $('#orderDetailBody').html(html);
     },
     error: function (err) {
@@ -38,6 +37,7 @@ $(document).ready(function () {
     } else {
       removeFromApprovalList(orderNo);
     }
+	updateActionButtons();
   });
 
 });
@@ -65,10 +65,6 @@ function addToApprovalList(orderNo, orderDate, amount) {
 
   $('#approvalListBody').append(html);
   
-  console.log(
-      '🔥 추가 후 승인 리스트 개수:',
-      $('#approvalListBody tr[data-order-no]').length
-    );
 }
 
 /* ===============================
@@ -133,10 +129,23 @@ function updateOrderStatusToApproved(orders) {
     const orderNo = order.orderNo;
 
     const $row = $(`.order-row[data-order-no="${orderNo}"]`);
+	
+	// 1️ 상태 배지 변경
     $row.find('.badge')
-      .removeClass('bg-label-warning')
+      .removeClass('bg-label-warning bg-label-danger')
       .addClass('bg-label-success')
       .text('승인');
+
+    // 2️ 체크박스 비활성화
+    $row.find('.order-check')
+      .prop('checked', false)
+      .prop('disabled', true);
+
+    // 3️ row 비활성화 스타일
+    $row.addClass('row-disabled');
+
+    // 4️ row 클릭 이벤트 막기 (선택)
+    $row.off('click');
   });
 }
 // 승인리스트 초기화
@@ -201,6 +210,7 @@ $(document).on('click', '#approveBtn', function () {
       resetApprovalList();
       resetCheckboxes();
       updateOrderStatusToApproved(orderNos);
+	  updateActionButtons();
     },
 
     error: function () {
