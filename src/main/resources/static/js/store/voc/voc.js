@@ -229,8 +229,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function movePage(page) {
     if (page < 1) page = 1;
-    document.getElementById("page").value = page;
-    document.getElementById("vocSearchForm").submit();
+
+    const form = document.getElementById('vocSearchForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    params.set('page', page);
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = form.action + '?' + params.toString();
 }
 
 function searchVoc() {
@@ -251,6 +264,33 @@ function resetSearchForm() {
 }
 
 function downloadExcel() {
-	var searchParams = $('#vocSearchForm').serialize();
-	location.href='/store/voc/downloadExcel?' + searchParams;
+    const form = document.getElementById('vocSearchForm');
+    const params = new URLSearchParams(new FormData(form));
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = '/store/voc/downloadExcel?' + params.toString();
+}
+
+function changePerPage(val) {
+    document.querySelector('#hiddenPerPage').value = val;
+    document.querySelector('#page').value = 1;
+    const form = document.getElementById('vocSearchForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    location.href = form.action + '?' + params.toString();
 }

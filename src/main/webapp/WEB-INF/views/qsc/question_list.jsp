@@ -95,6 +95,7 @@
 						<div class="card-body py-3 px-3">
 					    	<form id="questionSearchForm" method="get" action="/store/qsc/admin/question">
 					    		<input type="hidden" name="page" id="page" value="1">
+								<input type="hidden" name="perPage" id="hiddenPerPage" value="${pager.perPage}">
 					      		<div class="row g-3">
 					        		<div class="col-12 col-sm-6 col-md-4 col-lg-2">
 					          			<label class="form-label small">카테고리</label>
@@ -136,7 +137,11 @@
 					<div class="card shadow-none border bg-white">
 					     	
 						<div class="card-header d-flex justify-content-between align-items-center">
-					    	<h5 class="mb-0">질문 목록</h5>
+							<select class="form-select" style="width: auto; margin-right: 1rem;" onchange="changePerPage(this.value)">
+								<option value="10" ${pager.perPage == 10 ? 'selected' : ''}>10개씩 보기</option>
+								<option value="50" ${pager.perPage == 50 ? 'selected' : ''}>50개씩 보기</option>
+								<option value="100" ${pager.perPage == 100 ? 'selected' : ''}>100개씩 보기</option>
+							</select>
 					        <div>
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
@@ -152,11 +157,11 @@
 					          
 					        	<thead>
 					            	<tr>
-					              		<th width="5%">ID</th>
-					              		<th>카테고리</th>
-					              		<th>질문</th>
-						                <th>배점</th>
-						              	<th>사용여부</th>
+					              		<th width="7%" onclick="moveSort('listId')" style="cursor: pointer;">ID <i id="icon_listId" class="bx bx-sort-alt-2 sort-icon"></i></th>
+					              		<th onclick="moveSort('category')" style="cursor: pointer;">카테고리 <i id="icon_category" class="bx bx-sort-alt-2 sort-icon"></i></th>
+					              		<th onclick="moveSort('question')" style="cursor: pointer;">질문 <i id="icon_question" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						                <th onclick="moveSort('score')" style="cursor: pointer;">배점 <i id="icon_score" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						              	<th onclick="moveSort('isUsed')" style="cursor: pointer;">사용여부 <i id="icon_isUsed" class="bx bx-sort-alt-2 sort-icon"></i></th>
 										<th>변경</th>
 						            </tr>
 					          	</thead>
@@ -383,5 +388,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     
     <script type="text/javascript" src="/js/store/qsc/question.js"></script>
+	<script type="text/javascript" src="/js/pager/sort.js"></script>
   </body>
 </html>

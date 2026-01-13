@@ -106,6 +106,7 @@
 						<div class="card-body py-3 px-3">
 					    	<form id="qscSearchForm" method="get" action="/store/qsc/list">
 					    		<input type="hidden" name="page" id="page" value="1">
+								<input type="hidden" name="perPage" id="hiddenPerPage" value="${pager.perPage}">
 					      		<div class="row g-3">
 					        		<div class="col-12 col-md-6 col-lg-2">
 					          			<label class="form-label small">평가등급</label>
@@ -158,7 +159,11 @@
 					<div class="card shadow-none border bg-white">
 					     	
 						<div class="card-header d-flex justify-content-between align-items-center">
-					    	<h5 class="mb-0">QSC 목록</h5>
+							<select class="form-select" style="width: auto; margin-right: 1rem;" onchange="changePerPage(this.value)">
+								<option value="10" ${pager.perPage == 10 ? 'selected' : ''}>10개씩 보기</option>
+								<option value="50" ${pager.perPage == 50 ? 'selected' : ''}>50개씩 보기</option>
+								<option value="100" ${pager.perPage == 100 ? 'selected' : ''}>100개씩 보기</option>
+							</select>
 					        <div>
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
@@ -171,12 +176,12 @@
 					          
 					        	<thead>
 					            	<tr>
-					              		<th width="5%">ID</th>
-					              		<th>담당자</th>
-					              		<th>가맹점명</th>
-						                <th>제목</th>
-						              	<th>등급</th>
-										<th>날짜</th>
+										<th width="7%" onclick="moveSort('qscId')" style="cursor: pointer;">ID <i id="icon_qscId" class="bx bx-sort-alt-2 sort-icon"></i></th>
+										<th onclick="moveSort('manager')" style="cursor: pointer;">담당자 <i id="icon_manager" class="bx bx-sort-alt-2 sort-icon"></i></th>
+										<th onclick="moveSort('storeName')" style="cursor: pointer;">가맹점명 <i id="icon_storeName" class="bx bx-sort-alt-2 sort-icon"></i></th>
+										<th onclick="moveSort('title')" style="cursor: pointer;">제목 <i id="icon_title" class="bx bx-sort-alt-2 sort-icon"></i></th>
+										<th onclick="moveSort('grade')" style="cursor: pointer;">등급 <i id="icon_grade" class="bx bx-sort-alt-2 sort-icon"></i></th>
+										<th onclick="moveSort('datetime')" style="cursor: pointer;">날짜 <i id="icon_datetime" class="bx bx-sort-alt-2 sort-icon"></i></th>
 						            </tr>
 					          	</thead>
 					            
@@ -196,6 +201,7 @@
 								            <td>${dto.qscDateStr}</td>
 					                    </tr>
 					                </c:forEach>
+									<c:if test="${empty list}"><td colspan="7" class="text-center">해당 데이터가 없습니다.</td></c:if>
 					            </tbody>
 					        </table>
 					    </div>
@@ -277,5 +283,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     
     <script type="text/javascript" src="/js/store/qsc/list.js"></script>
+	<script type="text/javascript" src="/js/pager/sort.js"></script>
   </body>
 </html>

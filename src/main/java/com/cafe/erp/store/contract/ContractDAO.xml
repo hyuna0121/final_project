@@ -61,7 +61,29 @@
             store_contract sc             
             INNER JOIN store s ON sc.store_id = s.store_id 
         <include refid="searchCondition" />
-        ORDER BY sc.contract_id DESC
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'contractId'"> sc.contract_id </when>
+						<when test="sort.field == 'storeName'"> s.store_name </when>
+						<when test="sort.field == 'royalti'"> sc.contract_royalti </when>
+						<when test="sort.field == 'deposit'"> sc.contract_deposit </when>
+						<when test="sort.field == 'startDate'"> sc.contract_start_date </when>
+						<when test="sort.field == 'endDate'"> sc.contract_end_date </when>
+						<when test="sort.field == 'status'"> sc.contract_status </when>
+						<otherwise> sc.contract_id DESC </otherwise>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY sc.contract_id DESC
+			</otherwise>
+		</choose>
         LIMIT #{startNum}, #{perPage}
 	</select>
 	
@@ -177,7 +199,28 @@
             INNER JOIN store s ON sc.store_id = s.store_id 
             LEFT JOIN member m ON s.member_id = m.member_id
         <include refid="searchCondition" />
-        ORDER BY sc.contract_id DESC
+		<choose>
+			<when test="sortConditions != null and sortConditions.size() > 0">
+				ORDER BY
+				<foreach collection="sortConditions" item="sort" separator=",">
+					<choose>
+						<when test="sort.field == 'contractId'"> sc.contract_id </when>
+						<when test="sort.field == 'storeName'"> s.store_name </when>
+						<when test="sort.field == 'royalti'"> sc.contract_royalti </when>
+						<when test="sort.field == 'deposit'"> sc.contract_deposit </when>
+						<when test="sort.field == 'startDate'"> sc.contract_start_date </when>
+						<when test="sort.field == 'endDate'"> sc.contract_end_date </when>
+						<when test="sort.field == 'status'"> sc.contract_status </when>
+					</choose>
+
+					<if test="sort.dir == 'DESC'"> DESC </if>
+					<if test="sort.dir == 'ASC'"> ASC </if>
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY sc.contract_id DESC
+			</otherwise>
+		</choose>
 	</select>
 	
 </mapper>

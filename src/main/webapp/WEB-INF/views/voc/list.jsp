@@ -97,7 +97,7 @@
 						<div class="card-body py-3 px-3">
 							<form id="vocSearchForm" method="get" action="/store/voc/list">
 							    <input type="hidden" name="page" id="page" value="1">
-							    
+								<input type="hidden" name="perPage" id="hiddenPerPage" value="${pager.perPage}">
 							    <div class="row g-3">
 							        <div class="col-12 col-lg-3">
 							            <label class="form-label small">불만 유형</label>
@@ -162,7 +162,11 @@
 					<div class="card shadow-none border bg-white">
 					     	
 						<div class="card-header d-flex justify-content-between align-items-center">
-					    	<h5 class="mb-0">VOC 목록</h5>
+							<select class="form-select" style="width: auto; margin-right: 1rem;" onchange="changePerPage(this.value)">
+								<option value="10" ${pager.perPage == 10 ? 'selected' : ''}>10개씩 보기</option>
+								<option value="50" ${pager.perPage == 50 ? 'selected' : ''}>50개씩 보기</option>
+								<option value="100" ${pager.perPage == 100 ? 'selected' : ''}>100개씩 보기</option>
+							</select>
 					        <div>
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
@@ -178,13 +182,13 @@
 					          
 					        	<thead>
 					            	<tr>
-					              		<th width="5%">ID</th>
-					              		<th>가맹점명</th>
-						                <th>유형</th>
-					              		<th>제목</th>
-						              	<th>작성자</th>
-						              	<th>진행상태</th>
-						              	<th>접수일시</th>
+					              		<th width="7%" onclick="moveSort('vocId')" style="cursor: pointer;">ID <i id="icon_vocId" class="bx bx-sort-alt-2 sort-icon"></i></th>
+					              		<th onclick="moveSort('storeName')" style="cursor: pointer;">가맹점명 <i id="icon_storeName" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						                <th onclick="moveSort('type')" style="cursor: pointer;">유형 <i id="icon_type" class="bx bx-sort-alt-2 sort-icon"></i></th>
+					              		<th onclick="moveSort('title')" style="cursor: pointer;">제목 <i id="icon_title" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						              	<th onclick="moveSort('writer')" style="cursor: pointer;">작성자 <i id="icon_writer" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						              	<th onclick="moveSort('status')" style="cursor: pointer;">진행상태 <i id="icon_status" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						              	<th onclick="moveSort('datetime')" style="cursor: pointer;">접수일시 <i id="icon_datetime" class="bx bx-sort-alt-2 sort-icon"></i></th>
 						            </tr>
 					          	</thead>
 					            
@@ -370,7 +374,7 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     
     <script type="text/javascript" src="/js/store/voc/voc.js"></script>
-    
+	<script type="text/javascript" src="/js/pager/sort.js"></script>
     
   </body>
 </html>

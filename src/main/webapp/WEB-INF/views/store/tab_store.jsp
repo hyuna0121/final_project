@@ -99,6 +99,7 @@
 						<div class="card-body py-3 px-3">
 					    	<form id="storeSearchForm" method="get" action="/store/list">
 					    		<input type="hidden" name="page" id="page" value="1">
+								<input type="hidden" name="perPage" id="hiddenPerPage" value="${pager.perPage}">
 					      		<div class="row g-3">
 					        		<div class="col-12 col-sm-6 col-md-4 col-lg-2">
 					          			<label class="form-label small">운영 상태</label>
@@ -143,10 +144,13 @@
 					</div>
 					        
 					<div class="card shadow-none border bg-white">
-					     	
 						<div class="card-header d-flex justify-content-between align-items-center">
-					    	<h5 class="mb-0">가맹점 목록</h5>
-					        <div>
+							<select class="form-select" style="width: auto; margin-right: 1rem;" onchange="changePerPage(this.value)">
+								<option value="10" ${pager.perPage == 10 ? 'selected' : ''}>10개씩 보기</option>
+								<option value="50" ${pager.perPage == 50 ? 'selected' : ''}>50개씩 보기</option>
+								<option value="100" ${pager.perPage == 100 ? 'selected' : ''}>100개씩 보기</option>
+							</select>
+					        <div class="d-flex align-items-center">
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
 					            </button>
@@ -155,18 +159,21 @@
 					          	</button>
 					     	</div>
 						</div>
-					  
 					    <div class="table-responsive">
 					    	<table class="table table-hover table-striped">
 					          
 					        	<thead>
 					            	<tr>
-					              		<th width="5%">ID</th>
-					              		<th>가맹점명</th>
-					              		<th>가맹점주</th>
-						                <th>주소</th>
-						              	<th>운영상태</th>
-						              	<th>운영시간</th>
+					              		<th width="5%" onclick="moveSort('storeId')" style="cursor: pointer;">ID <i id="icon_storeId" class="bx bx-sort-alt-2 sort-icon"></i></th>
+										<th onclick="moveSort('storeName')" style="cursor: pointer;">가맹점명 <i id="icon_storeName" class="bx bx-sort-alt-2 sort-icon"></i></th>
+										<th onclick="moveSort('storeOwnerName')" style="cursor: pointer;">가맹점주 <i id="icon_storeOwnerName" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						                <th onclick="moveSort('storeAddress')" style="cursor: pointer;">주소 <i id="icon_storeAddress" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						              	<th onclick="moveSort('storeStatus')" style="cursor: pointer;">운영상태 <i id="icon_storeStatus" class="bx bx-sort-alt-2 sort-icon"></i></th>
+						              	<th>
+											<span onclick="moveSort('storeStartTime')" style="cursor: pointer; margin-right: 10px;">오픈 <i id="icon_storeStartTime" class="bx bx-sort-alt-2 sort-icon"></i></span>
+											<span class="text-muted">|</span>
+											<span onclick="moveSort('storeCloseTime')" style="cursor: pointer; margin-left: 10px;">마감 <i id="icon_storeCloseTime" class="bx bx-sort-alt-2 sort-icon"></i></span>
+										</th>
 						                <th>관리</th>
 						            </tr>
 					          	</thead>
@@ -352,5 +359,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     
     <script type="text/javascript" src="/js/store/tab_store.js"></script>
+  	<script type="text/javascript" src="/js/pager/sort.js"></script>
   </body>
 </html>

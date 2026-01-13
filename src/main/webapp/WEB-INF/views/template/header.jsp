@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <link rel="stylesheet" href="/css/notification/notification.css" />
 
@@ -20,20 +21,23 @@
       </li>
     </div>
 
-    <!-- 🟣 출근 / 퇴근 -->
-	<div class="header-actions d-flex gap-2">
-          <button id="inCommute" class="btn btn-sm d-flex align-items-center gap-1 px-2 fw-bold" 
-                  style="background-color: #e8fadf; color: #28c76f; border: none; border-radius: 6px;">
-              <i class='bx bx-log-in-circle fs-5'></i> 
-              <span style="font-size: 0.85rem;">출근</span>
-          </button>
-        	
-          <button id="outCommute" class="btn btn-sm d-flex align-items-center gap-1 px-2 fw-bold" 
-                  style="background-color: #f2f2f2; color: #697a8d; border: none; border-radius: 6px;">
-              <i class='bx bx-log-out-circle fs-5'></i> 
-              <span style="font-size: 0.85rem;">퇴근</span>
-          </button>
-       </div>
+      <sec:authentication property="principal.member" var="Info"/>
+      <c:if test="${fn:startsWith(Info.memberId, '1')}">
+        <!-- 🟣 출근 / 퇴근 -->
+        <div class="header-actions d-flex gap-2">
+              <button id="inCommute" class="btn btn-sm d-flex align-items-center gap-1 px-2 fw-bold"
+                      style="background-color: #e8fadf; color: #28c76f; border: none; border-radius: 6px;">
+                  <i class='bx bx-log-in-circle fs-5'></i>
+                  <span style="font-size: 0.85rem;">출근</span>
+              </button>
+
+              <button id="outCommute" class="btn btn-sm d-flex align-items-center gap-1 px-2 fw-bold"
+                      style="background-color: #f2f2f2; color: #697a8d; border: none; border-radius: 6px;">
+                  <i class='bx bx-log-out-circle fs-5'></i>
+                  <span style="font-size: 0.85rem;">퇴근</span>
+              </button>
+           </div>
+      </c:if>
 
     
     <!-- 오른쪽 영역 -->
@@ -82,7 +86,6 @@
 
       <!-- 👤 사용자 -->
       
-          <sec:authentication property="principal.member" var="Info"/>
       <div class="profile_img">
 	      	<input type="hidden" id="loggedInMemberId" value="${Info.memberId}">
             <c:choose>
@@ -112,6 +115,9 @@
           </span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end">
+        <li>
+            <a class="dropdown-item" href="/member/AM_member_detail">내정보</a>
+        </li>
           <li>
             <a class="dropdown-item" href="/member/logout">로그아웃</a>
           </li>
