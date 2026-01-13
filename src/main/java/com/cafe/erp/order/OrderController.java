@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.cafe.erp.item.ItemDTO;
 import com.cafe.erp.item.ItemService;
@@ -64,36 +66,55 @@ public class OrderController {
 	// 발주 등록
 	@PostMapping("request")
 	@Transactional
-	public String request(OrderDTO orderDTO, @AuthenticationPrincipal UserDTO userDTO) {
-		orderService.requestOrder(orderDTO, userDTO);
-		return "redirect:./approval";
+	public String request(OrderDTO orderDTO, 
+			@AuthenticationPrincipal UserDTO userDTO,
+			RedirectAttributes redirectAttributes) {
+		try {
+			orderService.requestOrder(orderDTO, userDTO);
+			redirectAttributes.addFlashAttribute("msg", "발주 요청이 완료되었습니다.");
+			return "redirect:/order/approval";
+
+		} catch (IllegalArgumentException e) {
+			redirectAttributes.addFlashAttribute("errorMsg", e.getMessage());
+			return "redirect:/order/request";
+
+		}
 	}
 	
 	// 목록 요청 
 	@GetMapping("list")
 	@Transactional
 	public String orderList(
-			@RequestParam Integer status,
-			Model model) {
+			@RequestParam List<Integer> statuses,
+			Model model, MemberDTO member) {
 		
-		List<OrderDTO> orderHqList = orderService.listHq(status);
-		List<OrderDTO> orderStoreList = orderService.listStore(status);
-		
-		model.addAttribute("orderHqList", orderHqList);
-		model.addAttribute("orderStoreList", orderStoreList);
-		model.addAttribute("status", status);
-		
-		return "order/approval"; // JSP 하나만 사용
+		List<OrderDTO> orderHqList = orderService.listHq(statuses, member);
+	    List<OrderDTO> orderStoreList = orderService.listStore(statuses, member);
+
+	    model.addAttribute("orderHqList", orderHqList);
+	    model.addAttribute("orderStoreList", orderStoreList);
+	    model.addAttribute("member", member);
+	    boolean hasRequest = statuses.contains(100);
+	    boolean hasApproved = statuses.contains(200);
+
+	    model.addAttribute("hasRequest", hasRequest);
+	    model.addAttribute("hasApproved", hasApproved);
+
+	    return "order/approval"; // JSP 하나만 사용
 	}
 	// 발주 목록 요청
 	@GetMapping("approval")
-	public String approval(Model model) {
-		return orderList(100, model);
+	public String approval(Model model, @AuthenticationPrincipal UserDTO userDTO) {
+		MemberDTO member = userDTO.getMember();
+		List<Integer> statuses = List.of(100, 150); // 요청 + 반려
+	    return orderList(statuses, model, member);
 	}
 	// 입고 목록 요청
 	@GetMapping("receive")
-	public String receive(Model model) {
-		return orderList(200, model);
+	public String receive(Model model, @AuthenticationPrincipal UserDTO userDTO) {
+		MemberDTO member = userDTO.getMember();
+		List<Integer> statuses = List.of(200); // 승인
+		return orderList(statuses, model, member);
 	}
 	
 	//출고 목록 요청
@@ -125,5 +146,12 @@ public class OrderController {
 		return "order/approval";
 	}
 	
+	// 반려 요청
+	@PostMapping("reject")
+	@ResponseBody
+	public String rejectOrder(@RequestBody OrderRejectDTO orderRejectDTO) {
+		orderService.rejectOrder(orderRejectDTO);
+		return "order/approval";
+	}
 
 }

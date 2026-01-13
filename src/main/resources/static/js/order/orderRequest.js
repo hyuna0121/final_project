@@ -1,9 +1,15 @@
 /* 물품 목록 불러오기 */
 function searchItem() {
-  const vendorCode = document.getElementById("vendorCode").value;
+  const vendorEl = document.getElementById("vendorCode");
   const keyword = document.getElementById("keyword").value;
-  console.log(vendorCode, keyword)
-  fetch(`/order/itemSearch?vendorCode=${vendorCode}&keyword=${keyword}`)
+  
+  // 가맹의 경우 vendorCode가 필요없기에 분기점 필요
+  let url = `/order/itemSearch?keyword=${keyword}`;
+   if (vendorEl) {
+     url += `&vendorCode=${vendorEl.value}`;
+   }
+  
+  fetch(url)
     .then(res => res.json())
     .then(list => {
       renderItemResult(list);
@@ -32,7 +38,7 @@ function renderItemResult(list) {
         <td class="text-end">${item.itemSupplyPrice.toLocaleString()}</td>
         <td>
           <button class="btn btn-sm btn-primary"
-                  onclick="selectItem('${item.itemId}','${item.itemCode}','${item.itemName}','${item.itemSupplyPrice}','${item.vendorCode}')">
+                  onclick="selectItem(this, '${item.itemId}','${item.itemCode}','${item.itemName}','${item.itemSupplyPrice}','${item.vendorCode}')">
             선택
           </button>
         </td>
@@ -43,7 +49,7 @@ function renderItemResult(list) {
 
 
 /* 물품 등록 */
-function selectItem(itemId, itemCode, itemName, itemSupplyPrice, vendorCode) {
+function selectItem(btn, itemId, itemCode, itemName, itemSupplyPrice, vendorCode) {
   
   let check = confirm("물품을 선택하시겠습니까?");
   if (!check){
@@ -95,38 +101,13 @@ function selectItem(itemId, itemCode, itemName, itemSupplyPrice, vendorCode) {
   /* 3️ 테이블에 추가 */
   tbody.appendChild(tr);
 
+  $(btn)
+      .removeClass('btn-primary')
+      .addClass('btn-success')
+      .prop('disabled', true);
 }
 
-function renderItemResult(list) {
-  const tbody = document.getElementById("itemSearchResult");
-  tbody.innerHTML = "";
 
-  if (list.length === 0) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5">검색 결과가 없습니다.</td>
-      </tr>
-    `;
-    return;
-  }
-
-  list.forEach(item => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${item.itemCode}</td>
-        <td>${item.itemName}</td>
-        <td>${item.vendorName}</td>
-        <td class="text-end">${item.itemSupplyPrice.toLocaleString()}</td>
-        <td>
-          <button class="btn btn-sm btn-primary"
-                  onclick="selectItem('${item.itemId}','${item.itemCode}','${item.itemName}','${item.itemSupplyPrice}','${item.vendorCode}')">
-            선택
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-}
 
 /* 물품 등록 취소 */
 function removeSelectedItems() {
