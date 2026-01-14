@@ -133,11 +133,11 @@
     	</select>
     	
     	<!-- 발주 승인 처리 -->
-    	<update id="approveHqOrder" parameterType="String">
-    		update order_hq set hq_order_status = 400 where hq_order_id = #{orderNo}
+    	<update id="approveHqOrder">
+    		update order_hq set hq_order_status = 200, hq_order_approvaled_at = NOW() where hq_order_id = #{orderNo}
     	</update>
-    	<update id="approveStoreOrder" parameterType="String">
-    		update order_store set store_order_status = 400 where store_order_id = #{orderNo}
+    	<update id="approveStoreOrder">
+    		update order_store set store_order_status = 200, store_order_approver = #{orderApproverId}, store_order_approvaled_at = NOW() where store_order_id = #{orderNo}
     	</update>
     	<!-- 발주 자동 승인 처리 -->
     	
@@ -154,7 +154,10 @@
     	
     	
     	<!-- 입고 처리 -->
-    	<update id="">
-    	
+    	<update id="receiveHqOrder" parameterType="String">
+    		update order_hq set hq_order_status = 400 where hq_order_id = #{orderNo}
+    	</update>
+    	<update id="receiveStoreOrder">
+    		update order_store set store_order_status = 400 where store_order_id = #{orderNo}
     	</update>
     </mapper>

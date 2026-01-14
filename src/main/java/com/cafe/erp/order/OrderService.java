@@ -176,13 +176,13 @@ public class OrderService {
 		return orderDAO.getStoreOrderDetail(orderNo);
 	}
 	
-	public void approveOrder(List<OrderApproveRequestDTO> orderNos) {
-		
-		for (OrderApproveRequestDTO orderNo : orderNos) {
+	public void approveOrder(List<OrderRequestDTO> orderNos, MemberDTO member) {
+		int orderApprover = member.getMemberId();
+		for (OrderRequestDTO orderNo : orderNos) {
 			if ("HQ".equals(orderNo.getOrderType())) {
-				orderDAO.approveHqOrder(orderNo.getOrderNo());							
+				orderDAO.approveHqOrder(orderNo.getOrderNo(), orderApprover);							
 			} else if("STORE".equals(orderNo.getOrderType())){
-				orderDAO.approveStoreOrder(orderNo.getOrderNo());							
+				orderDAO.approveStoreOrder(orderNo.getOrderNo(), orderApprover);							
 			}
 		}
 	}
@@ -208,6 +208,15 @@ public class OrderService {
 				receiverMemberId,
 				orderId
 		);
+	}
+	public void receiveOrder(List<OrderRequestDTO> orderNos) {
+		for (OrderRequestDTO orderNo : orderNos) {
+			if ("HQ".equals(orderNo.getOrderType())) {
+				orderDAO.receiveHqOrder(orderNo.getOrderNo());							
+			} else if("STORE".equals(orderNo.getOrderType())){
+				orderDAO.receiveStoreOrder(orderNo.getOrderNo());							
+			}
+		}
 	}
 
 }

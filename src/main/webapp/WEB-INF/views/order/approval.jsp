@@ -113,7 +113,7 @@
 									  </c:when>
 									  <c:otherwise>
 									    <c:if test="${hasApproved}">
-									      <button type="button" class="btn btn-danger btn-sm">승인취소</button>
+									      <button type="button" class="btn btn-danger btn-sm" onclick="location.href='/order/cancelApprove'">승인취소</button>
 									    </c:if>
 									  </c:otherwise>
 									</c:choose>
@@ -391,5 +391,6 @@
 	<!-- JS -->    
     <script src="/js/order/orderApprove.js"></script>
     <script src="/js/order/orderReject.js"></script>
+    <script src="/js/order/orderReceive.js"></script>
   </body>
 </html>

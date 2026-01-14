@@ -217,4 +217,3 @@ $(document).on('click', '#approveBtn', function () {
   });
 });
 
-

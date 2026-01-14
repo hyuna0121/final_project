@@ -29,8 +29,8 @@ public interface OrderDAO {
 	public List<OrderDetailDTO> getHqOrderDetail(@Param("orderNo") String orderNo);
 	public List<OrderDetailDTO> getStoreOrderDetail(@Param("orderNo") String orderNo);
 	
-	public void approveHqOrder(@Param("orderNo") String orderNo);
-	public void approveStoreOrder(@Param("orderNo") String orderNo);
+	public void approveHqOrder(String orderNo, int orderApproverId);
+	public void approveStoreOrder(String orderNo, int orderApproverId);
 	
 	public List<OrderDTO> getApprovedOrder();
 	public List<OrderDetailDTO> getApprovedOrderDetail();
@@ -38,5 +38,8 @@ public interface OrderDAO {
 	public void rejectOrder(OrderRejectDTO OrderRejectDTO);
 	// 발주 반려 시 알림 기능 (가맹점주 아이디 조회)
 	public OrderRejectDTO rejectOrderNotification(OrderRejectDTO orderRejectDTO);
+	
+	public void receiveHqOrder(@Param("orderNo") String orderNo);
+	public void receiveStoreOrder(@Param("orderNo") String orderNo);
 	
 }
