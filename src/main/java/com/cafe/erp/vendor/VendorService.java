@@ -17,7 +17,11 @@ public class VendorService {
 	
 	@Transactional // 거래처코드생성로직
     public int generateVendorCode(String regionName) {
-
+		
+		if (regionName.equals("전북특별자치도") || regionName.equals("전남")) {
+			regionName = "전라도";
+		}
+		
         // 1. 지역번호 (2자리)
         String regionCode = RegionCode.findCodeByAddress(regionName);
 

@@ -50,12 +50,27 @@ public class OrderService {
 		// 요청자 기입
 		orderDTO.setMemberId(orderType);
 		
+		// 상태값 기입(요청/자동승인)
+		orderDTO.setHqOrderStatus(100);	// 기본: 요청	
+		if (isHqOrder) {
+			List<OrderItemRequestDTO> detailList = orderDTO.getItems();
+			int isAutoOrder = 0;
+			for (OrderItemRequestDTO orderItemRequestDTO : detailList) {
+				// 0: 자동승인 1:승인요청
+				if(orderItemRequestDTO.getItemAutoOrder() == true) {
+					isAutoOrder++;
+				}
+			}
+			if (isAutoOrder == 0) {
+				orderDTO.setHqOrderStatus(200);	// isAutoOrder 값이 0이면 자동승인			
+			}
+		}
 		// 발주 insert
 		insertOrder(orderDTO, isHqOrder);
 		// 발주 상세 insert
 		insertOrderItemDetail(orderDTO, isHqOrder);
-		
-		if (isHqOrder) {
+
+		if (isHqOrder && orderDTO.getHqOrderStatus() == 100) {
 		    notificationService.sendOrderNotificationToFinanceTeam(
 		        orderDTO.getHqOrderId(),
 		        orderType

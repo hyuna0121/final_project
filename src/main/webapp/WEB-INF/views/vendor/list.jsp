@@ -192,7 +192,7 @@
 
  <!-- 수정 모달창 -->
 	<div class="modal fade" id="editModal" tabindex="-1">
-	  <div class="modal-dialog">
+	  <div class="modal-dialog modal-dialog-scrollable">
 	    <form class="modal-content" action="/vendor/update" method="post">
 	      <div class="modal-header">
 	        <h5 class="modal-title">거래처 정보 수정</h5>

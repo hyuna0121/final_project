@@ -20,10 +20,39 @@
     	
     	<!-- 발주 추가 -->
     	<insert id="insertHqOrder" parameterType="OrderDTO">
-    		insert into order_hq values(#{hqOrderId}, now(), null, 100, #{memberId}, #{hqOrderTotalAmount});
+    		insert into order_hq values(
+    		#{hqOrderId}, 
+    		NOW(),
+    		<choose>
+	            <when test="hqOrderStatus == 100">
+	                NULL
+	            </when>
+	            <when test="hqOrderStatus == 200">
+	                NOW()
+	            </when>
+	        </choose>, 
+	        #{hqOrderStatus}, 
+	        #{memberId}, 
+	        #{hqOrderTotalAmount});
     	</insert>
     	<insert id="insertStoreOrder" parameterType="OrderDTO">
-    		insert into order_store values(#{hqOrderId}, now(), null, 100, null, #{storeId}, #{memberId}, #{hqOrderTotalAmount}, null);
+    		insert into order_store values(
+    		#{hqOrderId}, 
+    		now(), 
+    		<choose>
+	            <when test="hqOrderStatus == 100">
+	                NULL
+	            </when>
+	            <when test="hqOrderStatus == 200">
+	                NOW()
+	            </when>
+	        </choose>, 
+    		#{hqOrderStatus}, 
+    		null, 
+    		#{storeId}, 
+    		#{memberId}, 
+    		#{hqOrderTotalAmount}, 
+    		null);
     	</insert>
     	
     	<!-- 발주 상세 추가 -->

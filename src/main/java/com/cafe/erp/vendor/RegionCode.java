@@ -7,7 +7,7 @@ public enum RegionCode {
 	SEOUL("서울", "10"),
     GYEONGGI("경기도", "11"),
     CHUNGCHEONG("충청도", "12"),
-    GANGWON("강원도", "13"),
+    GANGWON("강원특별자치도", "13"),
     JEOLLA("전라도", "14"),
     GYEONGSANG("경상도", "15");
 
