@@ -176,3 +176,27 @@ function previewFile(fileName, savedName) {
 
     previewModal.show();
 }
+
+function deleteProcess(processId) {
+    if (!confirm("정말 이 댓글을 삭제하시겠습니까?")) return;
+
+    fetch('/store/voc/deleteProcess', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'processId=' + processId
+        })
+        .then(response => {
+            if (response.ok) {
+                alert("삭제되었습니다.");
+                location.reload();
+            } else {
+                alert("삭제에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("서버 통신 중 오류가 발생했습니다.");
+        });
+}

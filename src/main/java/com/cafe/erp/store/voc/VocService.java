@@ -146,5 +146,20 @@ public class VocService {
 	public List<VocStatDTO> managerPerformance(String year, String month) throws Exception {
 		return vocDAO.managerPerformance(year, month);
 	}
-	
+
+	@Transactional
+    public int deleteProcess(Integer processId) throws Exception {
+		List<VocProcessFileDTO> fileList = vocDAO.fileListById(processId);
+
+		if (fileList != null && !fileList.isEmpty()) {
+			File dir = new File(uploadPath);
+
+			for (VocProcessFileDTO fileDTO : fileList) {
+				fileManager.fileDelete(dir, fileDTO.getFileSavedName());
+			}
+		}
+
+		vocDAO.deleteFile(processId);
+		return vocDAO.deleteProcess(processId);
+    }
 }

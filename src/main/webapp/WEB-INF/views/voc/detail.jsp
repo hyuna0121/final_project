@@ -83,7 +83,7 @@
               <h4 class="fw-bold py-3 mb-4"><a href="/store/voc/list" class="text-muted fw-light">VOC /</a> 상세 내역</h4>
 
               <div class="row">
-                <div class="col-xl-7 col-lg-7 col-md-12">
+                <div class="col-xl-7 col-lg-7 col-md-12 mb-4 mb-lg-0">
                     <div class="card h-100 mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="bx bx-user-voice me-1"></i> 불만 접수 내용</h5>
@@ -166,14 +166,15 @@
                               <c:forEach var="process" items="${list}">
 								  <sec:authentication property="principal.member" var="memberInfo"/>
 								  <c:set var="isMe" value="${process.memberId eq memberInfo.memberId}" />
-						        <div class="d-flex w-100 my-3 ${isMe ? 'justify-content-end' : 'justify-content-start'}">
-						            <div style="max-width: 80%;" class="${isMe ? 'text-end' : 'text-start'}">
+						        <div class=" d-flex w-100 my-3 ${isMe ? 'justify-content-end' : 'justify-content-start'}">
+						            <div style="max-width: 80%;" class="msg-container ${isMe ? 'text-end' : 'text-start'}">
 						                <small class="d-block mb-1 ${isMe ? 'me-2 text-primary fw-bold' : 'ms-2 text-dark fw-bold'}">
 						                    ${process.memName}
 						                </small>
 						                <div class="chat-bubble ${isMe ? 'chat-right' : 'chat-left'} text-start">
-										    <span>${process.processContents}</span>
-										
+											<c:if test="${process.processIsDeleted eq 0}"><span>${process.processContents}</span></c:if>
+											<c:if test="${process.processIsDeleted eq 1}"><span>삭제된 메세지입니다.</span></c:if>
+
 										    <c:if test="${not empty process.fileDTOs and not empty process.fileDTOs[0].fileOriginalName}">
 										        <c:if test="${not empty process.processContents}">
 										            <hr class="my-2 ${isMe ? 'border-white opacity-50' : 'border-secondary opacity-25'}">
@@ -183,7 +184,7 @@
 										            <c:forEach var="file" items="${process.fileDTOs}">
 										                <div class="d-flex align-items-center justify-content-between">
 										                    
-										                    <div class="d-flex align-items-center" style="cursor: pointer; width: 100%; min-width: 250px;" 
+										                    <div class="d-flex align-items-center" style="cursor: pointer; width: 100%;"
 										                         onclick="previewFile('${file.fileOriginalName}', '${file.fileSavedName}')">
 										                        <i class="bx bx-file me-1 ${isMe ? 'text-white' : 'text-secondary'}"></i>
 										                        <span class="${isMe ? 'text-white' : 'text-dark'} text-truncate" 
@@ -196,10 +197,19 @@
 										        </div>
 										    </c:if>
 										</div>
-						
-						                <div class="chat-time ${isMe ? 'me-1' : 'ms-1'}">
-						                    ${process.processCreatedAtStr}
-						                </div>
+
+										<div class="d-flex align-items-center ${isMe ? 'justify-content-end me-1' : 'justify-content-start ms-1'} mt-1">
+											<c:if test="${isMe and process.processIsDeleted ne 1}">
+												<i class="bx bx-trash text-secondary delete-btn me-2"
+												   style="cursor: pointer; font-size: 1rem;"
+												   onclick="deleteProcess('${process.processId}')"
+												   title="삭제"></i>
+											</c:if>
+
+											<span class="chat-time text-muted small me-2">
+												${process.processCreatedAtStr}
+											</span>
+										</div>
 						            </div>
 						        </div>
 						    </c:forEach>

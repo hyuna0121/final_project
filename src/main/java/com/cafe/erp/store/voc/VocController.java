@@ -90,6 +90,12 @@ public class VocController {
 	public Map<String, Object> addVocProcess(Integer isFirst, @ModelAttribute VocProcessDTO processDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception { 
 		return result(vocService.addProcess(isFirst, processDTO, files));
 	}
+
+	@PostMapping("deleteProcess")
+	@ResponseBody
+	public Map<String, Object> deleteVocProcess(@RequestParam Integer processId) throws Exception {
+		return result(vocService.deleteProcess(processId));
+	}
 	
 	private Map<String, Object> result(int result) {
 		Map<String, Object> response = new HashMap<>();

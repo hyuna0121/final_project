@@ -40,4 +40,9 @@ public interface VocDAO {
 	
 	public List<VocStatDTO> managerPerformance(String year, String month) throws Exception;
 
+    public List<VocProcessFileDTO> fileListById(Integer processId) throws Exception;
+
+	public int deleteFile(Integer processId) throws Exception;
+
+	public int deleteProcess(Integer processId) throws Exception;
 }

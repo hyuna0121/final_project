@@ -67,3 +67,13 @@
     color: #a1acb8;
     margin-top: 5px;
 }
+
+.msg-container .delete-btn {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.msg-container:hover .delete-btn {
+    opacity: 1;
+    color: #dc3545 !important;
+}
