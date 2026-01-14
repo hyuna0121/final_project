@@ -152,6 +152,13 @@
     		WHERE store_order_id = #{rejectId}
     	</select>
     	
+    	<!-- 승인취소 처리 -->
+    	<update id="cancelApproveHqOrder" parameterType="String">
+    		update order_hq set hq_order_status = 300 where hq_order_id = #{orderNo}
+    	</update>
+    	<update id="cancelApproveStoreOrder" parameterType="String">
+    		update order_store set store_order_status = 300 where store_order_id = #{orderNo}
+    	</update>
     	
     	<!-- 입고 처리 -->
     	<update id="receiveHqOrder" parameterType="String">

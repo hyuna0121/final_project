@@ -41,5 +41,8 @@ public interface OrderDAO {
 	
 	public void receiveHqOrder(@Param("orderNo") String orderNo);
 	public void receiveStoreOrder(@Param("orderNo") String orderNo);
+
+	public void cancelApproveHqOrder(@Param("orderNo") String orderNo);
+	public void cancelApproveStoreOrder(@Param("orderNo") String orderNo);
 	
 }

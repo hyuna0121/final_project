@@ -105,7 +105,7 @@ public class OrderController {
 	@GetMapping("approval")
 	public String approval(Model model, @AuthenticationPrincipal UserDTO userDTO) {
 		MemberDTO member = userDTO.getMember();
-		List<Integer> statuses = List.of(100, 150); // 요청 + 반려
+		List<Integer> statuses = List.of(100, 150, 300); // 요청 + 반려
 	    return orderList(statuses, model, member);
 	}
 	// 입고 목록 요청
@@ -165,5 +165,11 @@ public class OrderController {
 		return "redirect:/order/receive";
 	}
 	
+	// 승인 취소 요청
+	@PostMapping("cancelApprove")
+	public String cancelApprove(@RequestBody List<OrderRequestDTO> orderNos) {
+		orderService.cancelApprove(orderNos);
+		return "redirect:/order/receive";
+	}
 
 }

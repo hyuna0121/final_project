@@ -218,5 +218,14 @@ public class OrderService {
 			}
 		}
 	}
+	public void cancelApprove(List<OrderRequestDTO> orderNos) {
+		for (OrderRequestDTO orderNo : orderNos) {
+			if ("HQ".equals(orderNo.getOrderType())) {
+				orderDAO.cancelApproveHqOrder(orderNo.getOrderNo());							
+			} else if("STORE".equals(orderNo.getOrderType())){
+				orderDAO.cancelApproveStoreOrder(orderNo.getOrderNo());							
+			}
+		}
+	}
 
 }
