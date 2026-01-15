@@ -180,7 +180,7 @@ $(document).on('click', '#approveBtn', function () {
   $approvalRows.each(function () {
 	const orderNo = $(this).data('order-no');
 	
-	// 🔥 상세페이지와 동일한 판별 로직
+	// 상세페이지와 동일한 판별 로직
 	const orderType = orderNo.charAt(0) === "P" ? "HQ" : "STORE";
 	
 	orderNos.push({
@@ -217,3 +217,72 @@ $(document).on('click', '#approveBtn', function () {
   });
 });
 
+
+let currentTab = "HQ"
+
+$(document).ready(function () {
+  $("#approveBtn, #rejectBtn").prop("disabled", true);
+  $("#rejectBtn").hide(); // 본사 디폴트 → 반려 버튼 없음
+});
+$(document).on("click", '.nav-link[data-bs-toggle="tab"]', function () {
+
+  const target = $(this).attr("data-bs-target");
+
+  // 체크 해제
+  $(".order-check").prop("checked", false);
+
+  // 버튼 초기화
+  $("#approveBtn, #rejectBtn").prop("disabled", true);
+
+  if (target === "#hqOrderTab") {
+    currentTab = "HQ";
+    $("#rejectBtn").hide();   // 본사 → 반려 숨김
+  }
+
+  if (target === "#storeOrderTab") {
+    currentTab = "STORE";
+    $("#rejectBtn").show();   // 가맹 → 반려 표시
+  }
+});
+$(document).on("change", ".order-check", function () {
+
+  const checked = $(".order-check:checked");
+  const checkedCount = checked.length;
+
+  // 아무것도 선택 안 했을 때
+  if (checkedCount === 0) {
+    $("#approveBtn, #rejectBtn").prop("disabled", true);
+    return;
+  }
+
+  /* =========================
+     승인 버튼 (공통)
+     ========================= */
+  // 본사 / 가맹 모두
+  // 단일, 다중 선택 → 승인 가능
+  $("#approveBtn").prop("disabled", false);
+
+  /* =========================
+     반려 버튼 (가맹만)
+     ========================= */
+  if (currentTab === "STORE") {
+
+    // 단일 선택일 때만 반려 가능
+    if (checkedCount === 1) {
+
+      const row = checked.closest(".order-row");
+      const status = row.data("status");
+
+      // 이미 반려된 건은 반려 불가
+      if (status !== 150) {
+        $("#rejectBtn").prop("disabled", false);
+      } else {
+        $("#rejectBtn").prop("disabled", true);
+      }
+
+    } else {
+      // 다중 선택 → 반려 불가
+      $("#rejectBtn").prop("disabled", true);
+    }
+  }
+});
