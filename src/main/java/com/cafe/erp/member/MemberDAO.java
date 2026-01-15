@@ -15,6 +15,10 @@ public interface MemberDAO {
 	// 관리자 전체 사원 리스트
 	public List<MemberDTO> list(MemberDTO memberDTO) throws Exception;
 	
+	public Long memberCount(MemberSearchDTO searchDTO) throws Exception;
+	
+    public List<MemberDTO> memberList(MemberSearchDTO searchDTO) throws Exception;
+	
 	// 사원 추가
 	public int add(MemberDTO memberDTO) throws Exception;
 	
@@ -39,10 +43,10 @@ public interface MemberDAO {
 	public List<Map<String, Object>> deptMemberCount(Map<String, Object> checkMem);
 	
 	// DB에 있는 전체 사원 수
-	public int countAllMember(MemberDTO memberDTO) throws Exception;
+	public int countAllMember(MemberSearchDTO memberSearchDTO) throws Exception;
 	
 	// 전체 활성 사원 수
-	public int countActiveMember(MemberDTO memberDTO) throws Exception;
+	public int countActiveMember(MemberSearchDTO memberSearchDTO) throws Exception;
 	
 
 	public String getMemberId(String id);

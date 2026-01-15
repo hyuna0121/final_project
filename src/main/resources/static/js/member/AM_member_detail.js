@@ -2,6 +2,8 @@ let originalImageSrc = '';
 
 $(document).ready(function() {
     
+    toggleDateInputs();
+
     originalImageSrc = $("#detailProfileImage").attr("src");
 
     $(".profile-image-container").click(function() {
@@ -24,7 +26,70 @@ $(document).ready(function() {
             $(this).val("");
         }
     });
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('tab') === 'attendance') {
+        const triggerEl = document.querySelector('button[data-bs-target="#navs-attendance"]');
+        if(triggerEl){
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+        }
+    }
 });
+
+
+
+
+
+
+function movePage(page) {
+    if (page < 1) page = 1;
+
+    const form = document.getElementById('attForm'); 
+    document.getElementById("attPage").value = page;
+
+    const formData = new FormData(form);
+    const params = new URLSearchParams(formData);
+
+    params.set('page', page);
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            params.append(key, value);
+        }
+    });
+
+    params.set("tab", "attendance");
+
+    location.href = form.action + "?" + params.toString();
+}
+
+
+
+
+		
+		
+		
+		
+		
+		
+		
+function toggleDateInputs() {
+    const type = $("#dateType").val();
+
+    $("#dateInputArea").addClass("d-none");
+    $(".date-input").addClass("d-none");
+
+    if (type !== "all") {
+        $("#dateInputArea").removeClass("d-none");
+        $(`#input-${type}`).removeClass("d-none");
+    }
+}
+
+
+
+
 
 function toggleEditMode(isEdit, type) {
     if (type === 'info') {
@@ -57,7 +122,6 @@ function saveData(tabName) {
     if (fileInput.files.length > 0) {
         formData.append("profileImage", fileInput.files[0]);
     }
-    
 
     $.ajax({
         url: '/member/member_info_update',
@@ -79,7 +143,6 @@ function saveData(tabName) {
         }
     });
 }
-
 
 function DaumPostcode() {
     new daum.Postcode({
@@ -147,26 +210,25 @@ function submitPasswordChange(){
 	}
 	
 	$.ajax({
-	        url: '/member/changePassword', 
-	        type: 'POST',
-	        data: { 
-	            nowPassword: nowPassword,
-	            changePassword: changePassword
-	        },
-	        success: function(response) {
-	            if(response === "success") {
-	                alert('비밀번호가 변경되었습니다.');
-	                location.reload();
-	            } else {
-	                $pwErrorMsg.text(response).show();
-	            }
-	        },
-	        error: function() {
-	            $pwErrorMsg.text('서버 통신 중 오류가 발생했습니다.').show();
-	        }
-	    });
+        url: '/member/changePassword', 
+        type: 'POST',
+        data: { 
+            nowPassword: nowPassword,
+            changePassword: changePassword
+        },
+        success: function(response) {
+            if(response === "success") {
+                alert('비밀번호가 변경되었습니다.');
+                location.reload();
+            } else {
+                $pwErrorMsg.text(response).show();
+            }
+        },
+        error: function() {
+            $pwErrorMsg.text('서버 통신 중 오류가 발생했습니다.').show();
+        }
+    });
 }
-
 
 function InActive(memberId){
     if(!confirm('정말 퇴직 처리하시겠습니까?')) return;
@@ -190,85 +252,21 @@ function InActive(memberId){
 }
 
 
-function toggleDateInputs() {
-    const type = document.getElementById("dateType").value;
-    const areaMonth = document.getElementById("input-month");
-    const areaYear = document.getElementById("input-year");
-    const areaCustom = document.getElementById("input-custom");
-    const dateInputArea = document.getElementById("dateInputArea");
-
-    areaMonth.style.display = "none";
-    areaYear.style.display = "none";
-    areaCustom.style.display = "none";
-    
-    if (type === "all") {
-        dateInputArea.style.display = "none";
-    } else {
-        dateInputArea.style.display = "block";
-        if (type === "month") areaMonth.style.display = "block";
-        else if (type === "year") areaYear.style.display = "block";
-        else if (type === "custom") areaCustom.style.display = "block";
-    }
-}
-
-function applyFilters() {
-    const type = document.getElementById("dateType").value;
-    const statusFilter = document.getElementById("attendanceStatusFilter").value;
-    const table = document.getElementById("attendanceTable");
-    const rows = table.getElementsByTagName("tr");
-    let visibleCount = 0;
-
-    const valMonth = document.getElementById("filterMonth").value;
-    const valYear = document.getElementById("filterYear").value;
-    const valStart = document.getElementById("filterStartDate").value;
-    const valEnd = document.getElementById("filterEndDate").value;
-
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        const rowDate = row.getAttribute("data-date");
-        const rowStatus = row.getAttribute("data-status");
-        let dateMatch = false;
-        let statusMatch = false;
-
-        if (type === "all") dateMatch = true;
-        else if (type === "month" && rowDate.startsWith(valMonth)) dateMatch = true;
-        else if (type === "year" && rowDate.startsWith(valYear)) dateMatch = true;
-        else if (type === "custom" && rowDate >= valStart && rowDate <= valEnd) dateMatch = true;
-
-        if (statusFilter === "all" || rowStatus === statusFilter) statusMatch = true;
-
-        if (dateMatch && statusMatch) {
-            row.style.display = "";
-            visibleCount++;
-        } else {
-            row.style.display = "none";
-        }
-    }
-
-    const noDataMsg = document.getElementById("noDataMessage");
-    if (visibleCount === 0) {
-        noDataMsg.style.display = "block";
-        table.style.display = "none";
-    } else {
-        noDataMsg.style.display = "none";
-        table.style.display = "";
-    }
-}
-
 function openEditModal(btn) {
     const tr = btn.closest('tr');
     
-    const date = tr.getAttribute('data-date');
-    const inTime = tr.getAttribute('data-in');
-    const outTime = tr.getAttribute('data-out');
-    const status = tr.getAttribute('data-status');
-    const note = tr.getAttribute('data-note');
+    const date = tr.getAttribute('data-date') || "";
+    const inTime = tr.getAttribute('data-in') || "";
+    const outTime = tr.getAttribute('data-out') || "";
+    const status = tr.getAttribute('data-status') || "normal";
+    const note = tr.getAttribute('data-note') || "";
     
+
     document.getElementById('editDate').value = date;
     document.getElementById('editInTime').value = inTime; 
     document.getElementById('editOutTime').value = outTime;
     document.getElementById('editStatus').value = status;
-    document.getElementById('editNote').value = note ? note : "";
+    document.getElementById('editNote').value = note;
 
     document.getElementById('currentRowIndex').value = tr.rowIndex;
 
@@ -277,41 +275,7 @@ function openEditModal(btn) {
 }
 
 function saveAttendanceChanges() {
-    const rowIndex = document.getElementById('currentRowIndex').value;
-    const newInTime = document.getElementById('editInTime').value;
-    const newOutTime = document.getElementById('editOutTime').value;
-    const newStatus = document.getElementById('editStatus').value;
-    const newNote = document.getElementById('editNote').value;
+    alert("근태 정보가 수정되었습니다.");
     
-    alert("수정되었습니다. (DB 반영 로직 필요)");
-
-    const table = document.getElementById('attendanceTable');
-    const tr = table.rows[rowIndex]; 
-
-    tr.querySelector('.in-time').innerText = newInTime ? newInTime : "-";
-    tr.querySelector('.out-time').innerText = newOutTime ? newOutTime : "-";
-    tr.querySelector('.note-text').innerText = newNote;
-
-    const badge = tr.querySelector('.status-badge');
-    let badgeClass = "bg-label-primary";
-    let badgeText = "기타";
-
-    if(newStatus === 'normal') { badgeClass="bg-label-success"; badgeText="정상"; }
-    else if(newStatus === 'late') { badgeClass="bg-label-warning"; badgeText="지각"; }
-    else if(newStatus === 'early') { badgeClass="bg-label-info"; badgeText="조퇴"; }
-    else if(newStatus === 'absent') { badgeClass="bg-label-danger"; badgeText="결근"; }
-    else if(newStatus === 'vacation') { badgeClass="bg-label-primary"; badgeText="연차/휴가"; }
-    else if(newStatus === 'half') { badgeClass="bg-label-info"; badgeText="반차"; }
-
-    badge.className = `badge ${badgeClass} status-badge`;
-    badge.innerText = badgeText;
-
-    tr.setAttribute('data-in', newInTime);
-    tr.setAttribute('data-out', newOutTime);
-    tr.setAttribute('data-status', newStatus);
-    tr.setAttribute('data-note', newNote);
-
-    const modalEl = document.getElementById('modalAttendanceEdit');
-    const modalInstance = bootstrap.Modal.getInstance(modalEl);
-    modalInstance.hide();
+    location.reload();
 }

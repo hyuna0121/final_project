@@ -15,24 +15,46 @@
 	    WHERE m.member_id = #{memberId}
 	</select>
 
-        <select id="list" resultType="MemberDTO">
-		SELECT 
-            M.member_id, M.mem_password, M.mem_name, M.mem_zip_code, 
-            M.mem_address_detail, M.mem_email, M.mem_phone, 
-            M.mem_hire_date, M.mem_left_date, M.mem_is_active, 
-            M.dept_code, M.position_code, P.mem_position_sequence
-        FROM 
-            member M  
-            LEFT JOIN member_dept D ON M.dept_code = D.member_dept_code
-            LEFT JOIN member_position P ON M.position_code = P.member_position_code 
-            ORDER BY
-            	mem_is_active DESC,
-            CASE	
-                WHEN M.member_id = 999999 OR M.position_code = 99 THEN 0  
-                WHEN M.position_code = 17 THEN 999                        
-                ELSE P.mem_position_sequence END ASC,
-            M.mem_hire_date ASC
-	</select>
+        <sql id="memberSearch">
+        <where>
+            <if test="deptCode != null and deptCode != ''">
+                AND dept_code = #{deptCode}
+            </if>
+            <if test="memIsActive != null">
+                AND mem_is_active = #{memIsActive}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (mem_name LIKE CONCAT('%', #{searchKeyword}, '%') 
+                     OR member_id LIKE CONCAT('%', #{searchKeyword}, '%'))
+            </if>
+        </where>
+    </sql>
+
+    <select id="memberCount" parameterType="MemberSearchDTO" resultType="Long">
+        SELECT COUNT(member_id) FROM member
+        <include refid="memberSearch" />
+    </select>
+    
+   
+		<select id="memberList" parameterType="MemberSearchDTO" resultType="MemberDTO">
+		    SELECT 
+		        m.*, 
+		        d.mem_dept_name AS memDeptName,
+		        p.mem_position_name AS memPositionName
+		    FROM member m
+		    LEFT JOIN member_dept d ON m.dept_code = d.member_dept_code
+		    LEFT JOIN member_position p ON m.position_code = p.member_position_code
+		    <include refid="memberSearch" />
+		    ORDER BY
+		        m.mem_is_active DESC,
+		        CASE    
+		            WHEN m.member_id = 999999 OR m.position_code = 99 THEN 0 
+		            WHEN m.position_code = 17 THEN 999                       
+		            ELSE p.mem_position_sequence                             
+		        END ASC,
+		        m.mem_hire_date ASC
+		    LIMIT #{startNum}, #{perPage}
+		</select>
 	
 	
 	
@@ -175,25 +197,36 @@
 	        m.member_id = #{memberId}
 	</select>
 
-	<select id="deptList" resultType="MemberDTO">
-	    SELECT 
-	        member_dept_code AS deptCode,      
-	        mem_dept_name    AS memDeptName
-	    FROM 
-	        member_dept
-	    ORDER BY 
-	        member_dept_code ASC
-	</select>
-	
-	<select id="positionList" resultType="MemberDTO">
-	    SELECT 
-	        member_position_code AS positionCode,   
-	        mem_position_name    AS memPositionName
-	    FROM 
-	        member_position
-	    ORDER BY 
-	        member_position_code ASC
-	</select>
+	<resultMap id="deptResultMap" type="MemberDTO">
+        <result property="deptCode" column="member_dept_code" />
+        <result property="memDeptName" column="mem_dept_name" />
+    </resultMap>
+
+    <resultMap id="positionResultMap" type="MemberDTO">
+        <result property="positionCode" column="member_position_code" />
+        <result property="memPositionName" column="mem_position_name" />
+    </resultMap>
+
+
+    <select id="deptList" resultMap="deptResultMap">
+        SELECT 
+            member_dept_code, 
+            mem_dept_name
+        FROM 
+            member_dept
+        ORDER BY 
+            member_dept_code ASC
+    </select>
+    
+    <select id="positionList" resultMap="positionResultMap">
+        SELECT 
+            member_position_code, 
+            mem_position_name
+        FROM 
+            member_position
+        ORDER BY 
+            member_position_code ASC
+    </select>
 
 
 	<select id="findProfileSavedName" resultType="String">
@@ -335,7 +368,7 @@
 	
 	
 	
-	
+
 	
 	
 	

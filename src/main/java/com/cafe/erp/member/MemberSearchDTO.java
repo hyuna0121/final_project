@@ -14,5 +14,8 @@ public class MemberSearchDTO extends Pager{
 	private String memName;      
 	private Integer deptCode;
     private Boolean memIsActive;
+    private String searchKeyword;
+    
+    
     
     }

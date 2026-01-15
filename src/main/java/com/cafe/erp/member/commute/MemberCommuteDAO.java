@@ -7,7 +7,8 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface MemberCommuteDAO {
 
-	public List<MemberCommuteDTO> attendanceList(MemberCommuteDTO commuteDTO)throws Exception;
+	public Long countCommuteList(MemberCommuteSearchDTO searchDTO) throws Exception;
+	public List<MemberCommuteDTO> attendanceList(MemberCommuteSearchDTO searchDTO) throws Exception;
 
 	public int checkIn(MemberCommuteDTO commuteDTO) throws Exception;
 

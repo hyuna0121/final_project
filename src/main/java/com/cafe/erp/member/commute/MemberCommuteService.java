@@ -17,10 +17,16 @@ public class MemberCommuteService {
 	@Autowired
 	private MemberAttendanceDAO memberAttendanceDAO;
 	
-	public List<MemberCommuteDTO> attendanceList(MemberCommuteDTO commuteDTO)throws Exception{
-		return commuteDAO.attendanceList(commuteDTO);
+	public Long countCommuteList(MemberCommuteSearchDTO memberCommuteSearchDTO) throws Exception{
+		return commuteDAO.countCommuteList(memberCommuteSearchDTO);
+		
 	}
-
+	public List<MemberCommuteDTO> attendanceList(MemberCommuteSearchDTO memberCommuteSearchDTO) throws Exception{
+		Long totalCount = commuteDAO.countCommuteList(memberCommuteSearchDTO);
+		memberCommuteSearchDTO.pageing(totalCount);
+		return commuteDAO.attendanceList(memberCommuteSearchDTO);
+		
+	}
 
 	public int checkOut(MemberCommuteDTO commuteDTO) throws Exception{
 		return commuteDAO.checkOut(commuteDTO);

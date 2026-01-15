@@ -45,46 +45,50 @@
               <h4 class="fw-bold py-3 mb-4"><span class="text-muted fw-light">인사 관리 /</span> 사원 통합 관리</h4>
 
               <div class="card mb-4">
-                <div class="card-body">
-                    <form action="./admin_member_list" method="get" class="row gx-3 gy-2 align-items-center">
-                        <div class="col-md-3">
-                            <label class="form-label" for="selectTypeOpt">부서 선택</label>
-                            <select id="selectTypeOpt" class="form-select color-dropdown">
-                                <option value="" selected>전체 부서</option>
-                                <option value="HR">인사팀</option>
-                                <option value="DEV">개발팀</option>
-                                <option value="SALES">영업팀</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label" for="selectStatusOpt">재직 상태</label>
-                            <select id="selectStatusOpt" class="form-select color-dropdown">
-                                <option value="" selected>전체</option>
-                                <option value="active">재직</option>
-                                <option value="leave">휴직</option>
-                                <option value="resigned">퇴사</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label" for="searchName">이름/사번 검색</label>
-                            <input type="text" class="form-control" id="searchName" placeholder="홍길동 or 124001" />
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label d-block">&nbsp;</label>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <span class="tf-icons bx bx-search"></span> 조회
-                            </button>
-                        </div>
-                    </form>
-                </div>
-              </div>
+				    <div class="card-body">
+				        <form id="searchForm" action="./admin_member_list" method="get" class="row gx-3 gy-2 align-items-center">
+				            <input type="hidden" name="page" id="pageInput" value="${pager.page}">
+				            
+				            <div class="col-md-3">
+							    <label class="form-label" for="selectTypeOpt">부서 선택</label>
+							    <select id="selectTypeOpt" name="deptCode" class="form-select color-dropdown">
+							        <option value="" ${empty param.deptCode ? 'selected' : ''}>전체 부서</option>
+								       <c:forEach var="dept" items="${deptList}">
+										    <option value="${dept.deptCode}" ${param.deptCode == dept.deptCode ? 'selected' : ''}>
+										        ${dept.memDeptName}
+										    </option>
+										</c:forEach>
+							    </select>
+							</div>
+				            <div class="col-md-3">
+				                <label class="form-label" for="selectStatusOpt">재직 상태</label>
+				                <select id="selectStatusOpt" name="memIsActive" class="form-select color-dropdown">
+				                    <option value="" ${empty param.memIsActive ? 'selected' : ''}>전체</option>
+				                    <option value="true" ${param.memIsActive == 'true' ? 'selected' : ''}>재직</option>
+				                    <option value="false" ${param.memIsActive == 'false' ? 'selected' : ''}>퇴사</option>
+				                </select>
+				            </div>
+				            <div class="col-md-4">
+				                <label class="form-label" for="searchName">이름/사번 검색</label>
+				                <input type="text" name="searchKeyword" class="form-control" id="searchName" 
+				                       placeholder="홍길동 or 124001" value="${param.searchKeyword}" />
+				            </div>
+				            <div class="col-md-2">
+				                <label class="form-label d-block">&nbsp;</label>
+				                <button type="submit" class="btn btn-primary w-100">
+				                    <span class="tf-icons bx bx-search"></span> 조회
+				                </button>
+				            </div>
+				        </form>
+				    </div>
+				</div>
 
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div class="mb-3">
-                    	<h5>현재 사원 수: ${activeCount}명</h5>
+                    	<h5>재직원: ${activeCount}명</h5>
                     	<div>
-						    <span>(재직원: ${totalCount}명 | </span>
+						    <span>(총 사원: ${totalCount}명 | </span>
 						    <span>퇴사자: ${totalCount - activeCount}명)</span>
                     	</div>
 					</div>
@@ -117,78 +121,12 @@
 		                    <tr>
         	                	<td><i class="fab fa-angular fa-lg text-danger me-3"></i>${member.memberId}</td>
             	            	<td><a href="./AM_member_detail?memberId=${member.memberId}"><span class="fw-bold text-primary"> ${member.memName}</span> </a></td>
-            	            	<td>
-	            	            	<c:choose>
-    	        	            		<c:when test="${member.deptCode == 10}">
-        	    	            			인사팀
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 11}">
-        	    	            			회계팀
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 12}">
-        	    	            			재무팀
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 13}">
-        	    	            			영업팀
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 14}">
-        	    	            			CS팀
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 15}">
-        	    	            			마케팅팀
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 16}">
-        	    	            			개발팀
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 17}">
-        	    	            			가맹점
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 20}">
-        	    	            			임원
-            		            		</c:when>
-            		            		<c:when test="${member.deptCode == 99}">
-        	    	            			관리자
-            		            		</c:when>
-            		            		
-	            	            	</c:choose>
-                	        	</td>            	            	
-                    	    	<td>
-                    	    		<c:choose>
-									    <c:when test="${member.positionCode == 99}">
-									        <span class="badge bg-label-info me-1">관리자</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 1}">
-									        <span class="badge bg-label-primary me-1">팀장</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 2}">
-									        <span class="badge bg-label-primary me-1">차장</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 3}">
-									        <span class="badge bg-label-primary me-1">과장</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 4}">
-									        <span class="badge bg-label-secondary me-1">대리</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 5}">
-									        <span class="badge bg-label-secondary me-1">주임</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 6}">
-									        <span class="badge bg-label-secondary me-1">사원</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 10}">
-									        <span class="badge bg-label-danger me-1">이사</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 11}">
-									        <span class="badge bg-label-danger me-1">상무</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 12}">
-									        <span class="badge bg-label-danger me-1">전무</span>
-									    </c:when>
-									    <c:when test="${member.positionCode == 17}">
-									        <span class="badge bg-label-warning me-1">가맹점</span>
-									    </c:when>
-									</c:choose>
-                    	    	</td>
+            	            	<td>${member.memDeptName}</td>
+								<td>
+								    <span class="badge ${member.positionCode == 99 ? 'bg-label-info' : 'bg-label-primary'}">
+								        ${member.memPositionName}
+								    </span>
+								</td>
                         		<td>${member.memHireDate}</td>
                         		<td>${member.memLeftDate}</td>
                         		<td>
@@ -216,26 +154,16 @@
                 </div>
                 
                 <div class="card-footer d-flex justify-content-center">
-                    <nav aria-label="Page navigation">
-                      <ul class="pagination">
-                        <li class="page-item first">
-                          <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-left"></i></a>
-                        </li>
-                        <li class="page-item prev">
-                          <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-left"></i></a>
-                        </li>
-                        <li class="page-item active">
-                          <a class="page-link" href="javascript:void(0);">1</a>
-                        </li>
-                        <li class="page-item next">
-                          <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevron-right"></i></a>
-                        </li>
-                        <li class="page-item last">
-                          <a class="page-link" href="javascript:void(0);"><i class="tf-icon bx bx-chevrons-right"></i></a>
-                        </li>
-                      </ul>
-                    </nav>
-                </div>
+					        <nav aria-label="Page navigation">
+					            <ul class="pagination">
+					                <li class="page-item ${pager.begin == 1 ? 'disabled' : ''}"><a class="page-link" href="javascript:movePage(${pager.begin - 1})"><i class="bx bx-chevron-left"></i></a></li>
+					                <c:forEach begin="${pager.begin}" end="${pager.end}" var="i">
+									    <li class="page-item ${pager.page == i ? 'active' : ''}"><a class="page-link" href="javascript:movePage(${i})">${i}</a></li>
+							  		</c:forEach>
+					                <li class="page-item next"><a class="page-link" href="javascript:movePage(${pager.end + 1})"><i class="bx bx-chevron-right"></i></a></li>
+					            </ul>
+					        </nav>
+					    </div>
                 </div>
               </div>
             <c:import url="/WEB-INF/views/template/footer.jsp"></c:import>
@@ -278,51 +206,60 @@
 							</div>
 	                    </div>
                         <div class="row g-2 mb-3">
+                             <div class="col mb-0">
+						        <label class="form-label">부서 <span class="text-danger">*</span></label>
+						        <select name="deptCode" id="deptCode" class="form-select" onchange="previewEmpId()" required>
+						            <option value="" selected disabled>선택하세요</option>
+						            
+						            <optgroup label="본사 (Prefix: 1)">
+						                <c:forEach var="dept" items="${deptList}">
+						                    <%-- 본사 부서 코드 범위 (10 ~ 20) --%>
+						                    <c:if test="${dept.deptCode ne 17}">
+						                        <option value="${dept.deptCode}" data-prefix="1">${dept.memDeptName}</option>
+						                    </c:if>
+						                </c:forEach>
+						            </optgroup>
+						
+						            <optgroup label="가맹점 (Prefix: 2)">
+						                <c:forEach var="dept" items="${deptList}">
+						                    <%-- 가맹점 부서 코드 범위 (그 외 또는 특정 코드) --%>
+						                    <c:if test="${dept.deptCode == 17}">
+						                        <option value="${dept.deptCode}" data-prefix="2">${dept.memDeptName}</option>
+						                    </c:if>
+						                </c:forEach>
+						            </optgroup>
+						        </select>
+						    </div>
                             <div class="col mb-0">
-                                <label class="form-label">부서 <span class="text-danger">*</span></label>
-                                <select name="deptCode" id="deptCode" class="form-select" onchange="previewEmpId()" required>
-                                    <option value="" selected disabled>선택하세요</option>
-                                    <optgroup label="본사 (Prefix: 1)">
-                                        <option value="10" data-prefix="1">인사팀</option>
-                                        <option value="11" data-prefix="1">회계팀</option>
-                                        <option value="12" data-prefix="1">재무팀</option>
-                                        <option value="13" data-prefix="1">영업팀</option>
-                                        <option value="14" data-prefix="1">CS팀</option>
-                                        <option value="15" data-prefix="1">마케팅팀</option>
-                                        <option value="16" data-prefix="1">식품개발팀</option>
-                                        <option value="20" data-prefix="1">임원</option>
-                                    </optgroup>
-                                    <optgroup label="가맹점 (Prefix: 2)">
-                                        <option value="10" data-prefix="2">서울</option>
-                                        <option value="11" data-prefix="2">경기도</option>
-                                        <option value="12" data-prefix="2">충청도</option>
-                                        <option value="13" data-prefix="2">강원도</option>
-                                        <option value="14" data-prefix="2">전라도</option>
-                                        <option value="15" data-prefix="2">경상도</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                            <div class="col mb-0">
-                                <label class="form-label">직급 <span class="text-danger">*</span></label>
-                                <select name="positionCode" class="form-select" required>
-                                    <optgroup label="---------------- 임원 -----------------"></optgroup>
-                                    <option value="12">전무</option>
-                                    <option value="11">상무</option>
-                                    <option value="10">이사</option>
-                                    <optgroup label="---------------- 사원 -----------------"></optgroup>
-                                    <option value="1">팀장</option>
-                                    <option value="2">차장</option>
-                                    <option value="3">과장</option>
-                                    <option value="4">대리</option>
-                                    <option value="5">주임</option>
-                                    <option value="6" selected>사원</option>
-                                    <optgroup label="---------------- 가맹 -----------------"></optgroup>
-                                    <option value="17">가맹점주</option>
-                                </select>
-                            </div>
-                            
-                        </div>
-
+						        <label class="form-label">직급 <span class="text-danger">*</span></label>
+						        <select name="positionCode" class="form-select" required>
+						            <option value="" disabled>선택하세요</option>
+						            
+						            <optgroup label="임원 및 관리자">
+						                <c:forEach var="pos" items="${positionList}">
+						                    <c:if test="${pos.positionCode >= 10 && pos.positionCode <= 99 && pos.positionCode != 17}">
+						                        <option value="${pos.positionCode}">${pos.memPositionName}</option>
+						                    </c:if>
+						                </c:forEach>
+						            </optgroup>
+						            
+						            <optgroup label="일반 사원">
+						                <c:forEach var="pos" items="${positionList}">
+						                    <c:if test="${pos.positionCode >= 1 && pos.positionCode <= 9}">
+						                        <option value="${pos.positionCode}" ${pos.positionCode == 6 ? 'selected' : ''}>${pos.memPositionName}</option>
+						                    </c:if>
+						                </c:forEach>
+						            </optgroup>
+						            
+						            <optgroup label="가맹 사업부">
+						                <c:forEach var="pos" items="${positionList}">
+						                    <c:if test="${pos.positionCode == 17}">
+						                        <option value="${pos.positionCode}">${pos.memPositionName}</option>
+						                    </c:if>
+						                </c:forEach>
+						            </optgroup>
+						        </select>
+						    </div>
                         <div class="row g-2 mb-3">
                             <div class="col mb-0">
                                 <label class="form-label">예상 사번 (자동 생성)</label>
@@ -382,51 +319,7 @@
     <script src="/vendor/libs/apex-charts/apexcharts.js"></script>
     <script src="/js/main.js"></script>
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    
-    <script>
-        function previewEmpId() {
-            const deptSelect = document.getElementById("deptCode");
-            const previewInput = document.getElementById("previewIdInput");
-            const hiddenPrefix = document.getElementById("idPrefix");
-            
-            // 1. 선택된 옵션 가져오기
-            const selectedOption = deptSelect.options[deptSelect.selectedIndex];
-            
-            // 2. data-prefix 값 확인 (1 또는 2)
-            const prefix = selectedOption.getAttribute("data-prefix");
-            
-            if (prefix) {
-            	hiddenPrefix.value = prefix;
-                // 3. 현재 연도 2자리 구하기 (2025 -> 25)
-                const year = new Date().getFullYear().toString().substr(-2);
-                
-                // 4. 프리뷰 문자열 생성 (예: 125xxx)
-                previewInput.value = prefix + year + "xxx (생성 예정)";
-            } else {
-                previewInput.value = "";
-            }
-        }
-        
-        function DaumPostcode() {
-            new daum.Postcode({
-                oncomplete: function(data) {
-                    document.getElementById("memZipCode").value = data.zonecode;
-                    document.getElementById("memAddress").value = data.address;
-                    document.getElementById("memAddressDetail").focus(); 
-                }
-            }).open();
-        }
-        
-        $('#addMemberModal').on('hidden.bs.modal', function () {
-			$(this).find('form')[0].reset();
-		})
-		
-		const autoHyphen = (target) => {
-		    target.value = target.value
-		        .replace(/[^0-9]/g, '')
-		        .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3")
-		        .replace(/(\-{1,2})$/g, "");
-		}
-    </script>
+    <script src="/js/member/admin_member_list.js"></script>
+   
   </body>
 </html>

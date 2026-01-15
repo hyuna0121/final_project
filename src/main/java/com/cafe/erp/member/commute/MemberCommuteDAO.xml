@@ -4,36 +4,92 @@
     "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
     <mapper namespace="com.cafe.erp.member.commute.MemberCommuteDAO">
-	    <select id="attendanceList" parameterType="MemberCommuteDTO" resultType="MemberCommuteDTO">
-		    SELECT * FROM (
-		        SELECT 
-		            member_commute_id,
-		            mem_commute_work_date,
-		            mem_commute_in_time,
-		            mem_commute_out_time,
-		            mem_commute_state,
-		            member_id,
-		            '' AS note
-		        FROM member_commute
-		        WHERE member_id = #{memberId}
-		
-		        UNION ALL
-		
-		        SELECT 
-		            0                      AS memberCommuteId,
-		            DATE(ma.mem_attendance_start_date) AS memCommuteWorkDate,
-		            NULL                   AS memCommuteInTime,
-		            NULL                   AS memCommuteOutTime,
-		            ma.mem_attendance_type AS memCommuteState,
-		            ma.member_id           AS memberId,
-		            CONCAT(ma.mem_attendance_reason, ' (', ma.mem_attendance_used_days, '일)') AS note
-		        FROM member_attendance ma
-		        JOIN approval a ON ma.approval_id = a.approval_id
-		        WHERE ma.member_id = #{memberId}
-		          AND a.app_status = '승인'
-		    ) AS combined_table
-		    ORDER BY mem_commute_work_date DESC
-		</select>
+	    <sql id="searchFrag">
+	        <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
+	            AND mem_commute_work_date BETWEEN #{startDate} AND #{endDate}
+	        </if>
+	        
+	        <if test="statusFilter != null and statusFilter != '' and statusFilter != 'all'">
+	            <choose>
+	                <when test="statusFilter == 'normal'">
+	                    AND mem_commute_state LIKE '%정상%'
+	                </when>
+	                <when test="statusFilter == 'late'">
+	                    AND (mem_commute_state LIKE '%지각%' OR mem_commute_state LIKE '%조퇴%')
+	                </when>
+	                <when test="statusFilter == 'vacation'">
+	                    AND (mem_commute_state LIKE '%연차%' OR mem_commute_state LIKE '%휴가%')
+	                </when>
+	                <when test="statusFilter == 'half'">
+	                    AND mem_commute_state LIKE '%반차%'
+	                </when>
+	                <otherwise>
+	                    AND mem_commute_state = #{statusFilter}
+	                </otherwise>
+	            </choose>
+	        </if>
+	    </sql>
+	
+	
+	    <select id="countCommuteList" parameterType="MemberCommuteSearchDTO" resultType="Long">
+	        SELECT COUNT(*) 
+	        FROM (
+	            SELECT 
+	                mem_commute_work_date, mem_commute_state
+	            FROM member_commute
+	            WHERE member_id = #{memberId}
+	    
+	            UNION ALL
+	    
+	            SELECT 
+	                DATE(ma.mem_attendance_start_date) AS memCommuteWorkDate,
+	                ma.mem_attendance_type AS memCommuteState
+	            FROM member_attendance ma
+	            JOIN approval a ON ma.approval_id = a.approval_id
+	            WHERE ma.member_id = #{memberId}
+	              AND a.app_status = '승인'
+	        ) AS combined_table
+	        WHERE 1=1 
+	        <include refid="searchFrag"/>
+	    </select>
+	
+	
+	    <select id="attendanceList" parameterType="MemberCommuteSearchDTO" resultType="MemberCommuteDTO">
+	        SELECT * FROM (
+	            SELECT 
+	                member_commute_id AS commuteId,
+	                mem_commute_work_date,
+	                mem_commute_in_time,
+	                mem_commute_out_time,
+	                mem_commute_state,
+	                member_id,
+	                '' AS note
+	            FROM member_commute
+	            WHERE member_id = #{memberId}
+	    
+	            UNION ALL
+	    
+	            SELECT 
+	                0 AS commuteId,
+	                DATE(ma.mem_attendance_start_date) AS memCommuteWorkDate,
+	                NULL AS memCommuteInTime,
+	                NULL AS memCommuteOutTime,
+	                ma.mem_attendance_type AS memCommuteState,
+	                ma.member_id AS memberId,
+	                CONCAT(ma.mem_attendance_reason, ' (', ma.mem_attendance_used_days, '일)') AS note
+	            FROM member_attendance ma
+	            JOIN approval a ON ma.approval_id = a.approval_id
+	            WHERE ma.member_id = #{memberId}
+	              AND a.app_status = '승인'
+	        ) AS combined_table
+	        WHERE 1=1
+	        
+	        <include refid="searchFrag"/>
+	        
+	        ORDER BY mem_commute_work_date DESC
+	        
+	        LIMIT #{startNum}, #{perPage}
+	    </select>
 			    
 	    
 	    <insert id="checkIn" parameterType="MemberCommuteDTO">

@@ -53,20 +53,26 @@ public class MemberService {
 	}
 	
 	// 전체 사원 수
-	public int countAllMember(MemberDTO memberDTO )throws Exception {
-		return memberDAO.countAllMember(memberDTO);
+	public int countAllMember(MemberSearchDTO memberSearchDTO )throws Exception {
+		return memberDAO.countAllMember(memberSearchDTO);
 	}
 	
 	// 전체 활성화 사원 수
-	public int countActiveMember(MemberDTO memberDTO) throws Exception{
-		return memberDAO.countActiveMember(memberDTO);
+	public int countActiveMember(MemberSearchDTO memberSearchDTO) throws Exception{
+		return memberDAO.countActiveMember(memberSearchDTO);
 	}
 	
 	// 관리자 전체 사원 목록
-	public List<MemberDTO> list(MemberDTO memberDTO) throws Exception {
-		return memberDAO.list(memberDTO);
-	}
+	/*
+	 * public List<MemberDTO> list(MemberDTO memberDTO) throws Exception { return
+	 * memberDAO.list(memberDTO); }
+	 */
 	
+	public List<MemberDTO> getMemberList(MemberSearchDTO searchDTO) throws Exception {
+	    Long totalCount = memberDAO.memberCount(searchDTO);
+	    searchDTO.pageing(totalCount);                     
+	    return memberDAO.memberList(searchDTO);         
+	}
 	
 	// 사원 추가
 	public int add(MemberDTO memberDTO) throws Exception{

@@ -348,147 +348,176 @@
 									
 			<!-- 근태 기록 -->
 									<div class="tab-pane fade" id="navs-attendance" role="tabpanel">
-                                        <div class="card mb-4 border">
-                                            <div class="card-body">
-                                                <div class="row gx-3 gy-2 align-items-center">
-                                                    <div class="col-md-2">
-                                                        <label class="form-label">조회 기준</label>
-                                                        <select id="dateType" class="form-select" onchange="toggleDateInputs()">
-                                                            <option value="month" selected>월별 조회</option>
-                                                            <option value="year">연도별 조회</option>
-                                                            <option value="custom">기간 지정</option>
-                                                            <option value="all">전체 (입사~현재)</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-md-4" id="dateInputArea">
-                                                        <div id="input-month">
-                                                            <label class="form-label">대상 월</label>
-                                                            <input type="month" id="filterMonth" class="form-control" value="2024-12">
-                                                        </div>
-                                                        <div id="input-year" style="display:none;">
-                                                            <label class="form-label">대상 연도</label>
-                                                            <select id="filterYear" class="form-select">
-                                                                <option value="2025">2025년</option>
-                                                                <option value="2024" selected>2024년</option>
-                                                            </select>
-                                                        </div>
-                                                        <div id="input-custom" style="display:none;">
-                                                            <label class="form-label">기간 설정</label>
-                                                            <div class="input-group">
-                                                                <input type="date" id="filterStartDate" class="form-control" value="2024-12-01">
-                                                                <span class="input-group-text">~</span>
-                                                                <input type="date" id="filterEndDate" class="form-control" value="2024-12-31">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="col-md-3">
-                                                        <label class="form-label">근태 상태</label>
-                                                        <select id="attendanceStatusFilter" class="form-select">
-                                                            <option value="all">전체 상태</option>
-                                                            <option value="normal">정상</option>
-                                                            <option value="late">지각/조퇴</option>
-                                                            <option value="vacation">연차/휴가</option>
-                                                            <option value="half">반차</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-md-3">
-                                                        <label class="form-label d-block">&nbsp;</label>
-                                                        <div class="d-flex gap-2">
-                                                            <button type="button" class="btn btn-primary flex-grow-1" onclick="applyFilters()">
-                                                                <i class='bx bx-search me-1'></i> 조회
-                                                            </button>
-                                                            <button type="button" class="btn btn-outline-success flex-grow-1">
-                                                                <i class='bx bx-download me-1'></i> Excel
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                            
-                                        <div class="table-responsive text-nowrap bg-white border rounded">
-                                            <table class="table table-striped table-hover mb-0" id="attendanceTable">
-                                                <thead class="table-light">
-                                                    <tr>
-                                                        <th>날짜</th>
-                                                        <th>출근 시간</th>
-                                                        <th>퇴근 시간</th>
-                                                        <th>상태</th>
-                                                        <th>비고</th>
-                                                        <th class="text-center">관리</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-												    <c:forEach items="${attendanceList}" var="attendance">
-												        <tr>
-												            <td>${attendance.memCommuteWorkDate}</td>
-												            
-												            <td class="in-time">
-												                 ${not empty attendance.formattedInTime ? attendance.formattedInTime : fn:substring(attendance.memCommuteInTime, 11, 16)}
-												            </td>
-												            
-												            <td class="out-time">
-												                 ${not empty attendance.formattedOutTime ? attendance.formattedOutTime : fn:substring(attendance.memCommuteOutTime, 11, 16)}
-												            </td>
-												            
-												            <td>
-												                <c:choose>
-												                    <c:when test="${fn:contains(attendance.memCommuteState, '지각') or fn:contains(attendance.memCommuteState, '조퇴')}">
-												                        <span class="badge bg-label-warning status-badge">${attendance.memCommuteState}</span>
-												                    </c:when>
-												
-												                    <c:when test="${fn:contains(attendance.memCommuteState, '결근') or fn:contains(attendance.memCommuteState, '무단')}">
-												                        <span class="badge bg-label-danger status-badge">${attendance.memCommuteState}</span>
-												                    </c:when>
-												                    
-												                    <c:when test="${fn:contains(attendance.memCommuteState, '반차') or fn:contains(attendance.memCommuteState, '휴가') or fn:contains(attendance.memCommuteState, '연차')}">
-												                        <span class="badge bg-label-primary status-badge">${attendance.memCommuteState}</span>
-												                    </c:when>
-												
-												                    <c:when test="${fn:contains(attendance.memCommuteState, '출근') or fn:contains(attendance.memCommuteState, '퇴근')}">
-												                        <span class="badge bg-label-secondary status-badge">${attendance.memCommuteState}</span>
-												                    </c:when>
-												
-												                    <c:otherwise>
-												                        <span class="badge bg-label-success status-badge">${attendance.memCommuteState}</span>
-												                    </c:otherwise>
-												                </c:choose>
-												            </td>
-												            
-												            <td>
-												                <span class="text-muted small">
-												                    <c:out value="${attendance.note}" default="" />
-												                </span>
-												            </td> 
-												            
-												            <td class="text-center">
-												                <button type="button" class="btn btn-sm btn-icon btn-outline-primary" onclick="openEditModal(this)">
-												                    <i class="bx bx-edit-alt"></i>
-												                </button>
-												            </td>
-												        </tr>
-												    </c:forEach>
-												    
-												    <c:if test="${empty attendanceList}">
-												        <tr>
-												            <td colspan="6" class="text-center py-4">
-												                <i class="bx bx-calendar-x fs-1 text-muted d-block mb-2"></i>
-												                기록이 없습니다.
-												            </td>
-												        </tr>
-												    </c:if>
-												</tbody>
-                                            </table>
-                                            <div id="noDataMessage" class="text-center py-5" style="display: none;">
-                                                <div class="mb-2"><i class="bx bx-calendar-x fs-1 text-muted"></i></div>
-                                                <p class="text-muted fw-bold">선택한 기간/조건에 해당하는 기록이 없습니다.</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
+									    <form action="./AM_member_detail" method="get" id="attForm">
+									        <input type="hidden" name="page" id="attPage" value="${empty pager.page ? 1 : pager.page}">
+									        <input type="hidden" name="memberId" value="${dto.memberId}">
+									        <input type="hidden" name="tab" value="attendance">
+									        
+									        <div class="card mb-4 border">
+									            <div class="card-body">
+									                <div class="row gx-3 gy-2 align-items-center">
+									                    <div class="col-md-2">
+									                        <label class="form-label">조회 기준</label>
+									                        <select id="dateType" name="dateType" class="form-select" onchange="toggleDateInputs()">
+									                            <option value="month" ${pager.dateType == 'month' || empty pager.dateType ? 'selected' : ''}>월별 조회</option>
+									                            <option value="year" ${pager.dateType == 'year' ? 'selected' : ''}>연도별 조회</option>
+									                            <option value="custom" ${pager.dateType == 'custom' ? 'selected' : ''}>기간 지정</option>
+									                            <option value="all" ${pager.dateType == 'all' ? 'selected' : ''}>전체</option>
+									                        </select>
+									                    </div>
+									                    
+									                    <div class="col-md-4" id="dateInputArea">
+									                        
+									                        <c:set var="now" value="<%=new java.util.Date()%>" />
+									                        <fmt:formatDate value="${now}" pattern="yyyy" var="curYear" />
+									
+									                        <div id="input-month" class="date-input">
+									                            <label class="form-label">대상 월</label>
+									                            <input type="month" 
+									                                   name="monthDate" 
+									                                   class="form-control" 
+									                                   value="${pager.monthDate}"
+									                                   onclick="this.showPicker()">
+									                        </div>
+									                    
+									                        <div id="input-year" class="date-input d-none">
+									                            <label class="form-label">대상 연도</label>
+									                            <select id="yearPicker" name="yearDate" class="form-select text-center" onchange="movePage(1)">
+									                                <c:set var="selectedYearOnly" value="${not empty pager.yearDate ? pager.yearDate : curYear}" />
+									                                <c:forEach begin="${curYear - 10}" end="${curYear}" var="y">
+									                                    <option value="${y}" ${y == selectedYearOnly ? 'selected' : ''}>${y}년</option>
+									                                </c:forEach>
+									                            </select>
+									                        </div>
+									                    
+									                        <div id="input-custom" class="date-input d-none">
+									                            <label class="form-label">기간 설정</label>
+									                            <div class="input-group">
+									                                <input type="date" name="startDate" class="form-control" value="${pager.startDate}">
+									                                <span class="input-group-text">~</span>
+									                                <input type="date" name="endDate" class="form-control" value="${pager.endDate}">
+									                            </div>
+									                        </div>
+									                    
+									                    </div>
+									
+									                    <div class="col-md-3">
+									                        <label class="form-label">근태 상태</label>
+									                        <select name="statusFilter" class="form-select">
+									                            <option value="">전체 상태</option>
+									                            <option value="normal" ${pager.statusFilter == 'normal' ? 'selected' : ''}>정상</option>
+									                            <option value="late" ${pager.statusFilter == 'late' ? 'selected' : ''}>지각/조퇴</option>
+									                            <option value="vacation" ${pager.statusFilter == 'vacation' ? 'selected' : ''}>연차/휴가</option>
+									                            <option value="half" ${pager.statusFilter == 'half' ? 'selected' : ''}>반차</option>
+									                        </select>
+									                    </div>
+									                    <div class="col-md-3">
+									                        <label class="form-label d-block">&nbsp;</label>
+									                        <div class="d-flex gap-2">
+									                            <button type="button" class="btn btn-primary" onclick="movePage(1)">
+									                                <i class='bx bx-search me-1'></i> 조회
+									                            </button>
+									                            <button type="button" class="btn btn-outline-success flex-grow-1">
+									                                <i class='bx bx-download me-1'></i> Excel
+									                            </button>
+									                        </div>
+									                    </div>
+									                </div>
+									            </div>
+									        </div>
+									    </form> 
+									
+									    <div class="table-responsive text-nowrap bg-white border rounded">
+									        <table class="table table-striped table-hover mb-0" id="attendanceTable">
+									            <thead class="table-light">
+									                <tr>
+									                    <th>날짜</th>
+									                    <th>출근 시간</th>
+									                    <th>퇴근 시간</th>
+									                    <th>상태</th>
+									                    <th>비고</th>
+									                    <th class="text-center">관리</th>
+									                </tr>
+									            </thead>
+									            <tbody>
+									                <c:forEach items="${attendanceList}" var="attendance">
+									                    <tr>
+									                        <td>${attendance.memCommuteWorkDate}</td>
+									                        <td class="in-time">
+									                             ${not empty attendance.formattedInTime ? attendance.formattedInTime : fn:substring(attendance.memCommuteInTime, 11, 16)}
+									                        </td>
+									                        <td class="out-time">
+									                             ${not empty attendance.formattedOutTime ? attendance.formattedOutTime : fn:substring(attendance.memCommuteOutTime, 11, 16)}
+									                        </td>
+									                        <td>
+									                            <c:choose>
+									                                <c:when test="${fn:contains(attendance.memCommuteState, '지각') or fn:contains(attendance.memCommuteState, '조퇴')}">
+									                                    <span class="badge bg-label-warning status-badge">${attendance.memCommuteState}</span>
+									                                </c:when>
+									                                <c:when test="${fn:contains(attendance.memCommuteState, '결근') or fn:contains(attendance.memCommuteState, '무단')}">
+									                                    <span class="badge bg-label-danger status-badge">${attendance.memCommuteState}</span>
+									                                </c:when>
+									                                <c:when test="${fn:contains(attendance.memCommuteState, '반차') or fn:contains(attendance.memCommuteState, '휴가') or fn:contains(attendance.memCommuteState, '연차')}">
+									                                    <span class="badge bg-label-primary status-badge">${attendance.memCommuteState}</span>
+									                                </c:when>
+									                                <c:when test="${fn:contains(attendance.memCommuteState, '출근') or fn:contains(attendance.memCommuteState, '퇴근')}">
+									                                    <span class="badge bg-label-secondary status-badge">${attendance.memCommuteState}</span>
+									                                </c:when>
+									                                <c:otherwise>
+									                                    <span class="badge bg-label-success status-badge">${attendance.memCommuteState}</span>
+									                                </c:otherwise>
+									                            </c:choose>
+									                        </td>
+									                        <td>
+									                            <span class="text-muted small">
+									                                <c:out value="${attendance.note}" default="" />
+									                            </span>
+									                        </td> 
+									                        <td class="text-center">
+									                            <button type="button" class="btn btn-sm btn-icon btn-outline-primary" onclick="openEditModal(this)">
+									                                <i class="bx bx-edit-alt"></i>
+									                            </button>
+									                        </td>
+									                    </tr>
+									                </c:forEach>
+									                
+									                <c:if test="${empty attendanceList}">
+									                    <tr>
+									                        <td colspan="6" class="text-center py-4">
+									                            <i class="bx bx-calendar-x fs-1 text-muted d-block mb-2"></i>
+									                            기록이 없습니다.
+									                        </td>
+									                    </tr>
+									                </c:if>
+									            </tbody>
+									        </table>
+									        
+									        <div class="card-footer d-flex justify-content-center">
+									            <nav aria-label="Page navigation">
+									                <ul class="pagination">
+									                    <li class="page-item ${pager.begin == 1 ? 'disabled' : ''}">
+									                        <a class="page-link" href="javascript:movePage(${pager.begin - 1})">
+									                            <i class="bx bx-chevron-left"></i>
+									                        </a>
+									                    </li>
+									        
+									                    <c:forEach begin="${pager.begin}" end="${pager.end}" var="i">
+									                        <li class="page-item ${pager.page == i ? 'active' : ''}">
+									                            <a class="page-link" href="javascript:movePage(${i})">${i}</a>
+									                        </li>
+									                    </c:forEach>
+									        
+									                    <li class="page-item next">
+									                        <a class="page-link" href="javascript:movePage(${pager.end + 1})">
+									                            <i class="bx bx-chevron-right"></i>
+									                        </a>
+									                    </li>
+									                </ul>
+									            </nav>
+									        </div>
+									
+									    </div>
+									</div>
                     
                     <!-- 휴가 현황 -->
                                    <div class="tab-pane fade" id="navs-vacation" role="tabpanel">
@@ -629,6 +658,13 @@
 									        </div>
 									    </div>
 									</div>
+									
+									
+									
+									
+									
+									
+									
 									</div>
                                 </div>
                             </div>
