@@ -63,6 +63,20 @@ public interface MemberDAO {
 
 	// 계정 잠금
 	public void lockAccount(int memberId) throws Exception;
+
+	// 사원 추가시 기본 연차 지급
+	public void addFirstLeave(MemberDTO memberDTO)throws Exception;
+
+	// 매해 한 번 전 사원 연차 지급
+	public void yearLeave() throws Exception;
+
+	// 상세페이지 부서 리스트 가져오기
+	public List<MemberDTO> deptList();
+
+	// 상세페이지 직급 리스트 가져오기
+	public List<MemberDTO> positionList();
+
+	
 	}
 
 

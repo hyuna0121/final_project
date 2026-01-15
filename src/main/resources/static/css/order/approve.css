@@ -205,3 +205,8 @@ th, td {
     padding-left: 8.25rem;
   }
 }
+
+.row-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

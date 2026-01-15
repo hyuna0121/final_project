@@ -125,7 +125,8 @@ function drawTable(memberList) {
                 <td><span class="text-body fw-medium">${member.memDeptName || '-'}</span></td>
                 <td class="text-center"><span class="badge ${posClass}">${posName}</span></td>
                 <td class="text-center">${statusBadge}</td>
-                <td class="text-center"><span class="text-muted">${member.memPhone || ''} / ${email}</span></td>
+                <td class="text-center"><span class="text-muted">${member.memPhone || ''}</span></td>
+                <td class="text-center"><span class="text-muted">${email}</span></td>
             </tr>
         `;
         tbody.append(row);
@@ -164,9 +165,6 @@ function openMemberDetail(id) {
     myModal.show();
 }
 
-function saveMemberDetails() {
-    alert("저장 기능은 구현 필요");
-}
 
 function openDeptEdit(event, deptId, deptName) {
     event.stopPropagation();
@@ -175,8 +173,3 @@ function openDeptEdit(event, deptId, deptName) {
     new bootstrap.Modal(document.getElementById('modalDeptEdit')).show();
 }
 
-function saveAuth() {
-    alert("권한 설정이 저장되었습니다.");
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalAuth'));
-    modal.hide();
-}

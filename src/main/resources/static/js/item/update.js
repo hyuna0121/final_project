@@ -21,31 +21,28 @@ const name = document.querySelector("#itemName");
 const id = document.querySelector("#itemId");
 const form = document.querySelector(".modal-content");
 
-document.addEventListener("click", function (e) {
-  const btn = e.target.closest(".btn-update-item");
-  if (!btn) return;
+$(document).on("click", ".btn-update-item", function () {
+  console.log("update item click OK");
 
-  document.querySelector(".modal-title").textContent = "물품 수정";
+  $(".modal-title").text("물품 수정");
   hidePriceFields();
 
-  name.value = btn.dataset.name;
-  name.readOnly = false;
-  id.value = btn.dataset.id;
-  document.querySelector("#itemUseYn").value = boolTo01(btn.dataset.itemuse);
-  document.querySelector("#autoOrderUseYn").value = boolTo01(btn.dataset.autouse);
-  form.action = "/item/updateItem"
+  $("#itemName").val($(this).data("name")).prop("readonly", false);
+  $("#itemId").val($(this).data("id"));
+  $("#itemUseYn").val(boolTo01($(this).data("itemuse")));
+  $("#autoOrderUseYn").val(boolTo01($(this).data("autouse")));
+
+  $(".modal-content").attr("action", "/item/updateItem");
 });
 
-document.addEventListener("click", function (e) {
-  const btn = e.target.closest(".btn-update-price");
-  if (!btn) return;
-  const modalbtn = document.querySelector(".modal-footer");
-  modalbtn.children[0].textContent = '등록';
+$(document).on("click", ".btn-update-price", function () {
+  console.log("update price click OK");
 
-  document.querySelector(".modal-title").textContent = "단가 등록";
+  $(".modal-title").text("단가 등록");
   showPriceFields();
-  name.value = btn.dataset.name;
-  name.readOnly = true;
-  id.value = btn.dataset.id;
-  form.action = "/item/insertPrice"
+
+  $("#itemName").val($(this).data("name")).prop("readonly", true);
+  $("#itemId").val($(this).data("id"));
+
+  $(".modal-content").attr("action", "/item/insertPrice");
 });

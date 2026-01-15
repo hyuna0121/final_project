@@ -164,23 +164,11 @@
 									                            <span class="avatar-initial rounded-circle bg-label-primary"><i class='bx bx-buildings fs-4'></i></span>
 									                        </div>
 									                        <div>
-									                            <small class="text-muted d-block mb-1">소속 부서</small>
-									                            <h6 class="mb-0 fw-bold text-dark" id="txt-dept-name">
-									                                <c:choose>
-									                                    <c:when test="${dto.deptCode == 10}">인사팀</c:when>
-									                                    <c:when test="${dto.deptCode == 11}">회계팀</c:when>
-									                                    <c:when test="${dto.deptCode == 12}">재무팀</c:when>
-									                                    <c:when test="${dto.deptCode == 13}">영업팀</c:when>
-									                                    <c:when test="${dto.deptCode == 14}">CS팀</c:when>
-									                                    <c:when test="${dto.deptCode == 15}">마케팅팀</c:when>
-									                                    <c:when test="${dto.deptCode == 16}">개발팀</c:when>
-									                                    <c:when test="${dto.deptCode == 17}">가맹점</c:when>
-									                                    <c:when test="${dto.deptCode == 20}">임원</c:when>
-									                                    <c:when test="${dto.deptCode == 99}">관리자</c:when>
-									                                    <c:otherwise>기타 부서</c:otherwise>
-									                                </c:choose>
-									                            </h6>
-									                        </div>
+													            <small class="text-muted d-block mb-1">소속 부서</small>
+													            <h6 class="mb-0 fw-bold text-dark" id="txt-dept-name">
+													                ${dto.memDeptName} 
+													            </h6>
+													        </div>
 									                    </div>
 									                </div>
 									                <div class="col-sm-4">
@@ -189,24 +177,11 @@
 									                            <span class="avatar-initial rounded-circle bg-label-info"><i class='bx bx-briefcase fs-4'></i></span>
 									                        </div>
 									                        <div>
-									                            <small class="text-muted d-block mb-1">직급</small>
-									                            <h6 class="mb-0 fw-bold text-dark" id="txt-position-name">
-									                                <c:choose>
-									                                    <c:when test="${dto.positionCode == 1}">팀장</c:when>
-									                                    <c:when test="${dto.positionCode == 2}">차장</c:when>
-									                                    <c:when test="${dto.positionCode == 3}">과장</c:when>
-									                                    <c:when test="${dto.positionCode == 4}">대리</c:when>
-									                                    <c:when test="${dto.positionCode == 5}">주임</c:when>
-									                                    <c:when test="${dto.positionCode == 6}">사원</c:when>
-									                                    <c:when test="${dto.positionCode == 10}">이사</c:when>
-									                                    <c:when test="${dto.positionCode == 11}">상무</c:when>
-									                                    <c:when test="${dto.positionCode == 12}">전무</c:when>
-									                                    <c:when test="${dto.positionCode == 17}">가맹점</c:when>
-									                                    <c:when test="${dto.positionCode == 99}">관리자</c:when>
-									                                    <c:otherwise>직급 없음</c:otherwise>
-									                                </c:choose>
-									                            </h6>
-									                        </div>
+													            <small class="text-muted d-block mb-1">직급</small>
+													            <h6 class="mb-0 fw-bold text-dark" id="txt-position-name">
+													                ${dto.memPositionName}
+													            </h6>
+													        </div>
 									                    </div>
 									                </div>
 									                <div class="col-sm-4">
@@ -287,36 +262,24 @@
 									                
 									                <div class="row g-3 mb-4">
 									                    <div class="col-sm-4">
-									                        <label class="form-label text-muted">소속 부서 (관리자 전용)</label>
-									                        <select class="form-select form-select-lg" id="edit-dept" name="deptCode">
-									                            <option value="10" ${dto.deptCode == 10 ? 'selected' : ''}>인사팀</option>
-									                            <option value="11" ${dto.deptCode == 11 ? 'selected' : ''}>회계팀</option>
-									                            <option value="12" ${dto.deptCode == 12 ? 'selected' : ''}>재무팀</option>
-									                            <option value="13" ${dto.deptCode == 13 ? 'selected' : ''}>영업팀</option>
-									                            <option value="14" ${dto.deptCode == 14 ? 'selected' : ''}>CS팀</option>
-									                            <option value="15" ${dto.deptCode == 15 ? 'selected' : ''}>마케팅팀</option>
-									                            <option value="16" ${dto.deptCode == 16 ? 'selected' : ''}>개발팀</option>
-									                            <option value="17" ${dto.deptCode == 17 ? 'selected' : ''}>가맹점</option>
-									                            <option value="20" ${dto.deptCode == 20 ? 'selected' : ''}>임원</option>
-									                            <option value="99" ${dto.deptCode == 99 ? 'selected' : ''}>관리자</option>
-									                        </select>
-									                    </div>
-									                    <div class="col-sm-4">
-									                        <label class="form-label text-muted">직급 (관리자 전용)</label>
-									                        <select class="form-select form-select-lg" id="edit-position" name="positionCode">
-									                            <option value="1" ${dto.positionCode == 1 ? 'selected' : ''}>팀장</option>
-									                            <option value="2" ${dto.positionCode == 2 ? 'selected' : ''}>차장</option>
-									                            <option value="3" ${dto.positionCode == 3 ? 'selected' : ''}>과장</option>
-									                            <option value="4" ${dto.positionCode == 4 ? 'selected' : ''}>대리</option>
-									                            <option value="5" ${dto.positionCode == 5 ? 'selected' : ''}>주임</option>
-									                            <option value="6" ${dto.positionCode == 6 ? 'selected' : ''}>사원</option>
-									                            <option value="10" ${dto.positionCode == 10 ? 'selected' : ''}>이사</option>
-									                            <option value="11" ${dto.positionCode == 11 ? 'selected' : ''}>상무</option>
-									                            <option value="12" ${dto.positionCode == 12 ? 'selected' : ''}>전무</option>
-									                            <option value="17" ${dto.positionCode == 17 ? 'selected' : ''}>가맹점</option>
-									                            <option value="99" ${dto.positionCode == 99 ? 'selected' : ''}>관리자</option>
-									                        </select>
-									                    </div>
+														    <label class="form-label text-muted">소속 부서 (관리자 전용)</label>
+														    <select class="form-select form-select-lg" id="edit-dept" name="deptCode">
+														        <c:forEach var="dept" items="${deptList}"> <option value="${dept.deptCode}" ${dto.deptCode == dept.deptCode ? 'selected' : ''}>
+														                ${dept.memDeptName}
+														            </option>
+														        </c:forEach>
+														    </select>
+														</div>
+														
+														<div class="col-sm-4">
+														    <label class="form-label text-muted">직급 (관리자 전용)</label>
+														    <select class="form-select form-select-lg" id="edit-position" name="positionCode">
+														        <c:forEach var="pos" items="${positionList}"> <option value="${pos.positionCode}" ${dto.positionCode == pos.positionCode ? 'selected' : ''}>
+														                ${pos.memPositionName}
+														            </option>
+														        </c:forEach>
+														    </select>
+														</div>
 									                    <div class="col-sm-4">
 									                        <label class="form-label text-muted">입사일</label>
 									                        <input type="text" class="form-control form-control-lg bg-light" value="${dto.memHireDate}" readonly>
@@ -463,9 +426,13 @@
 												        <tr>
 												            <td>${attendance.memCommuteWorkDate}</td>
 												            
-												            <td class="in-time">${attendance.formattedInTime}</td>
+												            <td class="in-time">
+												                 ${not empty attendance.formattedInTime ? attendance.formattedInTime : fn:substring(attendance.memCommuteInTime, 11, 16)}
+												            </td>
 												            
-												            <td class="out-time">${attendance.formattedOutTime}</td>
+												            <td class="out-time">
+												                 ${not empty attendance.formattedOutTime ? attendance.formattedOutTime : fn:substring(attendance.memCommuteOutTime, 11, 16)}
+												            </td>
 												            
 												            <td>
 												                <c:choose>
@@ -477,7 +444,7 @@
 												                        <span class="badge bg-label-danger status-badge">${attendance.memCommuteState}</span>
 												                    </c:when>
 												                    
-												                    <c:when test="${fn:contains(attendance.memCommuteState, '반차') or fn:contains(attendance.memCommuteState, '휴가')}">
+												                    <c:when test="${fn:contains(attendance.memCommuteState, '반차') or fn:contains(attendance.memCommuteState, '휴가') or fn:contains(attendance.memCommuteState, '연차')}">
 												                        <span class="badge bg-label-primary status-badge">${attendance.memCommuteState}</span>
 												                    </c:when>
 												
@@ -491,7 +458,11 @@
 												                </c:choose>
 												            </td>
 												            
-												            <td></td> 
+												            <td>
+												                <span class="text-muted small">
+												                    <c:out value="${attendance.note}" default="" />
+												                </span>
+												            </td> 
 												            
 												            <td class="text-center">
 												                <button type="button" class="btn btn-sm btn-icon btn-outline-primary" onclick="openEditModal(this)">
@@ -522,118 +493,139 @@
                     <!-- 휴가 현황 -->
                                    <div class="tab-pane fade" id="navs-vacation" role="tabpanel">
 
-									    <div class="row mb-4">
+									    <div class="row mb-4 g-3">
 									        <div class="col-md-4">
-									            <div class="card bg-label-secondary border-0 text-center">
+									            <div class="card h-100 border-0 shadow-sm" style="border-top: 4px solid #8592a3 !important;">
 									                <div class="card-body">
-									                    <i class='bx bx-calendar-star mb-2' style="font-size: 2rem;"></i>
-									                    <h5 class="card-title mb-1">총 부여 연차</h5>
-									                    <h3 class="card-text text-secondary fw-bold">
-									                        ${stats.memLeaveTotalDays} <span class="fs-6 fw-normal">일</span>
-									                    </h3>
+									                    <span class="d-block text-muted mb-1">총 부여 연차</span>
+									                    <div class="d-flex align-items-center justify-content-between">
+									                        <h2 class="mb-0 fw-bold text-dark">${stats.memLeaveTotalDays}</h2>
+									                        <div class="p-2 rounded-circle bg-label-secondary">
+									                            <i class='bx bx-calendar fs-4 text-secondary'></i>
+									                        </div>
+									                    </div>
 									                </div>
 									            </div>
 									        </div>
 									        
 									        <div class="col-md-4">
-									            <div class="card bg-label-warning border-0 text-center">
+									            <div class="card h-100 border-0 shadow-sm" style="border-top: 4px solid #ffab00 !important;">
 									                <div class="card-body">
-									                    <i class='bx bx-calendar-minus mb-2' style="font-size: 2rem;"></i>
-									                    <h5 class="card-title mb-1">사용 연차</h5>
-									                    <h3 class="card-text text-warning fw-bold">
-									                        ${stats.memLeaveUsedDays} <span class="fs-6 fw-normal">일</span>
-									                    </h3>
+									                    <span class="d-block text-muted mb-1">사용 연차</span>
+									                    <div class="d-flex align-items-center justify-content-between">
+									                        <h2 class="mb-0 fw-bold text-warning">${stats.memLeaveUsedDays}</h2>
+									                        <div class="p-2 rounded-circle bg-label-warning">
+									                            <i class='bx bx-minus fs-4 text-warning'></i>
+									                        </div>
+									                    </div>
 									                </div>
 									            </div>
 									        </div>
 									        
 									        <div class="col-md-4">
-									            <div class="card bg-label-success border-0 text-center">
+									            <div class="card h-100 border-0 shadow-sm" style="border-top: 4px solid #71dd37 !important;">
 									                <div class="card-body">
-									                    <i class='bx bx-calendar-check mb-2' style="font-size: 2rem;"></i>
-									                    <h5 class="card-title mb-1">잔여 연차</h5>
-									                    <h3 class="card-text text-success fw-bold">
-									                        ${stats.remainingDays} <span class="fs-6 fw-normal">일</span>
-									                    </h3>
+									                    <span class="d-block text-muted mb-1">잔여 연차</span>
+									                    <div class="d-flex align-items-center justify-content-between">
+									                        <h2 class="mb-0 fw-bold text-success">${stats.remainingDays}</h2>
+									                        <div class="p-2 rounded-circle bg-label-success">
+									                            <i class='bx bx-check fs-4 text-success'></i>
+									                        </div>
+									                    </div>
 									                </div>
 									            </div>
 									        </div>
 									    </div>
 									    
-									    <div class="card mb-4">
-									        <div class="card-body">
+									    <div class="card mb-4 border-0 shadow-sm">
+									        <div class="card-body py-3">
 									            <div class="d-flex justify-content-between mb-1">
-									                <span class="fw-semibold">연차 소진율</span>
-									                <span class="fw-semibold">${stats.usageRate}%</span>
+									                <small class="fw-semibold text-muted">연차 사용률</small>
+									                <small class="fw-bold text-dark">${stats.usageRate}%</small>
 									            </div>
-									            <div class="progress" style="height: 10px;">
-									                <div class="progress-bar bg-warning" role="progressbar" 
+									            <div class="progress" style="height: 6px;">
+									                <div class="progress-bar bg-success" role="progressbar" 
 									                     style="width: ${stats.usageRate}%;" 
 									                     aria-valuenow="${stats.usageRate}" aria-valuemin="0" aria-valuemax="100">
 									                </div>
 									            </div>
-									            <small class="text-muted mt-1 d-block">
-									                총 ${stats.memLeaveTotalDays}일 중 ${stats.memLeaveUsedDays}일 사용
-									            </small>
 									        </div>
 									    </div>
-									    <h5 class="fw-bold py-2 mb-2"><i class='bx bx-list-ul me-1'></i> 휴가 사용 내역</h5>
-											<div class="table-responsive text-nowrap bg-white border rounded">
-											    <table class="table table-hover">
-											        <thead class="table-light">
-											            <tr>
-											                <th>기간</th>
-											                <th>휴가 종류</th>
-											                <th>차감 일수</th>
-											                <th>사유</th>
-											                <th>상태</th>
-											            </tr>
-											        </thead>
-											        <tbody>
-											            <c:if test="${empty vacationList}">
-											                <tr><td colspan="5" class="text-center py-4">사용 내역이 없습니다.</td></tr>
-											            </c:if>
-											
-											            <c:forEach var="dto" items="${vacationList}">
-											                <tr>
-											                    <td>
-											                        <fmt:formatDate value="${dto.memAttendanceStartDate}" pattern="yyyy-MM-dd"/> 
-											                        ~ 
-											                        <fmt:formatDate value="${dto.memAttendanceEndDate}" pattern="yyyy-MM-dd"/>
-											                    </td>
-											                    
-											                    <td><span class="badge bg-label-primary">${dto.memAttendanceType}</span></td>
-											                    
-											                    <td class="fw-bold text-danger">
+									
+									    <h6 class="fw-bold text-muted mb-3">사용 내역</h6>
+									    
+									    <div class="card border-0 shadow-sm">
+									        <div class="table-responsive">
+									            <table class="table align-middle table-hover">
+									                <thead class="table-light">
+									                    <tr>
+									                        <th class="text-center text-secondary border-bottom-0" style="font-size: 0.85rem;">신청일/기간</th>
+									                        <th class="text-center text-secondary border-bottom-0" style="font-size: 0.85rem;">종류</th>
+									                        <th class="text-center text-secondary border-bottom-0" style="font-size: 0.85rem;">사용</th>
+									                        <th class="text-secondary border-bottom-0 ps-4" style="font-size: 0.85rem;">사유</th>
+									                        <th class="text-center text-secondary border-bottom-0" style="font-size: 0.85rem;">상태</th>
+									                    </tr>
+									                </thead>
+									                <tbody class="border-top-0">
+									                    <c:if test="${empty vacationList}">
+									                        <tr><td colspan="5" class="text-center py-4 text-muted">내역이 없습니다.</td></tr>
+									                    </c:if>
+									
+									                    <c:forEach var="dto" items="${vacationList}">
+									                        <tr>
+									                            <td class="text-center">
+									                                <div class="d-flex flex-column">
+									                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">
+									                                        <fmt:formatDate value="${dto.memAttendanceStartDate}" pattern="yyyy-MM-dd"/> 
+									                                        ~ 
+									                                        <fmt:formatDate value="${dto.memAttendanceEndDate}" pattern="yyyy-MM-dd"/>
+									                                    </span>
+									                                </div>
+									                            </td>
+									                            
+									                            <td class="text-center">
+									                                <span class="text-dark">${dto.memAttendanceType}</span>
+									                            </td>
+									                            
+									                            <td class="text-center">
 																    <c:choose>
 																        <c:when test="${dto.appStatus eq '반려'}">
-																            - 0.0 </c:when>
+																            <span class="text-muted text-decoration-line-through">
+																                -${dto.memAttendanceUsedDays}
+																            </span>
+																        </c:when>
 																        <c:otherwise>
-																            - ${dto.memAttendanceUsedDays} </c:otherwise>
+																            <span class="text-danger fw-bold">
+																                -${dto.memAttendanceUsedDays}
+																            </span>
+																        </c:otherwise>
 																    </c:choose>
 																</td>
-											                    
-											                    <td>${dto.memAttendanceReason}</td>
-											                    
-											                    <td>
-											                        <c:choose>
-											                            <c:when test="${dto.appStatus eq '승인'}">
-											                                <span class="badge bg-success">승인완료</span>
-											                            </c:when>
-											                            <c:when test="${dto.appStatus eq '반려'}">
-											                                <span class="badge bg-danger">반려</span>
-											                            </c:when>
-											                            <c:otherwise>
-											                                <span class="badge bg-warning">결재중</span>
-											                            </c:otherwise>
-											                        </c:choose>
-											                    </td>
-											                </tr>
-											            </c:forEach>
-											        </tbody>
-											    </table>
-									        <div class="text-center py-4" style="display:none;">
-									            <p class="text-muted">사용 내역이 없습니다.</p>
+
+									                            
+									                            <td class="ps-4">
+									                                <span class="text-muted text-truncate d-inline-block" style="max-width: 300px; vertical-align: middle;">
+									                                    ${dto.memAttendanceReason}
+									                                </span>
+									                            </td>
+									                            
+									                            <td class="text-center">
+									                                <c:choose>
+									                                    <c:when test="${dto.appStatus eq '승인'}">
+									                                        <span class="badge bg-label-success rounded-pill">승인</span>
+									                                    </c:when>
+									                                    <c:when test="${dto.appStatus eq '반려'}">
+									                                        <span class="badge bg-label-danger rounded-pill">반려</span>
+									                                    </c:when>
+									                                    <c:otherwise>
+									                                        <span class="badge bg-label-warning rounded-pill">대기</span>
+									                                    </c:otherwise>
+									                                </c:choose>
+									                            </td>
+									                        </tr>
+									                    </c:forEach>
+									                </tbody>
+									            </table>
 									        </div>
 									    </div>
 									</div>

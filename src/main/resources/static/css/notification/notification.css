@@ -1,3 +1,7 @@
+/* =====================================================
+   TOAST (실시간 알림)
+===================================================== */
+
 #toast-container {
   position: fixed;
   top: 72px;
@@ -14,7 +18,7 @@
   border-radius: 10px;
   padding: 12px 14px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-  border-left: 4px solid #6366f1; /* default VOC */
+  border-left: 4px solid transparent;
   opacity: 0;
   transform: translateY(-6px);
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -26,23 +30,28 @@
   transform: translateY(0);
 }
 
-.toast .toast-title {
+.toast-title {
   font-size: 0.9rem;
   font-weight: 600;
   color: #111827;
   margin-bottom: 4px;
 }
 
-.toast .toast-content {
+.toast-content {
   font-size: 0.8rem;
   color: #6b7280;
   line-height: 1.4;
 }
 
-.toast.voc {
-  border-left-color: #6366f1;
-}
+/* toast 타입별 */
+.toast.voc    { border-left-color: #6366f1; }
+.toast.order  { border-left-color: #22c55e; }
+.toast.reject { border-left-color: #be123c; }
 
+
+/* =====================================================
+   DROPDOWN 알림 리스트
+===================================================== */
 
 #notificationList {
   display: flex;
@@ -53,38 +62,30 @@
   padding-right: 4px;
 }
 
-/* item */
+/* 공통 아이템 */
 .notify-item {
   display: flex;
   gap: 12px;
-  padding: 12px;
+  padding: 14px;
   border-radius: 10px;
-  background: #f9fafc;
   cursor: pointer;
+  background: #f9fafc;
   transition: background-color 0.15s ease;
 }
 
-.notify-item:hover {
-  background: #f1f4ff;
-}
-
-
-
-/* icon */
+/* 아이콘 */
 .notify-icon {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: #eef2ff;
-  color: #6366f1;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   flex-shrink: 0;
 }
 
-/* body */
+/* 본문 */
 .notify-body {
   flex: 1;
   min-width: 0;
@@ -118,18 +119,7 @@
   line-height: 1.4;
 }
 
-/* type */
-.notify-item.voc .notify-icon {
-  background: #eef2ff;
-  color: #6366f1;
-}
-
-
-
-.notify-item.unread {
-  background: #f5f7ff;
-  box-shadow: inset 3px 0 0 #6366f1;
-}
+/* 읽음/안읽음 */
 .notify-item.unread .notify-title {
   font-weight: 700;
 }
@@ -140,19 +130,78 @@
 }
 
 
-.notify-signal {
-  width: 8px;
-  height: 8px;
-  background: #6366f1;
-  border-radius: 50%;
-  margin-top: 6px;
-  display: none;
+/* =====================================================
+   TYPE : VOC
+===================================================== */
+
+.notify-item.voc {
+  background: #f7f8ff;
 }
 
-.notify-item.unread .notify-signal {
-  display: block;
+.notify-item.voc .notify-icon {
+  background: #eef2ff;
+  color: #6366f1;
 }
 
+.notify-item.voc.unread {
+  background: #eef2ff;
+  box-shadow: inset 3px 0 0 #6366f1;
+}
+
+.notify-item.voc:hover {
+  background: #e0e7ff;
+}
+
+
+/* =====================================================
+   TYPE : ORDER
+===================================================== */
+
+.notify-item.order {
+  background: #f6fdf9;
+}
+
+.notify-item.order .notify-icon {
+  background: #ecfdf5;
+  color: #22c55e;
+}
+
+.notify-item.order.unread {
+  background: #ecfdf5;
+  box-shadow: inset 3px 0 0 #22c55e;
+}
+
+.notify-item.order:hover {
+  background: #dcfce7;
+}
+
+
+/* =====================================================
+   TYPE : REJECT
+===================================================== */
+
+.notify-item.reject {
+  background: #fff1f2;
+}
+
+.notify-item.reject .notify-icon {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+.notify-item.reject.unread {
+  background: #ffe4e6;
+  box-shadow: inset 3px 0 0 #be123c;
+}
+
+.notify-item.reject:hover {
+  background: #fecdd3;
+}
+
+
+/* =====================================================
+   MODAL 알림 리스트
+===================================================== */
 
 .notification-modal-header {
   border-bottom: none;
@@ -166,27 +215,32 @@
 }
 
 .modal-list .notify-item {
-  background: #f9fafb;
   border-radius: 12px;
   padding: 14px;
-}
-
-.modal-list .notify-item.unread {
-  background: #eef2ff;
-  border-left: 4px solid #6366f1;
 }
 
 .modal-list .notify-item + .notify-item {
   margin-top: 10px;
 }
 
-/* ===== 푸터 ===== */
-.notification-modal-footer {
-  border-top: none;
-  padding: 12px 24px 20px;
+/* modal unread 라인 */
+.modal-list .notify-item.voc.unread {
+  border-left: 4px solid #6366f1;
 }
 
-/* ===== 알림 없음 상태 ===== */
+.modal-list .notify-item.order.unread {
+  border-left: 4px solid #22c55e;
+}
+
+.modal-list .notify-item.reject.unread {
+  border-left: 4px solid #be123c;
+}
+
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
 .empty-notification {
   list-style: none;
   padding: 48px 0;
@@ -204,12 +258,18 @@
   font-size: 28px;
   color: #c7cbe1;
 }
-/* 모달 리스트 기본 정리 */
+
+
+/* =====================================================
+   TABS
+===================================================== */
+
 #modalNotificationList {
   margin: 0;
   padding: 0;
   list-style: none;
 }
+
 .notification-tabs {
   display: flex;
   gap: 6px;
@@ -241,11 +301,3 @@
   color: #fff;
   box-shadow: 0 2px 6px rgba(99, 102, 241, 0.35);
 }
-
-#notificationDropdown .notification-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-

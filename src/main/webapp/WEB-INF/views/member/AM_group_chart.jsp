@@ -41,58 +41,53 @@
                             <div class="card border-0 shadow-sm">
                                 <div class="card-header d-flex justify-content-between align-items-center border-bottom pb-3">
                                     <h5 class="mb-0 fw-bold text-dark"><i class='bx bx-buildings me-2 text-primary'></i>부서 목록</h5>
-                                    <button type="button" class="btn btn-sm btn-icon btn-light text-primary" 
-                                            data-bs-toggle="modal" data-bs-target="#modalDeptAdd" title="부서 추가">
-                                        <i class='bx bx-plus'></i>
-                                    </button>
                                 </div>
                                 
                                 <div class="card-body pt-3 px-2">
-                                    <div class="list-group list-group-flush" id="deptList">
-                                        <a class="list-group-item list-group-item-action dept-item active mb-2" data-dept="0">
-                                            <div class="d-flex w-100 justify-content-between align-items-center">
-                                                <span><i class='bx bx-globe me-2'></i>전체 부서</span>
-                                                <span class="badge bg-white text-primary shadow-sm rounded-pill">${totalCount}</span>
-                                            </div>
-                                        </a>
-
-                                        <c:set var="currentGroup" value=""/>
-                                        <c:forEach var="dept" items="${deptCount}">
-                                            <c:choose>
-                                                <c:when test="${dept.deptCode == 99 || dept.deptCode == 20}">
-                                                    <c:set var="groupName" value="임원 및 관리자"/>
-                                                </c:when>
-                                                <c:when test="${dept.deptCode >= 10 && dept.deptCode <= 12}">
-                                                    <c:set var="groupName" value="경영지원본부"/>
-                                                </c:when>
-                                                <c:when test="${dept.deptCode >= 13 && dept.deptCode <= 15}">
-                                                    <c:set var="groupName" value="영업 / 마케팅"/>
-                                                </c:when>
-                                                <c:when test="${dept.deptCode == 16}">
-                                                    <c:set var="groupName" value="기술연구소"/>
-                                                </c:when>
-                                                <c:when test="${dept.deptCode == 17}">
-                                                    <c:set var="groupName" value="가맹 사업부"/>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <c:set var="groupName" value="기타 부서"/>
-                                                </c:otherwise>
-                                            </c:choose>
-
-                                            <c:if test="${currentGroup != groupName}">
-                                                <div class="list-group-header">${groupName}</div>
-                                                <c:set var="currentGroup" value="${groupName}"/>
-                                            </c:if>
-
-                                            <a class="list-group-item list-group-item-action dept-item sub-dept" data-dept="${dept.deptCode}" data-name="${dept.memDeptName}">
-                                                <div class="d-flex w-100 justify-content-between align-items-center">
-                                                    <span>${dept.memDeptName}</span>
-                                                    <span class="badge bg-label-secondary rounded-pill" style="font-size:0.75rem;">${dept.count}</span>
-                                                </div>
-                                            </a>
-                                        </c:forEach>
-                                    </div>
-                                </div>
+								    <div class="list-group list-group-flush" id="deptList">
+								        <a class="list-group-item list-group-item-action dept-item active mb-2" data-dept="0">
+								            <div class="d-flex w-100 justify-content-between align-items-center">
+								                <span><i class='bx bx-globe me-2'></i>전체 부서</span>
+								                <span class="badge bg-white text-primary shadow-sm rounded-pill">${totalCount}</span>
+								            </div>
+								        </a>
+								
+								        <c:set var="currentGroup" value=""/>
+								        
+								       <c:forEach var="dept" items="${deptCount}">
+    
+										    <c:if test="${dept.memDeptGroupName != null and currentGroup ne dept.memDeptGroupName}">
+										        <div class="list-group-header fw-bold mt-2 mb-1 px-3 text-muted" style="font-size: 0.8rem;">
+										            ${dept.memDeptGroupName}
+										        </div>
+										        <c:set var="currentGroup" value="${dept.memDeptGroupName}"/>
+										    </c:if>
+										
+										    <a class="list-group-item list-group-item-action dept-item sub-dept" 
+										       data-dept="${dept.deptCode}" 
+										       data-name="${dept.memDeptName}">
+										        
+										        <div class="d-flex w-100 justify-content-between align-items-center">
+										            <span>${dept.memDeptName}</span>
+										            
+										            <div class="d-flex align-items-center">
+										                <i class='bx bx-edit-alt me-2 text-muted dept-edit-icon' 
+										                   style="cursor: pointer; opacity: 0.6;" 
+										                   onclick="openDeptEdit(event, '${dept.deptCode}', '${dept.memDeptName}')"
+										                   onmouseover="this.style.opacity=1" 
+										                   onmouseout="this.style.opacity=0.6">
+										                </i>
+														
+										                <span class="badge bg-white text-primary shadow-sm rounded-pill" style="font-size:0.75rem;">
+										                    ${dept.count}
+										                </span>
+										            </div>
+										        </div>
+										    </a>
+										    
+										</c:forEach>
+								    </div>
+								</div>
                             </div>
                         </div>
 
@@ -120,19 +115,21 @@
                             <div class="table-responsive text-nowrap" style="min-height: 500px;">
                                 <table class="table table-borderless">
                                     <colgroup>
-                                        <col style="width: 25%;">
+                                        <col style="width: 20%;">
+                                        <col style="width: 10%;">
                                         <col style="width: 15%;">
                                         <col style="width: 15%;">
-                                        <col style="width: 15%;">
-                                        <col style="width: 30%;">
+                                        <col style="width: 20%;">
+                                        <col style="width: 20%;">
                                     </colgroup>
                                     <thead>
                                         <tr>
                                             <th>이름 / 사번</th>
-                                            <th>부서</th>
+                                            <th >부서</th>
                                             <th class="text-center">직급</th>
                                             <th class="text-center">상태</th>
-                                            <th class="text-center">연락처 / 이메일</th>
+                                            <th class="text-center">연락처</th>
+                                            <th class="text-center">연락처</th>
                                         </tr>
                                     </thead>
                                     <tbody id="memberTableBody">
@@ -162,152 +159,7 @@
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 
-<div class="modal fade" id="modalMemberDetail" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-	    <div class="modal-content">
-            <div class="modal-header bg-light border-bottom py-3">
-                <div class="d-flex align-items-center gap-3 w-100">
-                    <ul class="nav nav-pills modal-header-tabs" role="tablist">
-                        <li class="nav-item">
-                            <button class="nav-link active btn-sm" data-bs-toggle="tab" data-bs-target="#tab-basic" type="button">
-                                <i class="bx bx-user me-1"></i>기본 정보
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#tab-work" type="button">
-                                <i class="bx bx-time me-1"></i>근태 기록
-                            </button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link btn-sm" data-bs-toggle="tab" data-bs-target="#tab-vacation" type="button">
-                                <i class="bx bx-sun me-1"></i>휴가 현황
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
 
-            <div class="modal-body p-4">
-                <div class="tab-content p-0">
-                    <div class="tab-pane fade show active" id="tab-basic" role="tabpanel">
-                        <form id="memberDetailForm">
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <label class="form-label">사원 번호</label>
-                                    <input type="text" class="form-control readonly-input" id="modalId" readonly>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">이름</label>
-                                    <input type="text" class="form-control" id="modalName">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">소속 부서</label>
-                                    <select class="form-select" id="modalDeptCode">
-                                        <option value="D001">인사팀</option>
-                                        <option value="D002">총무팀</option>
-                                        <option value="D003">개발 1팀</option>
-                                        <option value="D004">개발 2팀</option>
-                                        <option value="D005">국내영업팀</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">직급</label>
-                                    <select class="form-select" id="modalPosition">
-                                        <option value="사원">사원</option>
-                                        <option value="대리">대리</option>
-                                        <option value="과장">과장</option>
-                                        <option value="차장">차장</option>
-                                        <option value="부장">부장</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">이메일</label>
-                                    <input type="email" class="form-control" id="modalEmail">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">연락처</label>
-                                    <input type="text" class="form-control" id="modalPhone">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">입사일</label>
-                                    <div class="input-group">
-                                        <input type="date" class="form-control" id="modalJoinDate">
-                                        <span class="input-group-text cursor-pointer"><i class="bx bx-calendar"></i></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">상태</label>
-                                    <select class="form-select" id="modalStatus">
-                                        <option value="active">재직 중</option>
-                                        <option value="vacation">휴가 중</option>
-                                        <option value="out">외근 중</option>
-                                        <option value="leave">퇴사</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="tab-pane fade" id="tab-work" role="tabpanel">
-                        <div class="text-center py-5">
-                            <i class="bx bx-time-five fs-1 text-muted mb-3"></i>
-                            <p class="text-muted">이번 달 근태 기록이 표시됩니다.</p>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="tab-vacation" role="tabpanel">
-                        <div class="d-flex justify-content-between mb-3 bg-lighter p-3 rounded">
-                            <div class="text-center">
-                                <span class="d-block text-muted small">총 연차</span>
-                                <span class="fs-4 fw-bold text-primary">15</span>
-                            </div>
-                            <div class="text-center border-start border-end px-4">
-                                <span class="d-block text-muted small">사용 연차</span>
-                                <span class="fs-4 fw-bold text-danger">3.5</span>
-                            </div>
-                            <div class="text-center">
-                                <span class="d-block text-muted small">잔여 연차</span>
-                                <span class="fs-4 fw-bold text-success">11.5</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer border-top">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-                <button type="button" class="btn btn-primary" onclick="saveMemberDetails()">저장</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="modalDeptAdd" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">새 부서 추가</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">상위 본부</label>
-                    <select class="form-select">
-                        <option value="HEAD">본부 직속</option>
-                        <option value="MGT">경영지원본부</option>
-                        <option value="RND">기술연구소</option>
-                    </select>
-                </div>
-                <div class="mb-0">
-                    <label class="form-label">부서명</label>
-                    <input type="text" class="form-control" placeholder="예: 전략기획팀" />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-                <button type="button" class="btn btn-primary">추가</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="modal fade" id="modalDeptEdit" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-sm">
@@ -331,43 +183,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalAuth" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">접근 권한 설정</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-3">대상 부서: <span id="authTargetDept" class="fw-bold text-primary">인사팀</span></p>
-                <input type="hidden" id="authTargetDeptId" />
-                
-                <form id="authForm">
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="menuId" value="M01" checked disabled>
-                        <label class="form-check-label">마이페이지 (기본)</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="menuId" value="M02">
-                        <label class="form-check-label">인사/급여 관리</label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" name="menuId" value="M03">
-                        <label class="form-check-label">매출/영업 관리</label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="menuId" value="M04">
-                        <label class="form-check-label">시스템 설정</label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-                <button type="button" class="btn btn-primary" onclick="saveAuth()">저장</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="/vendor/libs/jquery/jquery.js"></script>
 <script src="/vendor/libs/popper/popper.js"></script>

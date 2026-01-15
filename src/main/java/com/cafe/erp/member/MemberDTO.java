@@ -27,6 +27,7 @@ public class MemberDTO {
 	private int deptCode;
 	private int positionCode;
     
+	
 	private int idPrefix;
 	
 	private String memDeptName;
@@ -35,6 +36,5 @@ public class MemberDTO {
 	private String memProfileSavedName;
 	private String memProfileOriginalName;
 	
-
     
 }

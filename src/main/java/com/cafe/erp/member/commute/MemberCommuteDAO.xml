@@ -5,9 +5,36 @@
     
     <mapper namespace="com.cafe.erp.member.commute.MemberCommuteDAO">
 	    <select id="attendanceList" parameterType="MemberCommuteDTO" resultType="MemberCommuteDTO">
-	    	SELECT * FROM member_commute WHERE member_id = #{memberId};
-	    </select>
-	    
+		    SELECT * FROM (
+		        SELECT 
+		            member_commute_id,
+		            mem_commute_work_date,
+		            mem_commute_in_time,
+		            mem_commute_out_time,
+		            mem_commute_state,
+		            member_id,
+		            '' AS note
+		        FROM member_commute
+		        WHERE member_id = #{memberId}
+		
+		        UNION ALL
+		
+		        SELECT 
+		            0                      AS memberCommuteId,
+		            DATE(ma.mem_attendance_start_date) AS memCommuteWorkDate,
+		            NULL                   AS memCommuteInTime,
+		            NULL                   AS memCommuteOutTime,
+		            ma.mem_attendance_type AS memCommuteState,
+		            ma.member_id           AS memberId,
+		            CONCAT(ma.mem_attendance_reason, ' (', ma.mem_attendance_used_days, '일)') AS note
+		        FROM member_attendance ma
+		        JOIN approval a ON ma.approval_id = a.approval_id
+		        WHERE ma.member_id = #{memberId}
+		          AND a.app_status = '승인'
+		    ) AS combined_table
+		    ORDER BY mem_commute_work_date DESC
+		</select>
+			    
 	    
 	    <insert id="checkIn" parameterType="MemberCommuteDTO">
 	    	INSERT INTO member_commute (
@@ -34,4 +61,6 @@
 		      AND mem_commute_work_date = CURDATE()
 		      AND mem_commute_out_time IS NULL  
 		 </update>
+		 
+		 
     </mapper> 

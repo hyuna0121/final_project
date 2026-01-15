@@ -5,11 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cafe.erp.member.attendance.MemberAttendanceDAO;
+import com.cafe.erp.member.attendance.MemberAttendanceDTO;
+
 @Service
 public class MemberCommuteService {
 
 	@Autowired
 	private MemberCommuteDAO commuteDAO;
+	
+	@Autowired
+	private MemberAttendanceDAO memberAttendanceDAO;
 	
 	public List<MemberCommuteDTO> attendanceList(MemberCommuteDTO commuteDTO)throws Exception{
 		return commuteDAO.attendanceList(commuteDTO);
@@ -22,5 +28,9 @@ public class MemberCommuteService {
 
 	public int checkIn(MemberCommuteDTO commuteDTO) throws Exception {
 		return commuteDAO.checkIn(commuteDTO);
+	}
+	
+	public List<MemberAttendanceDTO> getApprovedAttendance(int memberId) throws Exception {
+	    return memberAttendanceDAO.selectApprovedAttendance(memberId);
 	}
 }

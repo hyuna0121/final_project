@@ -80,6 +80,20 @@
 				
 				    <div class="layout-page">
 				      <div class="content-wrapper">
+					      <div class="row mb-4">
+							  <div class="col">
+							    <h4 class="fw-bold">
+							    	<c:choose>
+									<c:when test="${hasRequest}">
+							   		   <span class="text-muted fw-light">발주 관리 /</span> 승인 처리
+									</c:when>
+									<c:when test="${hasApproved}">
+							      		<span class="text-muted fw-light">발주 관리 /</span> 입고 처리
+									</c:when>
+								  </c:choose>
+							    </h4>
+							  </div>
+						  </div>
 				
 				        <!-- ================= 발주 화면 ================= -->
 				        <div class="card p-3">
@@ -108,12 +122,12 @@
 									    </c:if>
 									    <c:if test="${hasApproved}">
 									      <button class="btn btn-success btn-sm" id="receiveBtn">입고</button>
-									      <button type="button" class="btn btn-danger btn-sm">승인취소</button>
+									      <button type="button" class="btn btn-danger btn-sm" id="cancelApproveBtn">승인취소</button>
 									    </c:if>
 									  </c:when>
 									  <c:otherwise>
 									    <c:if test="${hasApproved}">
-									      <button type="button" class="btn btn-danger btn-sm">승인취소</button>
+									      <button type="button" class="btn btn-danger btn-sm" id="cancelApproveBtn">승인취소</button>
 									    </c:if>
 									  </c:otherwise>
 									</c:choose>
@@ -167,7 +181,7 @@
 				                      <tbody>
 				                        <c:forEach var="o" items="${orderHqList}">
 				                          <tr class="order-row" data-order-no="${o.hqOrderId}" data-order-member="${member.memberId}" data-order-type="HQ">
-				                            <td class="chk-td"><input type="checkbox" class="order-check" /></td>
+				                            <td class="chk-td"><input type="checkbox" class="order-check"></input> </td>
 				                            <td>${o.hqOrderId}</td>
 				                            <td class="text-end">
 				                              <fmt:formatNumber value="${o.hqOrderTotalAmount}"/>원
@@ -218,8 +232,8 @@
 				                      </thead>
 				                      <tbody>
 				                        <c:forEach var="o" items="${orderStoreList}">
-				                          <tr class="order-row" data-order-no="${o.hqOrderId}" data-order-type="STORE">
-				                            <td class="chk-td"><input type="checkbox" class="order-check"/></td>
+				                          <tr class="order-row" data-order-no="${o.hqOrderId}" data-order-type="STORE" data-status="${o.hqOrderStatus}">
+				                            <td class="chk-td"><input type="checkbox" class="order-check" ${o.hqOrderStatus == 150 ? "disabled" : ""}/></td>
 				                            <td>${o.hqOrderId}</td>
 				                            <td class="text-end">
 				                              <fmt:formatNumber value="${o.hqOrderTotalAmount}"/>원
@@ -391,5 +405,7 @@
 	<!-- JS -->    
     <script src="/js/order/orderApprove.js"></script>
     <script src="/js/order/orderReject.js"></script>
+    <script src="/js/order/orderReceive.js"></script>
+    <script src="/js/order/orderCancel.js"></script>
   </body>
 </html>

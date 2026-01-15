@@ -23,6 +23,7 @@ public class OrderDTO {
 	
 	// 가맹
 	private Integer storeId;
+	private String storeName;
 	private Integer storeOrderApprover;
 	private String storeRejectionReason; 
 	

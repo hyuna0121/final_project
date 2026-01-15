@@ -17,10 +17,8 @@
     <link rel="stylesheet" href="/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <link rel="stylesheet" href="/css/member/member_mypage.css" />
     
-
     <script src="/vendor/js/helpers.js"></script>
     <script src="/js/config.js"></script>
-    
 </head>
 
 <body>
@@ -30,11 +28,9 @@
         <c:import url="/WEB-INF/views/template/aside.jsp"></c:import>
 
         <div class="layout-page">
-            
             <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
 
             <div class="content-wrapper">
-                
                 <div class="container-xxl flex-grow-1 container-p-y" style="padding-top: 3rem !important;">
                     
                     <h4 class="fw-bold py-3 mb-4">
@@ -42,18 +38,70 @@
                     </h4>
 
                     <div class="card shadow-sm">
+                        
+                        <div class="card-header border-bottom d-flex justify-content-between align-items-center py-3">
+                            
+                            <div class="d-flex align-items-center">
+                                <button type="button" class="btn btn-outline-secondary btn-sm me-3" id="btnToday">Today</button>
+                                
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-icon btn-sm btn-text-secondary rounded-pill" id="btnPrev">
+                                        <i class='bx bx-chevron-left fs-4'></i>
+                                    </button>
+                                    
+                                    <h4 class="mb-0 fw-bold text-dark mx-2" id="calendarTitle" style="min-width: 140px; text-align: center;">
+                                        Loading...
+                                    </h4>
+                                    
+                                    <button type="button" class="btn btn-icon btn-sm btn-text-secondary rounded-pill" id="btnNext">
+                                        <i class='bx bx-chevron-right fs-4'></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="btn-group" role="group" aria-label="View Toggle">
+                                <button type="button" class="btn btn-outline-primary" id="btnShowList">
+                                    <i class='bx bx-list-ul me-1'></i>리스트
+                                </button>
+                                
+                                <button type="button" class="btn btn-primary active" id="btnShowCalendar">
+                                    <i class='bx bx-calendar me-1'></i>달력
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="card-body p-4">
-                            <div id='calendar'></div> 
+                            
+                            <div id="calendarWrapper">
+                                <div id='calendar'></div> 
+                            </div>
+
+                            <div id="listWrapper" style="display: none;">
+							    <div class="table-responsive text-nowrap">
+							        <table class="table table-hover table-bordered align-middle">
+							            <thead class="table-light">
+							                <tr>
+							                    <th class="text-center" style="width: 15%;">날짜</th>
+							                    <th class="text-center" style="width: 12%;">구분</th>
+							                    <th class="text-center" style="width: 22%;">시간 / 차감</th>
+							                    <th class="ps-4">상세 내역</th>
+							                </tr>
+							            </thead>
+							            <tbody id="attendanceListBody">
+							                </tbody>
+							        </table>
+							    </div>
+							</div>
+
                         </div>
                     </div>
 
                 </div>
-                
                 <c:import url="/WEB-INF/views/template/footer.jsp"></c:import>
                 <div class="content-backdrop fade"></div>
             </div>
-            </div>
         </div>
+    </div>
     <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 
@@ -63,10 +111,8 @@
 <script src="/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="/vendor/js/menu.js"></script>
 <script src="/js/main.js"></script>
-<script src="/js/member/member_mypage.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-
+<script src="/js/member/member_mypage.js"></script>
 
 </body>
 </html>

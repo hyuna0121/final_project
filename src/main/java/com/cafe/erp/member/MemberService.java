@@ -93,6 +93,9 @@ public class MemberService {
 		memberDTO.setMemPassword(bcpw);
 		
 		int result = memberDAO.add(memberDTO);
+		if (result > 0) {
+	        memberDAO.addFirstLeave(memberDTO);
+	    }
 		return result;
 	}
 	
@@ -185,6 +188,18 @@ public class MemberService {
 	}
 
 	public void lockAccount(int memberId) throws Exception {}
+
+	public List<MemberDTO> deptList() throws Exception{
+		return memberDAO.deptList();
+	}
+
+	public List<MemberDTO> positionList() {
+		return memberDAO.positionList();
+	}
+
+	
+
+
 
 	
 	

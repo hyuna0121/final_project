@@ -68,11 +68,12 @@ public class ReceivableController {
 		model.addAttribute("receivableRoyaltyDTO", receivableRoyaltyDTO);
 		model.addAttribute("receivableAmountSummaryDTO", receivableAmountSummaryDTO);
 		model.addAttribute("receivableTransactionDTO", receivableTransactionDTO);
-		
-		
 	}
 	
-
+	@GetMapping("vendor")
+	public String index() {
+		return "receivable/receivable-vendor";
+	}
 	
 	
 	

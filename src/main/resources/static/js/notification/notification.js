@@ -102,12 +102,30 @@ function loadModalNotifications() {
 
 /* ================= 공통 ================= */
 
+
 function createNotificationItem(n) {
-  const li = document.createElement("li");
-  li.className = `notify-item ${n.notificationReadYn === "N" ? "unread" : ""}`;
+	
+	const li = document.createElement("li");
+	
+	const typeClass = n.notificationType
+	  ? n.notificationType.toLowerCase()
+	  : "voc";
+	
+	li.className = `notify-item ${typeClass} ${n.notificationReadYn === "N" ? "unread" : ""}`;
+	
+	let iconClass = "bx-message-rounded-detail"; // VOC 기본
+
+	if (typeClass === "order") {
+	  iconClass = "bx-package";
+	} else if (typeClass === "reject") {
+	  iconClass = "bx-error-circle";
+	}
+
 
   li.innerHTML = `
-    <div class="notify-icon"><i class="bx bx-message-rounded-detail"></i></div>
+	  <div class="notify-icon">
+	    <i class="bx ${iconClass}"></i>
+	  </div>
     <div class="notify-body">
       <div class="notify-header">
         <span class="notify-title">${n.notificationTitle}</span>

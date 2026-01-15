@@ -90,6 +90,7 @@
 	
 	<select id="deptMemberCount" resultType="DeptCountDTO">
 	    SELECT
+	    	 D.mem_dept_group_name,
 	         M.dept_code, 
 	         D.mem_dept_name, 
 	         COUNT(M.member_id) as count
@@ -113,12 +114,12 @@
 	     </where>
 	
 	     GROUP BY 
-	        dept_code, D.mem_dept_name
+		     M.dept_code, D.mem_dept_name, D.mem_dept_group_name
 	     ORDER BY
 	        M.dept_code ASC
 	</select>
 	
-	<!-- 사원 추가 시 자동 증가 -->
+	<!-- 사원 추가 시 아이디 자동 증가 -->
 	<select id="getMemberId" parameterType="String" resultType="String">
         SELECT MAX(member_id) 
         FROM member 
@@ -133,24 +134,66 @@
 	</insert>
 	
 	
-	
+	<insert id="addFirstLeave" parameterType="MemberDTO">
+	    INSERT INTO member_leave (
+	        mem_leave_year, 
+	        mem_leave_total_days, 
+	        mem_leave_used_days, 
+	        mem_leave_created_at, 
+	        mem_leave_updated_at, 
+	        member_id
+	    )
+	    SELECT 
+	        YEAR(NOW()),                  
+	        mp.mem_position_leave_days,   
+	        0.0,                         
+	        NOW(), 
+	        NOW(),
+	        #{memberId}                
+	    FROM member_position mp
+	    WHERE mp.member_position_code = #{positionCode} 
+</insert>
 	
 	
 	<select id="detail" parameterType="MemberDTO" resultType="MemberDTO">
     SELECT 
         m.*, 
-        (
-            SELECT mem_profile_saved_name 
-            FROM member_profile 
-            WHERE member_id = m.member_id 
-            AND mem_profile_is_active = true
-            LIMIT 1
-        ) AS memProfileSavedName
-    FROM 
-        member m
-    WHERE 
-        m.member_id = #{memberId}
-</select>
+        m.dept_code      AS deptCode,      m.position_code  AS positionCode,  d.mem_dept_name,     
+        p.mem_position_name,
+	        (
+	            SELECT mem_profile_saved_name 
+	            FROM member_profile 
+	            WHERE member_id = m.member_id 
+	            AND mem_profile_is_active = true
+	            LIMIT 1
+	        ) AS memProfileSavedName
+	    FROM 
+	        member m
+        LEFT JOIN member_dept d ON m.dept_code = d.member_dept_code
+	    LEFT JOIN member_position p ON m.position_code = p.member_position_code
+	    WHERE 
+	        m.member_id = #{memberId}
+	</select>
+
+	<select id="deptList" resultType="MemberDTO">
+	    SELECT 
+	        member_dept_code AS deptCode,      
+	        mem_dept_name    AS memDeptName
+	    FROM 
+	        member_dept
+	    ORDER BY 
+	        member_dept_code ASC
+	</select>
+	
+	<select id="positionList" resultType="MemberDTO">
+	    SELECT 
+	        member_position_code AS positionCode,   
+	        mem_position_name    AS memPositionName
+	    FROM 
+	        member_position
+	    ORDER BY 
+	        member_position_code ASC
+	</select>
 
 
 	<select id="findProfileSavedName" resultType="String">
@@ -192,6 +235,10 @@
             member_id = #{memberId}
     </update>
     
+    
+    
+    
+    
     <insert id="insertProfile">
         INSERT INTO member_profile (
             mem_profile_original_name,
@@ -207,6 +254,11 @@
             #{memberId}
         )
     </insert>
+    
+    
+    
+    
+    
 	
 	<update id="resetPw" parameterType="MEmberDTO">
 		UPDATE member
@@ -217,6 +269,10 @@
 	
 	</update>
 	
+	
+	
+	
+	
 	<update id="InActive" parameterType="MemberDTO">
 		UPDATE member
 		SET
@@ -225,12 +281,20 @@
 		WHERE member_id = #{memberId}
 	</update>
 	
+	
+	
+	
+	
 	<select id="getMemberPassword" parameterType="int" resultType="String">
 		SELECT mem_password
 		FROM member
 		WHERE member_id = #{memberId}
 		
 	</select>
+	
+	
+	
+	
 	
 	
 	<update id="changePassword" parameterType="MemberChangePasswordDTO">
@@ -241,11 +305,38 @@
 			member_id = #{memberId}
 	</update>
 	
-	<update id="lockAccount" parameterType="int">
-	    UPDATE member 
-	    SET mem_is_locked = 'Y'
-	    WHERE member_id = #{memberId}
-	</update>
+	
+	
+	
+	
+
+	<insert id="yearLeave">
+        INSERT INTO member_leave (
+            mem_leave_year, 
+            mem_leave_total_days, 
+            mem_leave_used_days, 
+            mem_leave_created_at, 
+            mem_leave_updated_at, 
+            member_id
+        )
+        SELECT 
+            YEAR(NOW()),
+            mp.mem_position_leave_days + ( (YEAR(NOW()) - YEAR(m.mem_hire_date)) * 1.0 ), <!-- 직급 기본 연차 + 근속 -->
+            0.0,
+            NOW(), 
+            NOW(),
+            m.member_id
+        FROM member m
+        JOIN member_position mp ON m.position_code = mp.member_position_code
+        WHERE m.mem_is_active = 1
+    </insert>
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -254,6 +345,13 @@
 		FROM member m LEFT JOIN store s ON m.member_id = s.member_id 
 		WHERE m.mem_name LIKE CONCAT('%', #{keyword}, '%') AND s.member_id IS NULL AND m.member_id LIKE '2%' 
 	</select>
+	
+	
+	
+	
+	
+	
+	
 	
 	<select id="searchManager" parameterType="String" resultType="MemberDTO"> 
 		SELECT 

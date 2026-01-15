@@ -28,4 +28,7 @@ public interface NotificationDAO {
     // 안 읽은 알림 개수
     int selectUnreadCount(int memberId);
     
+    // 재무팀 전체 조회
+    List<Integer> selectFinanceTeamMemberIds();
+    
 }

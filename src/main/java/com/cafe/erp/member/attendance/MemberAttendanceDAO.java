@@ -9,4 +9,7 @@ public interface MemberAttendanceDAO {
 	List<MemberAttendanceDTO> attendanceList(int memberId);
 	
 	MemberLeaveStatsDTO selectLeaveStats(int memberId);
+
+	List<MemberAttendanceDTO> selectApprovedAttendance(int memberId);
+
 }

@@ -87,5 +87,13 @@
         WHERE receiver_member_id = #{memberId}
           AND notification_read_yn = 'N'
     </select>
-
+	
+	<!-- 재무팀 전체 memberId 조회 -->
+	<select id="selectFinanceTeamMemberIds" resultType="int">	
+		SELECT member_id
+		FROM member
+		WHERE dept_code = 12
+	</select>
+	
+	
 </mapper>

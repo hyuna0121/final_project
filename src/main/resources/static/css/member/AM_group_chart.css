@@ -50,6 +50,7 @@
 		    border-bottom: 2px solid #b4bdc6;
 		    
 		    background-color: transparent; 
+		    border-radius: 0 0 0 4px; 
 		    transform: none; 
 		}
 		

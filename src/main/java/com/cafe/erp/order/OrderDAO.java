@@ -15,7 +15,7 @@ public interface OrderDAO {
 	public String selectMaxOrderHqId(String prefix, String orderDate);
 	public String selectMaxOrderStoreId(String prefix, String orderDate);
 	
-	public int selectStoreId(int memberId);
+	public OrderDTO selectStoreId(int memberId);
 	
 	public void insertHqOrder(OrderDTO orderDTO);
 	public void insertStoreOrder(OrderDTO orderDTO);
@@ -29,11 +29,20 @@ public interface OrderDAO {
 	public List<OrderDetailDTO> getHqOrderDetail(@Param("orderNo") String orderNo);
 	public List<OrderDetailDTO> getStoreOrderDetail(@Param("orderNo") String orderNo);
 	
-	public void approveHqOrder(@Param("orderNo") String orderNo);
-	public void approveStoreOrder(@Param("orderNo") String orderNo);
+	public void approveHqOrder(String orderNo, int orderApproverId);
+	public void approveStoreOrder(String orderNo, int orderApproverId);
 	
 	public List<OrderDTO> getApprovedOrder();
 	public List<OrderDetailDTO> getApprovedOrderDetail();
 
 	public void rejectOrder(OrderRejectDTO OrderRejectDTO);
+	// 발주 반려 시 알림 기능 (가맹점주 아이디 조회)
+	public OrderRejectDTO rejectOrderNotification(OrderRejectDTO orderRejectDTO);
+	
+	public void receiveHqOrder(@Param("orderNo") String orderNo);
+	public void receiveStoreOrder(@Param("orderNo") String orderNo);
+
+	public void cancelApproveHqOrder(@Param("orderNo") String orderNo);
+	public void cancelApproveStoreOrder(@Param("orderNo") String orderNo);
+	
 }

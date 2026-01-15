@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 
 import com.cafe.erp.item.ItemDTO;
 import com.cafe.erp.member.MemberDTO;
+import com.cafe.erp.notification.service.NotificationService;
 import com.cafe.erp.security.UserDTO;
 
 @Service
@@ -17,6 +18,9 @@ public class OrderService {
 	
 	@Autowired
 	private OrderDAO orderDAO;
+	
+	@Autowired
+	private NotificationService notificationService;
 	
 	public void requestOrder(OrderDTO orderDTO, UserDTO userDTO) { 
 		
@@ -32,8 +36,10 @@ public class OrderService {
 		if(String.valueOf(orderType).charAt(0) == '2') {
 			isHqOrder = true;
 			// 스토어 정보 가져오기
-			int storeId = orderDAO.selectStoreId(orderType);
-			orderDTO.setStoreId(storeId);
+			OrderDTO dto = orderDAO.selectStoreId(orderType);
+			
+			orderDTO.setStoreId(dto.getStoreId());
+			orderDTO.setStoreName(dto.getStoreName());
 		}
 		// 발주번호(orderId) 생성
 		String orderId = generateOrderId(isHqOrder);
@@ -44,13 +50,32 @@ public class OrderService {
 		// 요청자 기입
 		orderDTO.setMemberId(orderType);
 		
+		// 상태값 기입(요청/자동승인)
+		orderDTO.setHqOrderStatus(100);	// 기본: 요청	
+		if (isHqOrder) {
+			List<OrderItemRequestDTO> detailList = orderDTO.getItems();
+			int isAutoOrder = 0;
+			for (OrderItemRequestDTO orderItemRequestDTO : detailList) {
+				// 0: 자동승인 1:승인요청
+				if(orderItemRequestDTO.getItemAutoOrder() == true) {
+					isAutoOrder++;
+				}
+			}
+			if (isAutoOrder == 0) {
+				orderDTO.setHqOrderStatus(200);	// isAutoOrder 값이 0이면 자동승인			
+			}
+		}
 		// 발주 insert
 		insertOrder(orderDTO, isHqOrder);
 		// 발주 상세 insert
 		insertOrderItemDetail(orderDTO, isHqOrder);
-		
-		
-		
+
+		if (isHqOrder && orderDTO.getHqOrderStatus() == 100) {
+		    notificationService.sendOrderNotificationToFinanceTeam(
+		        orderDTO.getHqOrderId(),
+		        orderType
+		  );
+		}
 		
 	}
 	
@@ -114,6 +139,7 @@ public class OrderService {
 				orderDAO.insertHqOrderItemDetail(detail);
 			}
 		} else {
+			// 가맹점 발주 상세 insert
 			for (OrderItemRequestDTO req : orderDTO.getItems()) {
 				
 				OrderDetailDTO detail = new OrderDetailDTO();
@@ -150,13 +176,13 @@ public class OrderService {
 		return orderDAO.getStoreOrderDetail(orderNo);
 	}
 	
-	public void approveOrder(List<OrderApproveRequestDTO> orderNos) {
-		
-		for (OrderApproveRequestDTO orderNo : orderNos) {
+	public void approveOrder(List<OrderRequestDTO> orderNos, MemberDTO member) {
+		int orderApprover = member.getMemberId();
+		for (OrderRequestDTO orderNo : orderNos) {
 			if ("HQ".equals(orderNo.getOrderType())) {
-				orderDAO.approveHqOrder(orderNo.getOrderNo());							
+				orderDAO.approveHqOrder(orderNo.getOrderNo(), orderApprover);							
 			} else if("STORE".equals(orderNo.getOrderType())){
-				orderDAO.approveStoreOrder(orderNo.getOrderNo());							
+				orderDAO.approveStoreOrder(orderNo.getOrderNo(), orderApprover);							
 			}
 		}
 	}
@@ -167,9 +193,39 @@ public class OrderService {
 	public List<OrderDetailDTO> getApprovedOrderDetail() {
 		return orderDAO.getApprovedOrderDetail();
 	}
-	
-	public void rejectOrder(OrderRejectDTO orderRejectDTO) {
+	// 반려
+	public void rejectOrder(OrderRejectDTO orderRejectDTO, UserDTO userDTO) {
+		// 발주테이블 상태값을 반려로 update
 		orderDAO.rejectOrder(orderRejectDTO);
+		// 가맹점주 아이디 조회
+		OrderRejectDTO result = orderDAO.rejectOrderNotification(orderRejectDTO);
+		int senderMemberId = userDTO.getMember().getMemberId(); // 본사 직원 아이디
+		int receiverMemberId = result.getStoreMemberId(); // 가맹점주 아이디
+		String orderId = result.getRejectId(); // 발주 번호
+		
+		notificationService.sendOrderRejectNotification(
+				senderMemberId,
+				receiverMemberId,
+				orderId
+		);
+	}
+	public void receiveOrder(List<OrderRequestDTO> orderNos) {
+		for (OrderRequestDTO orderNo : orderNos) {
+			if ("HQ".equals(orderNo.getOrderType())) {
+				orderDAO.receiveHqOrder(orderNo.getOrderNo());							
+			} else if("STORE".equals(orderNo.getOrderType())){
+				orderDAO.receiveStoreOrder(orderNo.getOrderNo());							
+			}
+		}
+	}
+	public void cancelApprove(List<OrderRequestDTO> orderNos) {
+		for (OrderRequestDTO orderNo : orderNos) {
+			if ("HQ".equals(orderNo.getOrderType())) {
+				orderDAO.cancelApproveHqOrder(orderNo.getOrderNo());							
+			} else if("STORE".equals(orderNo.getOrderType())){
+				orderDAO.cancelApproveStoreOrder(orderNo.getOrderNo());							
+			}
+		}
 	}
 
 }

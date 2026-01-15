@@ -37,7 +37,6 @@ $(document).ready(function () {
     } else {
       removeFromApprovalList(orderNo);
     }
-	updateActionButtons();
   });
 
 });
@@ -88,7 +87,7 @@ function removeFromApprovalList(orderNo) {
 
 
 $(document).ready(function () {
-
+	
   /* ===============================
      전체 선택 (Select All)
   ================================ */
@@ -210,7 +209,6 @@ $(document).on('click', '#approveBtn', function () {
       resetApprovalList();
       resetCheckboxes();
       updateOrderStatusToApproved(orderNos);
-	  updateActionButtons();
     },
 
     error: function () {
@@ -218,5 +216,4 @@ $(document).on('click', '#approveBtn', function () {
     }
   });
 });
-
 

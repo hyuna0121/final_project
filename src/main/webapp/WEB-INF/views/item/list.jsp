@@ -216,8 +216,8 @@
 
 	<!-- 수정 모달창 -->
 	<div class="modal fade" id="editModal" tabindex="-1">
-	  <div class="modal-dialog">
-	    <form class="modal-content" method="post">
+	  <div class="modal-dialog modal-dialog-scrollable">
+	    <form class="modal-content"  method="post">
 	      <div class="modal-header">
 	        <h5 class="modal-title">title</h5>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -282,7 +282,7 @@
 	
 	<!-- 물품 등록 모달 -->
 	<div class="modal fade" id="itemAddModal" tabindex="-1" aria-hidden="true">
-	  <div class="modal-dialog modal-lg modal-dialog-centered">
+	  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 	    <div class="modal-content">
 	
 	      <!-- 모달 헤더 -->

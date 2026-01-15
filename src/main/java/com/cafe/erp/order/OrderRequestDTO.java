@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderApproveRequestDTO {
+public class OrderRequestDTO {
 	private String orderNo;
     private String orderType; // HQ / STORE
 }

@@ -22,7 +22,7 @@ public class MemberCommuteDTO extends MemberDTO{
 	private String memCommuteState;
 	private int memberId;
 	
-	
+	private String note;
 	
 	public String getFormattedInTime() {
         if (memCommuteInTime == null) return "-";

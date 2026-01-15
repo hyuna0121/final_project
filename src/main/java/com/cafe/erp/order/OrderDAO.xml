@@ -14,16 +14,45 @@
 			where store_order_id LIKE CONCAT(#{prefix}, #{orderDate}, '%')    	
     	</select>
     	
-    	<select id="selectStoreId" parameterType="Integer" resultType="Integer">
-    		select store_id from store where member_id = #{memberId}
+    	<select id="selectStoreId" parameterType="Integer" resultType="OrderDTO">
+    		select store_id, store_name from store where member_id = #{memberId}
     	</select>
     	
     	<!-- 발주 추가 -->
     	<insert id="insertHqOrder" parameterType="OrderDTO">
-    		insert into order_hq values(#{hqOrderId}, now(), null, 100, #{memberId}, #{hqOrderTotalAmount});
+    		insert into order_hq values(
+    		#{hqOrderId}, 
+    		NOW(),
+    		<choose>
+	            <when test="hqOrderStatus == 100">
+	                NULL
+	            </when>
+	            <when test="hqOrderStatus == 200">
+	                NOW()
+	            </when>
+	        </choose>, 
+	        #{hqOrderStatus}, 
+	        #{memberId}, 
+	        #{hqOrderTotalAmount});
     	</insert>
     	<insert id="insertStoreOrder" parameterType="OrderDTO">
-    		insert into order_store values(#{hqOrderId}, now(), null, 100, null, #{storeId}, #{memberId}, #{hqOrderTotalAmount}, null);
+    		insert into order_store values(
+    		#{hqOrderId}, 
+    		now(), 
+    		<choose>
+	            <when test="hqOrderStatus == 100">
+	                NULL
+	            </when>
+	            <when test="hqOrderStatus == 200">
+	                NOW()
+	            </when>
+	        </choose>, 
+    		#{hqOrderStatus}, 
+    		null, 
+    		#{storeId}, 
+    		#{memberId}, 
+    		#{hqOrderTotalAmount}, 
+    		null);
     	</insert>
     	
     	<!-- 발주 상세 추가 -->
@@ -104,11 +133,11 @@
     	</select>
     	
     	<!-- 발주 승인 처리 -->
-    	<update id="approveHqOrder" parameterType="String">
-    		update order_hq set hq_order_status = 400 where hq_order_id = #{orderNo}
+    	<update id="approveHqOrder">
+    		update order_hq set hq_order_status = 200, hq_order_approvaled_at = NOW() where hq_order_id = #{orderNo}
     	</update>
-    	<update id="approveStoreOrder" parameterType="String">
-    		update order_store set store_order_status = 400 where store_order_id = #{orderNo}
+    	<update id="approveStoreOrder">
+    		update order_store set store_order_status = 200, store_order_approver = #{orderApproverId}, store_order_approvaled_at = NOW() where store_order_id = #{orderNo}
     	</update>
     	<!-- 발주 자동 승인 처리 -->
     	
@@ -117,10 +146,25 @@
     	<update id="rejectOrder" parameterType="OrderRejectDTO">
     		update order_store set store_order_status = 150, store_rejection_reason = #{rejectReason} where store_order_id = #{rejectId}
     	</update>
+    	<!-- 반려 처리 알림으로 가맹 점수 아이디 조회 -->
+    	<select id="rejectOrderNotification" parameterType="OrderRejectDTO" resultType="OrderRejectDTO">
+    		SELECT store_order_id AS rejectId, member_id AS storeMemberId FROM order_store
+    		WHERE store_order_id = #{rejectId}
+    	</select>
     	
+    	<!-- 승인취소 처리 -->
+    	<update id="cancelApproveHqOrder" parameterType="String">
+    		update order_hq set hq_order_status = 300 where hq_order_id = #{orderNo}
+    	</update>
+    	<update id="cancelApproveStoreOrder" parameterType="String">
+    		update order_store set store_order_status = 300 where store_order_id = #{orderNo}
+    	</update>
     	
     	<!-- 입고 처리 -->
-    	<update id="">
-    	
+    	<update id="receiveHqOrder" parameterType="String">
+    		update order_hq set hq_order_status = 400 where hq_order_id = #{orderNo}
+    	</update>
+    	<update id="receiveStoreOrder">
+    		update order_store set store_order_status = 400 where store_order_id = #{orderNo}
     	</update>
     </mapper>
