@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.cafe.erp.util.Pager;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface StoreDAO { 
@@ -32,4 +33,6 @@ public interface StoreDAO {
     public StoreDTO findByMemberId(int memberId);
 
     public List<StoreDTO> searchMyStore(String keyword, String memberId) throws Exception;
+
+    public int isCurrentManager(@Param("storeId") Integer storeId, @Param("memberId") Integer memberId) throws Exception;
 }

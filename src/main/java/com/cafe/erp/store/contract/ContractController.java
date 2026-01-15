@@ -6,7 +6,9 @@ import java.util.Map;
 
 import com.cafe.erp.security.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,31 +30,24 @@ public class ContractController {
 	@Autowired ContractService contractService;
 
 	@GetMapping("list")
-	public String List(ContractSearchDTO searchDTO, Model model, Authentication authentication) throws Exception {
-		UserDTO user = (UserDTO) authentication.getPrincipal();
-		String memberId = user.getUsername();
+	public String List(ContractSearchDTO searchDTO, Model model, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
 
-		if (memberId.startsWith("2")) {
-			if (user.getStore() != null) {
-				searchDTO.setSearchStoreId(user.getStore().getStoreId());
-			} else {
-				searchDTO.setSearchStoreId(-1);
+		if (isStoreOwner) {
+			if (user.getStore() == null) {
+				return "error/no_store_info";
 			}
-
-			List<ContractDTO> contractList = contractService.list(searchDTO);
-			model.addAttribute("list", contractList);
-			model.addAttribute("pager", searchDTO);
-
-			return "view_store/store/contract";
-		} else {
-			List<ContractDTO> contractList = contractService.list(searchDTO);
-			model.addAttribute("list", contractList);
-			model.addAttribute("pager", searchDTO);
-
-			return "store/tab_contract";
+			searchDTO.setSearchStoreId(user.getStore().getStoreId());
 		}
+
+		List<ContractDTO> contractList = contractService.list(searchDTO);
+		model.addAttribute("list", contractList);
+		model.addAttribute("pager", searchDTO);
+
+		return isStoreOwner ? "view_store/store/contract" : "store/tab_contract";
 	}
-	
+
+	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("add")
 	@ResponseBody
 	public Map<String, Object> addContract(@ModelAttribute ContractDTO contractDTO, 
@@ -62,11 +57,9 @@ public class ContractController {
 		Map<String, Object> response = new HashMap<>();
 	 
 		if (result > 0) {  
-			response.put("message", "등록 완료"); 
 			response.put("status", "success");
 		} else {
 			response.put("status", "error");
-			response.put("message", "등록 실패");
 		}
 		
 		return response; 
@@ -74,10 +67,18 @@ public class ContractController {
 	
 	@GetMapping("detail")
 	@ResponseBody
-	public ContractDTO getDetail(@RequestParam String contractId) throws Exception {
-		return contractService.getDetail(contractId);
+	public ContractDTO getDetail(@RequestParam String contractId, @AuthenticationPrincipal UserDTO user) throws Exception {
+		ContractDTO contractDTO = contractService.getDetail(contractId);
+
+		if (contractDTO == null) return null;
+
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
+		if (isStoreOwner && (!contractDTO.getStoreId().equals(user.getStore().getStoreId()))) return null;
+
+		return contractDTO;
 	}
-	
+
+	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("update")
 	@ResponseBody
 	public Map<String, Object> updateContract(@ModelAttribute ContractDTO contractDTO, 
@@ -88,27 +89,24 @@ public class ContractController {
 		Map<String, Object> response = new HashMap<>();
 		
 		if (result > 0) {  
-			response.put("message", "등록 완료"); 
 			response.put("status", "success");
 		} else {
 			response.put("status", "error");
-			response.put("message", "등록 실패");
 		}
 		
 		return response;
 	}
 	
 	@GetMapping("downloadExcel")
-	public void downloadExcel(ContractSearchDTO searchDTO, HttpServletResponse response, Authentication authentication) throws Exception {
-		UserDTO user = (UserDTO) authentication.getPrincipal();
-		String memberId = user.getUsername();
+	public void downloadExcel(ContractSearchDTO searchDTO, HttpServletResponse response, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
 
-		if (memberId.startsWith("2")) {
-			if (user.getStore() != null) {
-				searchDTO.setSearchStoreId(user.getStore().getStoreId());
-			} else {
-				searchDTO.setSearchStoreId(-1);
+		if (isStoreOwner) {
+			if (user.getStore() == null) {
+				response.sendRedirect("/error/noStoreInfo");
+				return;
 			}
+			searchDTO.setSearchStoreId(user.getStore().getStoreId());
 		}
 
 		List<ContractDTO> list = contractService.excelList(searchDTO);

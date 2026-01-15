@@ -57,6 +57,14 @@ async function submitQuestionRegistration() {
 
         const result = await response.json();
 
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("QSC 질문 등록 중 오류가 발생했습니다.");
+            return;
+        }
+
         alert("QSC 질문이 성공적으로 등록되었습니다.");
         
         const modalEl = document.getElementById('registerQuestionModal');
@@ -192,6 +200,14 @@ async function submitQuestionUpdate() {
         }
 
         const result = await response.json();
+
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("질문 수정 중 오류가 발생했습니다.");
+            return;
+        }
 
         alert("질문이 성공적으로 수정되었습니다.");
 

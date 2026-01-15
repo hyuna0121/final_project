@@ -145,7 +145,8 @@
                             <div class="d-flex justify-content-end gap-2 p-4">
                                 <a href="/store/qsc/list" class="btn btn-outline-secondary">목록</a>
                                 <sec:authentication property="principal.member" var="memberInfo"/>
-                                <c:if test="${dto.memberId eq memberInfo.memberId}">
+                                <sec:authorize access="hasAnyRole('EXEC', 'MASTER')" var="isAdmin" />
+                                <c:if test="${(dto.memberId eq memberInfo.memberId) or isAdmin}">
                                     <a href="/store/qsc/edit?qscId=${dto.qscId}"class="btn btn-primary">수정</a>
                                 </c:if>
                             </div>

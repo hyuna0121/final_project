@@ -224,4 +224,10 @@
 		ORDER BY s.store_name
 	</select>
 
+    <select id="isCurrentManager" resultType="int">
+		SELECT COUNT(*)
+		FROM store_manager_history
+		WHERE store_id = #{storeId} AND member_id = #{memberId} AND manage_end_date IS NULL
+	</select>
+
 </mapper>

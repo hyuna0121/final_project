@@ -57,6 +57,17 @@ function selectStore(id, name, member) {
     document.getElementById("storeResultList").style.display = 'none';
 }
 
+document.addEventListener('click', function(e) {
+    const target = e.target;
+    const isInputGroup = target.closest('.input-group');
+    const isResultList = target.closest('#storeResultList');
+
+    if (!isInputGroup && !isResultList) {
+        const listEl = document.getElementById('storeResultList');
+        if (listEl) listEl.style.display = 'none';
+    }
+});
+
 function handleMaxScore(el) {
     const maxScore = parseInt(el.getAttribute('data-max-score'));
 
@@ -179,8 +190,18 @@ async function submitQscForm() {
             throw new Error(`서버 오류: ${response.status}`);
         }
 
+        const result = await response.json();
+
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("QSC점검 등록 중 오류가 발생했습니다.");
+            return;
+        }
+
+        alert("QSC점검이 등록되었습니다.");
         location.href = "/store/qsc/list";
-        alert("QSC 점검이 등록되었습니다.");
     } catch (error) {
         console.error('Error:', error);
         alert("등록 중 오류가 발생했습니다.");
@@ -237,6 +258,16 @@ async function submitQscUpdateForm() {
 
         if (!response.ok) {
             throw new Error(`서버 오류: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("QSC점검 수정 중 오류가 발생했습니다.");
+            return;
         }
 
         alert("QSC 점검이 수정되었습니다.");

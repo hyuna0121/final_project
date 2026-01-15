@@ -4,37 +4,31 @@ import java.util.Collection;
 import java.util.Objects;
 
 import com.cafe.erp.store.StoreDTO;
+import jakarta.mail.Store;
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.cafe.erp.member.MemberDTO;
 
-public class UserDTO implements UserDetails{
+@Getter
+@ToString
+public class UserDTO implements UserDetails {
 
-	@Autowired
 	private MemberDTO member;
-	@Autowired
 	private StoreDTO store;
-	
-	public UserDTO(MemberDTO memberDTO) {
-		this(memberDTO, null);
-	}
+	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserDTO(MemberDTO memberDTO, StoreDTO storeDTO) {
+	public UserDTO(MemberDTO memberDTO, StoreDTO store, Collection<? extends GrantedAuthority> authorities) {
 		this.member = memberDTO;
-		this.store = storeDTO;
+		this.store = store;
+		this.authorities = authorities;
 	}
-	
-	public MemberDTO getMember() {
-		return member;
-	}
-	public StoreDTO getStore() { return store; }
 
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return java.util.Collections.emptyList();
-	}
+	public Collection<? extends GrantedAuthority> getAuthorities() { return this.authorities; }
 
 	@Override
 	public String getPassword() {
@@ -45,8 +39,7 @@ public class UserDTO implements UserDetails{
 	public String getUsername() {
 		return String.valueOf(member.getMemberId());
 	}
-	
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) return true;
@@ -61,13 +54,6 @@ public class UserDTO implements UserDetails{
 		return Objects.hash(this.member.getMemberId());
 	}
 	
-	
-	
-	
-	
-	
-	
-
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
@@ -87,13 +73,5 @@ public class UserDTO implements UserDetails{
 	public boolean isEnabled() {
 		return true;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 }

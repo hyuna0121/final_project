@@ -5,8 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cafe.erp.store.StoreDTO;
+import com.cafe.erp.store.StoreService;
 import com.cafe.erp.store.contract.ContractDTO;
+import jakarta.mail.Store;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -32,36 +36,28 @@ public class VocController {
 	
 	@Autowired
 	private VocService vocService;
-	
+	@Autowired
+	private StoreService storeService;
 
-	
-	
 	@GetMapping("list")
-	public String list(VocSearchDTO searchDTO, Model model, Authentication authentication) throws Exception {
-		UserDTO user = (UserDTO) authentication.getPrincipal();
-		String memberId = user.getUsername();
+	public String list(VocSearchDTO searchDTO, Model model, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
 
-		if (memberId.startsWith("2")) {
-			if (user.getStore() != null) {
-				searchDTO.setSearchStoreId(user.getStore().getStoreId());
-			} else {
-				searchDTO.setSearchStoreId(-1);
+		if (isStoreOwner) {
+			if (user.getStore() == null) {
+				return "error/no_store_info";
 			}
-
-			List<VocDTO> vocList = vocService.list(searchDTO);
-			model.addAttribute("list", vocList);
-			model.addAttribute("pager", searchDTO);
-
-			return "view_store/store/voc_list";
-		} else {
-			List<VocDTO> vocList = vocService.list(searchDTO);
-			model.addAttribute("list", vocList);
-			model.addAttribute("pager", searchDTO);
-
-			return "voc/list";
+			searchDTO.setSearchStoreId(user.getStore().getStoreId());
 		}
+
+		List<VocDTO> vocList = vocService.list(searchDTO);
+		model.addAttribute("list", vocList);
+		model.addAttribute("pager", searchDTO);
+
+		return isStoreOwner ? "view_store/store/voc_list" : "voc/list";
 	}
-	
+
+	@PreAuthorize("hasAnyRole('DEPT_CS', 'EXEC', 'MASTER')")
 	@PostMapping("add")
 	@ResponseBody
 	public Map<String, Object> addVoc(
@@ -69,14 +65,21 @@ public class VocController {
 			@AuthenticationPrincipal UserDTO userDTO
 			)
 			throws Exception {
-		int result = vocService.add(vocDTO , userDTO.getMember().getMemberId());
-		return result(result); 
-		
+		return result(vocService.add(vocDTO , userDTO.getMember().getMemberId()));
 	}
 	
 	@GetMapping("detail")
-	public String detail(Integer vocId, Model model) throws Exception {
+	public String detail(Integer vocId, Model model, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
+
 		VocDTO vocDTO = vocService.detail(vocId);
+		if (vocDTO == null) return "error/404";
+		if (isStoreOwner) {
+			StoreDTO store = user.getStore();
+			if (store == null) return "error/no_store_info";
+			if (!store.getStoreId().equals(vocDTO.getStoreId())) return "error/403";
+		}
+
 		List<VocProcessDTO> processList = vocService.processList(vocId);
 		model.addAttribute("dto", vocDTO);
 		model.addAttribute("list", processList);
@@ -84,39 +87,55 @@ public class VocController {
 		
 		return "voc/detail";
 	}
-	
+
+	@PreAuthorize("hasAnyRole('STORE', 'DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("addProcess")
 	@ResponseBody
-	public Map<String, Object> addVocProcess(Integer isFirst, @ModelAttribute VocProcessDTO processDTO, @RequestParam(value = "files", required = false) List<MultipartFile> files) throws Exception { 
+	public Map<String, Object> addVocProcess(
+			Integer isFirst, @ModelAttribute VocProcessDTO processDTO,
+			@RequestParam(value = "files", required = false) List<MultipartFile> files,
+			@AuthenticationPrincipal UserDTO user) throws Exception {
+		Integer writerId = user.getMember().getMemberId();
+		boolean isSales = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEPT_SALES"));
+
+		if (isSales) {
+			VocDTO vocDTO = vocService.detail(processDTO.getVocId());
+			boolean isManager = storeService.isCurrentManager(vocDTO.getStoreId(), writerId);
+			if (!isManager) return result("해당 가맹점의 담당자가 아닙니다.");
+		}
+
+		processDTO.setMemberId(writerId);
 		return result(vocService.addProcess(isFirst, processDTO, files));
 	}
-	
-	private Map<String, Object> result(int result) {
-		Map<String, Object> response = new HashMap<>();
-		 
-		if (result > 0) {  
-			response.put("message", "등록 완료"); 
-			response.put("status", "success");
-		} else {
-			response.put("status", "error");
-			response.put("message", "등록 실패");
+
+	@PreAuthorize("hasAnyRole('STORE', 'DEPT_SALES', 'EXEC', 'MASTER')")
+	@PostMapping("deleteProcess")
+	@ResponseBody
+	public Map<String, Object> deleteVocProcess(@RequestParam Integer processId, @AuthenticationPrincipal UserDTO user) throws Exception {
+		Integer logInId = user.getMember().getMemberId();
+		boolean isSales = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEPT_SALES"));
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
+
+		if ((isSales || isStoreOwner)) {
+			VocProcessDTO originDTO = vocService.getProcess(processId);
+			if (!logInId.equals(originDTO.getMemberId())) return result("본인이 작성한 내역이 아닙니다.");
 		}
-		
-		return response; 
+
+		return result(vocService.deleteProcess(processId));
 	}
 	
 	@GetMapping("downloadExcel")
-	public void downloadExcel(VocSearchDTO searchDTO, HttpServletResponse response, Authentication authentication) throws Exception {
-		UserDTO userDTO = (UserDTO) authentication.getPrincipal();
-		String memberId = userDTO.getUsername();
+	public void downloadExcel(VocSearchDTO searchDTO, HttpServletResponse response, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
 
-		if (memberId.startsWith("2")) {
-			if (userDTO.getStore() != null) {
-				searchDTO.setSearchStoreId(userDTO.getStore().getStoreId());
-			} else {
-				searchDTO.setSearchStoreId(-1);
+		if (isStoreOwner) {
+			if (user.getStore() == null) {
+				response.sendRedirect("/error/noStoreInfo");
+				return;
 			}
+			searchDTO.setSearchStoreId(user.getStore().getStoreId());
 		}
+
 		List<VocDTO> list = vocService.excelList(searchDTO);
 		String[] headers = {"ID", "작성자ID", "작성자", "가맹점ID", "가맹점명", "점주ID", "점주명", "주소", 
 				            "불만유형", "제목", "처리상태", "고객연락처", "상세내용", "작성일시", "수정일시"};
@@ -140,12 +159,14 @@ public class VocController {
 			row.createCell(14).setCellValue(dto.getVocUpdatedAtStr());
 		});
 	}
-	
+
+	@PreAuthorize("hasRole('HQ')")
 	@GetMapping("statistics")
 	public String statistics() throws Exception {
 		return "voc/statistics";
 	}
-	
+
+	@PreAuthorize("hasRole('HQ')")
 	@GetMapping(value = "statistics", params = "year")
 	@ResponseBody
 	public Map<String, Object> statistics(@RequestParam("year") String year, @RequestParam(value = "month") String month) throws Exception { 
@@ -189,6 +210,27 @@ public class VocController {
         resultMap.put("managerList", managerList);
         
 		return resultMap;
+	}
+
+	private Map<String, Object> result(int result) {
+		Map<String, Object> response = new HashMap<>();
+
+		if (result > 0) {
+			response.put("status", "success");
+		} else {
+			response.put("status", "fail");
+		}
+
+		return response;
+	}
+
+	private Map<String, Object> result(String message) {
+		Map<String, Object> response = new HashMap<>();
+
+		response.put("status", "error");
+		response.put("message", message);
+
+		return response;
 	}
 
 }

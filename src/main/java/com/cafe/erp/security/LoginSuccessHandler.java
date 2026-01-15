@@ -16,12 +16,13 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         UserDTO user = (UserDTO) authentication.getPrincipal();
-        String memberIdStr = user.getUsername();
-        StoreDTO storeDTO = user.getStore();
+        boolean isStoreOwner = user.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
 
-        if (memberIdStr.startsWith("2")) { // 가맹 점주
-            if (storeDTO != null) response.sendRedirect("/store/detail?storeId=" + storeDTO.getStoreId());
-            else response.sendRedirect("/store/notFound"); // 가맹점 정보가 아직 생성되지 않은 점주
+        if (isStoreOwner) {
+            StoreDTO store = user.getStore();
+            if (store != null) response.sendRedirect("/store/detail?storeId=" + store.getStoreId()); // 가맹점주
+            else response.sendRedirect("/error/noStoreInfo"); // 가맹점이 아직 생성되지 않은 가맹점주
         } else { // 본사 직원
             response.sendRedirect("/member/AM_group_chart");
         }

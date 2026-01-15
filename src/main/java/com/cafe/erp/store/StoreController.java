@@ -4,9 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cafe.erp.security.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,11 +34,7 @@ public class StoreController {
 	@Value("${kakao.appkey}")
 	private String kakaoKey;
 
-	@GetMapping("example")
-	public String list() throws Exception {
-		return "store/example";
-	}
-
+	@PreAuthorize("hasRole('HQ')")
 	@GetMapping("list")
 	public String list(StoreSearchDTO searchDTO, Model model) throws Exception {
 		List<StoreDTO> storeList = storeService.list(searchDTO);
@@ -47,6 +46,7 @@ public class StoreController {
 		return "store/tab_store";
 	}
 
+	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("add") 
 	@ResponseBody
 	public Map<String, Object> addStore(@RequestBody StoreDTO storeDTO) throws Exception { 
@@ -64,7 +64,8 @@ public class StoreController {
 		
 		return response; 
 	}
-	
+
+	@PreAuthorize("hasRole('HQ')")
 	@GetMapping("downloadExcel")
 	public void downloadExcel(StoreSearchDTO searchDTO, HttpServletResponse response) throws Exception {
 		List<StoreDTO> list = storeService.excelList(searchDTO);
@@ -83,49 +84,52 @@ public class StoreController {
 	}
 	
 	@GetMapping("detail")
-	public String detail(StoreDTO storeDTO, Model model, Authentication authentication) throws Exception {
+	public String detail(StoreDTO storeDTO, Model model, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
+
+		if (isStoreOwner) {
+			if (user.getStore() == null) {
+				return "error/no_store_info";
+			}
+			storeDTO.setStoreId(user.getStore().getStoreId());
+		}
+
 		storeDTO = storeService.detail(storeDTO);
+		if (storeDTO == null) return "error/store_not_found";
+
 		List<StoreManageDTO> manageList = storeService.manageList(storeDTO);
 		
 		model.addAttribute("store", storeDTO);
-		model.addAttribute("kakaoKey", kakaoKey);
 		model.addAttribute("manageList", manageList);
+		model.addAttribute("kakaoKey", kakaoKey);
 
-		String memberId = authentication.getName();
-		if (memberId.startsWith("2")) return "view_store/store/info";
-		
-		return "store/detail";
+		return isStoreOwner ? "view_store/store/info" : "store/detail";
 	}
-	
+
+	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("manage/update")
 	@ResponseBody
-	public Map<String, Object> addStore(@RequestBody StoreManageDTO managerDTO) throws Exception { 
+	public Map<String, Object> updateManager(@RequestBody StoreManageDTO managerDTO) throws Exception {
 		int result = storeService.updateManager(managerDTO);
 	 
 		Map<String, Object> response = new HashMap<>();
 	 
 		if (result > 0) {  
-			response.put("message", "등록 완료"); 
+			response.put("message", "배정 완료");
 			response.put("status", "success");
 		} else {
 			response.put("status", "error");
-			response.put("message", "등록 실패");
+			response.put("message", "배정 실패");
 		}
 		
 		return response; 
 	}
-	
-	
+
 	// contract list tab
 	@GetMapping("search")
 	@ResponseBody
 	public List<StoreDTO> searchStore(@RequestParam String keyword, @RequestParam String isManager, Authentication authentication) throws Exception {
 		return storeService.searchStore(keyword, isManager, authentication.getName());
-	}
-
-	@GetMapping("notFound")
-	public String notFound() {
-		return "error/store_not_found";
 	}
 
 }

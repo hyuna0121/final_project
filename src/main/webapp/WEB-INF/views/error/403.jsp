@@ -73,7 +73,8 @@
 
             <div class="container-xxl flex-grow-1 container-p-y d-flex align-items-center justify-content-center">
               <div class="text-center">
-                <h1>존재하지 않는 가맹점 정보입니다.</h1>
+                <h1>해당 페이지에 접근할 수 있는 권한이 없습니다.</h1>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">이전 페이지</a>
               </div>
             </div>
             <!-- / Content -->

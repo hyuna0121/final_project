@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html
   lang="en"
@@ -61,6 +62,7 @@
   </head>
 
   <body>
+  	<sec:authentication property="principal.member" var="memberInfo"/>
     <!-- Layout wrapper -->
     <div class="layout-wrapper layout-content-navbar">
       <div class="layout-container">
@@ -146,9 +148,12 @@
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
 					            </button>
-					          	<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerQuestionModal">
-					                <i class="bx bx-plus me-1"></i> 질문 등록
-					          	</button>
+								<!-- 영업팀 or Admin 권한 -->
+								<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+									<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerQuestionModal">
+										<i class="bx bx-plus me-1"></i> 질문 등록
+									</button>
+								</sec:authorize>
 					     	</div>
 						</div>
 					  
@@ -162,7 +167,7 @@
 					              		<th onclick="moveSort('question')" style="cursor: pointer;">질문 <i id="icon_question" class="bx bx-sort-alt-2 sort-icon"></i></th>
 						                <th onclick="moveSort('score')" style="cursor: pointer;">배점 <i id="icon_score" class="bx bx-sort-alt-2 sort-icon"></i></th>
 						              	<th onclick="moveSort('isUsed')" style="cursor: pointer;">사용여부 <i id="icon_isUsed" class="bx bx-sort-alt-2 sort-icon"></i></th>
-										<th>변경</th>
+										<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')"><th>변경</th></sec:authorize>
 						            </tr>
 					          	</thead>
 					            
@@ -181,17 +186,19 @@
 								            	<c:if test="${dto.listIsUse eq true}"><span class="badge bg-label-success">사용</span></c:if>
 								            	<c:if test="${dto.listIsUse eq false}"><span class="badge bg-label-danger">미사용</span></c:if>
 								            </td>
-											<td>
-												<button class="btn btn-sm btn-icon btn-outline-secondary"
-														data-id="${dto.listId}"
-														data-category="${dto.listCategory}"
-														data-question="${dto.listQuestion}"
-														data-score="${dto.listMaxScore}"
-														data-status="${dto.listIsUse}"
-														onclick="openUpdateModal(this)">
-													<i class="bx bx-edit"></i>
-												</button>
-											</td>
+											<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+												<td>
+													<button class="btn btn-sm btn-icon btn-outline-secondary"
+															data-id="${dto.listId}"
+															data-category="${dto.listCategory}"
+															data-question="${dto.listQuestion}"
+															data-score="${dto.listMaxScore}"
+															data-status="${dto.listIsUse}"
+															onclick="openUpdateModal(this)">
+														<i class="bx bx-edit"></i>
+													</button>
+												</td>
+											</sec:authorize>
 					                    </tr>
 					                </c:forEach>
 									<c:if test="${empty list}"><td colspan="7" class="text-center">해당 데이터가 없습니다.</td></c:if>
@@ -214,121 +221,122 @@
                 </div>
 			  	
 	          </div>
-	          
-          	<div class="modal fade" id="registerQuestionModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-		        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-		            <div class="modal-content">
-		            
-		                <div class="modal-header">
-		                    <h5 class="modal-title">신규 QSC 질문 등록</h5>
-		                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		                </div>
-		                
-		                <div class="modal-body">
-		                    <form id="registerQuestionForm">
-		                        <div class="row g-3">
-									<div class="col-md-6">
-										<label class="form-label" for="listCategory">카테고리 <span class="text-danger">*</span></label>
-										<div class="input-group">
-											<select class="form-select" id="listCategory">
-												<option value="Quality" selected>Quality</option>
-												<option value="Service">Service</option>
-												<option value="Cleanliness">Cleanliness</option>
-											</select>
+
+			<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+				<div class="modal fade" id="registerQuestionModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+						<div class="modal-content">
+
+							<div class="modal-header">
+								<h5 class="modal-title">신규 QSC 질문 등록</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+
+							<div class="modal-body">
+								<form id="registerQuestionForm">
+									<div class="row g-3">
+										<div class="col-md-6">
+											<label class="form-label" for="listCategory">카테고리 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<select class="form-select" id="listCategory">
+													<option value="Quality" selected>Quality</option>
+													<option value="Service">Service</option>
+													<option value="Cleanliness">Cleanliness</option>
+												</select>
+											</div>
 										</div>
-									</div>
 
-									<div class="col-md-6">
-										<label class="form-label" for="listMaxScore">배점 <span class="text-danger">*</span></label>
-										<div class="input-group">
-											<span class="input-group-text"><i class="bx bx-star"></i></span>
-											<input type="text" id="listMaxScore" name="listMaxScore" class="form-control" placeholder="1 ~ 10" oninput="handleMaxScore(this)" required />
+										<div class="col-md-6">
+											<label class="form-label" for="listMaxScore">배점 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<span class="input-group-text"><i class="bx bx-star"></i></span>
+												<input type="text" id="listMaxScore" name="listMaxScore" class="form-control" placeholder="1 ~ 10" oninput="handleMaxScore(this)" required />
+											</div>
 										</div>
+
+										<div class="col-md-12">
+											<label class="form-label" for="listQuestion">질문 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<span class="input-group-text"><i class='bx bx-detail'></i></span>
+												<input type="text" id="listQuestion" name="listQuestion" class="form-control" placeholder="질문 입력" required />
+											</div>
+										</div>
+
+
 									</div>
+								</form>
+							</div>
 
-		                            <div class="col-md-12">
-		                                <label class="form-label" for="listQuestion">질문 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <span class="input-group-text"><i class='bx bx-detail'></i></span>
-		                                    <input type="text" id="listQuestion" name="listQuestion" class="form-control" placeholder="질문 입력" required />
-		                                </div>
-		                            </div>
-		
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+								<button type="button" class="btn btn-primary" onclick="submitQuestionRegistration()">저장</button>
+							</div>
 
-		                        </div>
-		                    </form>
-		                </div>
-		                
-		                <div class="modal-footer">
-		                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-		                    <button type="button" class="btn btn-primary" onclick="submitQuestionRegistration()">저장</button>
-		                </div>
-		                
-		            </div>
-		        </div>
-		    </div>
-
-			<div class="modal fade" id="updateQuestionModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-				<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-					<div class="modal-content">
-
-						<div class="modal-header">
-							<h5 class="modal-title">QSC 질문 사용여부 변경</h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 						</div>
-
-						<div class="modal-body">
-							<form id="updateQuestionForm">
-								<input type="hidden" id="updateListId">
-								<div class="row g-3">
-									<div class="col-md-4">
-										<label class="form-label" for="updateListCategory">카테고리</label>
-										<div class="input-group">
-										<span class="form-control" id="updateListCategory"></span>
-										</div>
-									</div>
-
-									<div class="col-md-4">
-										<label class="form-label" for="listMaxScore">배점</label>
-										<div class="input-group">
-											<span class="input-group-text"><i class="bx bx-star"></i></span>
-											<span class="form-control" id="updateListMaxScore"></span>
-										</div>
-									</div>
-
-									<div class="col-md-4">
-										<label class="form-label" for="listStatus">사용여부 <span class="text-danger">*</span></label>
-										<div class="input-group">
-											<select class="form-select" id="listStatus">
-												<option value="true" selected>사용</option>
-												<option value="false">미사용</option>
-											</select>
-										</div>
-									</div>
-
-									<div class="col-md-12">
-										<label class="form-label" for="updateListQuestion">질문</label>
-										<div class="input-group">
-											<span class="input-group-text"><i class='bx bx-detail'></i></span>
-											<span class="form-control" id="updateListQuestion"><i class='bx bx-detail'></i></span>
-										</div>
-									</div>
-
-
-								</div>
-							</form>
-						</div>
-
-						<div class="modal-footer">
-							<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-							<button type="button" class="btn btn-primary" onclick="submitQuestionUpdate()">저장</button>
-						</div>
-
 					</div>
 				</div>
-			</div>
-			  	
-     
+
+				<div class="modal fade" id="updateQuestionModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+						<div class="modal-content">
+
+							<div class="modal-header">
+								<h5 class="modal-title">QSC 질문 사용여부 변경</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+
+							<div class="modal-body">
+								<form id="updateQuestionForm">
+									<input type="hidden" id="updateListId">
+									<div class="row g-3">
+										<div class="col-md-4">
+											<label class="form-label" for="updateListCategory">카테고리</label>
+											<div class="input-group">
+											<span class="form-control" id="updateListCategory"></span>
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<label class="form-label" for="listMaxScore">배점</label>
+											<div class="input-group">
+												<span class="input-group-text"><i class="bx bx-star"></i></span>
+												<span class="form-control" id="updateListMaxScore"></span>
+											</div>
+										</div>
+
+										<div class="col-md-4">
+											<label class="form-label" for="listStatus">사용여부 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<select class="form-select" id="listStatus">
+													<option value="true" selected>사용</option>
+													<option value="false">미사용</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<label class="form-label" for="updateListQuestion">질문</label>
+											<div class="input-group">
+												<span class="input-group-text"><i class='bx bx-detail'></i></span>
+												<span class="form-control" id="updateListQuestion"><i class='bx bx-detail'></i></span>
+											</div>
+										</div>
+
+
+									</div>
+								</form>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+								<button type="button" class="btn btn-primary" onclick="submitQuestionUpdate()">저장</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</sec:authorize>
+
             </div>
             <!-- / Content -->
 

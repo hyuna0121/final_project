@@ -73,7 +73,9 @@
 
             <div class="container-xxl flex-grow-1 container-p-y d-flex align-items-center justify-content-center">
               <div class="text-center">
-                <h1>존재하지 않는 가맹점 정보입니다.</h1>
+                <h1>페이지를 찾을 수 없습니다.</h1>
+                <p>입력하신 주소가 정확한 지 다시 한번 확인해주세요.</p>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">이전 페이지</a>
               </div>
             </div>
             <!-- / Content -->

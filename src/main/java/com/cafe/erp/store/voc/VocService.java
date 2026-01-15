@@ -66,7 +66,6 @@ public class VocService {
 	public int addProcess(Integer isFirst, VocProcessDTO processDTO, List<MultipartFile> files) throws Exception {
 		if (isFirst == 0) vocDAO.updateToActive(processDTO.getVocId());
 		
-		processDTO.setMemberId(121001);
 		int result = vocDAO.addProcess(processDTO);
 		
 		uploadFiles(files, processDTO.getProcessId());
@@ -146,5 +145,24 @@ public class VocService {
 	public List<VocStatDTO> managerPerformance(String year, String month) throws Exception {
 		return vocDAO.managerPerformance(year, month);
 	}
-	
+
+	@Transactional
+    public int deleteProcess(Integer processId) throws Exception {
+		List<VocProcessFileDTO> fileList = vocDAO.fileListById(processId);
+
+		if (fileList != null && !fileList.isEmpty()) {
+			File dir = new File(uploadPath);
+
+			for (VocProcessFileDTO fileDTO : fileList) {
+				fileManager.fileDelete(dir, fileDTO.getFileSavedName());
+			}
+		}
+
+		vocDAO.deleteFile(processId);
+		return vocDAO.deleteProcess(processId);
+    }
+
+	public VocProcessDTO getProcess(Integer processId) throws Exception {
+		return vocDAO.getProcess(processId);
+	}
 }

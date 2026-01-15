@@ -73,7 +73,8 @@
 
             <div class="container-xxl flex-grow-1 container-p-y d-flex align-items-center justify-content-center">
               <div class="text-center">
-                <h1>해당 페이지에 접근할 수 없습니다.</h1>
+                <h1>가맹점 정보가 아직 생성되지 않았습니다.</h1>
+                <h1>담당자에게 연락하세요.</h1>
               </div>
             </div>
             <!-- / Content -->

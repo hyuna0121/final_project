@@ -46,73 +46,6 @@ async function fetchJson(url, options = {}) {
     return response.json();
 }
 
-async function submitVocRegistration() {
-    const storeId = document.getElementById('storeId').value;
-    const vocType = document.getElementById('vocType').value;
-    const vocContact = document.getElementById('vocContact').value;
-	const vocTitle = document.getElementById('vocTitle').value;
-	const vocContents = document.getElementById('vocContents').value;
-    
-    if (!storeId) {
-        alert("가맹점명을 선택해주세요.");
-        return;
-    }
-    if (!vocType) {
-        alert("불만유형을 선택해주세요.");
-        return;
-    }
-    if (!vocContact) {
-        alert("고객연락처를 입력해주세요.");
-        return;
-    }
-    if (!vocTitle) {
-        alert("제목을 입력해주세요.");
-        return;
-    }
-    if (!vocContents) {
-        alert("내용을 입력해주세요.");
-        return;
-    }
-
-    const formData = {
-        storeId: storeId,
-        vocType: vocType, 
-        vocContact: vocContact,
-        vocTitle: vocTitle,
-        vocContents: vocContents
-    };
-
-    try {
-        const response = await fetch('/store/voc/add', { 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', 
-				},
-            body: JSON.stringify(formData)
-        });
-
-        if (!response.ok) {
-            throw new Error(`서버 오류: ${response.status}`);
-        }
-
-        const result = await response.json();
-
-        alert("VOC가 성공적으로 등록되었습니다.");
-        
-        const modalEl = document.getElementById('registerVocModal');
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        if (modalInstance) {
-            modalInstance.hide();
-        }
-        
-        location.reload();
-
-    } catch (error) {
-        console.error('Error:', error);
-        alert("등록 중 오류가 발생했습니다.");
-    }
-}
-
 async function submitVocProcess() {
     const vocId = document.getElementById('vocId').value;
     const processContents = document.getElementById('processContents').value;
@@ -144,6 +77,17 @@ async function submitVocProcess() {
             throw new Error(`서버 오류: ${response.status}`);
         }
 
+        const result = await response.json();
+
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("오류가 발생했습니다.");
+            return;
+        }
+
+        alert("등록되었습니다.");
         location.reload();
 
     } catch (error) {
@@ -175,4 +119,35 @@ function previewFile(fileName, savedName) {
     }
 
     previewModal.show();
+}
+
+function deleteProcess(processId) {
+    if (!confirm("정말 이 댓글을 삭제하시겠습니까?")) return;
+
+    fetch('/store/voc/deleteProcess', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'processId=' + processId
+        })
+        .then(response => {
+            if (response.ok) {
+                const result = response.json();
+
+                if (result.status === 'error') {
+                    alert(result.message);
+                    return;
+                }
+
+                alert("삭제되었습니다.");
+                location.reload();
+            } else {
+                alert("삭제에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("서버 통신 중 오류가 발생했습니다.");
+        });
 }

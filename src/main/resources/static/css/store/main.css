@@ -65,3 +65,8 @@
 #detailStatusArea {
 	border: 1px solid #d9dee3;
 }
+
+.price-input {
+    text-align: right;
+    padding: 5px 10px;
+}

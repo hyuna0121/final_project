@@ -92,5 +92,8 @@ public class StoreService {
 		storeDAO.updateToEnd(managerDTO);
 		return storeDAO.addManager(managerDTO);
 	}
-	
+
+	public boolean isCurrentManager(Integer storeId, Integer memberId) throws Exception {
+		return storeDAO.isCurrentManager(storeId, memberId) > 0;
+	}
 }

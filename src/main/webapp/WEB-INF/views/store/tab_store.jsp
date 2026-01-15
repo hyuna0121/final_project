@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html
   lang="en"
@@ -154,9 +155,11 @@
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
 					            </button>
-					          	<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerStoreModal">
-					                <i class="bx bx-plus me-1"></i> 가맹점 등록
-					          	</button>
+								<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+									<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerStoreModal">
+										<i class="bx bx-plus me-1"></i> 가맹점 등록
+									</button>
+								</sec:authorize>
 					     	</div>
 						</div>
 					    <div class="table-responsive">
@@ -216,88 +219,90 @@
                 </div>
 			  	
 	          </div>
-	          
-          	<div class="modal fade" id="registerStoreModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-		        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-		            <div class="modal-content">
-		            
-		                <div class="modal-header">
-		                    <h5 class="modal-title">신규 가맹점 등록</h5>
-		                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		                </div>
-		                
-		                <div class="modal-body">
-		                    <form id="registerStoreForm">
-		                        <div class="row g-3">
-		                            <div class="col-md-6">
-		                                <label class="form-label" for="storeName">가맹점명 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <span class="input-group-text"><i class="bx bx-store"></i></span>
-		                                    <input type="text" id="storeName" name="storeName" class="form-control" placeholder="가맹점 이름 입력" required />
-		                                </div>
-		                            </div>
-		
-		                            <div class="col-md-6 position-relative">
-		                                <label class="form-label" for="ownerNameInput">점주 검색 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <input type="text" id="ownerNameInput" class="form-control" placeholder="점주명 입력" onkeyup="if(window.event.keyCode==13){searchOwner()}" required />
-		                                    <input type="hidden" id="memberId" name="memberId" />
-		                                    <button class="btn btn-primary" type="button" onclick="searchOwner()">
-		                                        <i class="bx bx-search"></i>
-		                                    </button>
-		                                </div>
-		                                
-		                                <ul id="ownerResultList" class="list-group position-absolute overflow-auto" 
-								        	style="max-height: 200px; width: 90%; z-index: 1050; display: none; margin-top: 5px; box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.15); background-color: rgba(255, 255, 255, 0.9);">
-								        </ul>
-		                            </div>
-		                            
-		                            <hr class="my-4" />
-		
-		                            <div class="col-md-12">
-		                                <label class="form-label" for="storeAddress">가맹점 주소 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <input type="text" id="storeAddress" name="storeAddress" class="form-control" placeholder="주소 검색 버튼을 클릭하세요" readonly required />
-		                                    <button class="btn btn-outline-primary" type="button" onclick="searchAddress()">
-		                                        <i class="bx bx-map me-1"></i> 주소 검색
-		                                    </button>
-		                                </div>
-		                            </div>
-		                            
-		                            <div class="col-md-6">
-		                                <label class="form-label" for="storeDetailAddress">상세 주소</label>
-		                                <div class="input-group">
-		                                    <input type="text" id="storeDetailAddress" name="storeDetailAddress" class="form-control" required />
-		                                </div>
-		                            </div>
-		                            
-		                            <div class="col-md-6">
-		                                <label class="form-label" for="storeZonecode">우편번호 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <input type="text" id="storeZonecode" name="storeZonecode" class="form-control" readonly="readonly" required />
-		                                </div>
-		                            </div>
-		                            
-		                            <input type="hidden" id="storeLatitude" />
-		                            <input type="hidden" id="storeLongitude" />
-		                            
-		                            <div class="col-md-12">
-			                            <div id="map" style="width:100%; height:300px; margin-top:25px; border-radius: 0.375rem;"></div>
-		                            </div>
-		                            
-		                            
-		                        </div>
-		                    </form>
-		                </div>
-		                
-		                <div class="modal-footer">
-		                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-		                    <button type="button" class="btn btn-primary" onclick="submitStoreRegistration()">저장</button>
-		                </div>
-		                
-		            </div>
-		        </div>
-		    </div>
+
+			<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+				<div class="modal fade" id="registerStoreModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+					<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+						<div class="modal-content">
+
+							<div class="modal-header">
+								<h5 class="modal-title">신규 가맹점 등록</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+
+							<div class="modal-body">
+								<form id="registerStoreForm">
+									<div class="row g-3">
+										<div class="col-md-6">
+											<label class="form-label" for="storeName">가맹점명 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<span class="input-group-text"><i class="bx bx-store"></i></span>
+												<input type="text" id="storeName" name="storeName" class="form-control" placeholder="가맹점 이름 입력" required />
+											</div>
+										</div>
+
+										<div class="col-md-6 position-relative">
+											<label class="form-label" for="ownerNameInput">점주 검색 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<input type="text" id="ownerNameInput" class="form-control" placeholder="점주명 입력" onkeyup="if(window.event.keyCode==13){searchOwner()}" required />
+												<input type="hidden" id="memberId" name="memberId" />
+												<button class="btn btn-primary" type="button" onclick="searchOwner()">
+													<i class="bx bx-search"></i>
+												</button>
+											</div>
+
+											<ul id="ownerResultList" class="list-group position-absolute overflow-auto"
+												style="max-height: 200px; width: 90%; z-index: 1050; display: none; margin-top: 5px; box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.15); background-color: rgba(255, 255, 255, 0.9);">
+											</ul>
+										</div>
+
+										<hr class="my-4" />
+
+										<div class="col-md-12">
+											<label class="form-label" for="storeAddress">가맹점 주소 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<input type="text" id="storeAddress" name="storeAddress" class="form-control" placeholder="주소 검색 버튼을 클릭하세요" readonly required />
+												<button class="btn btn-outline-primary" type="button" onclick="searchAddress()">
+													<i class="bx bx-map me-1"></i> 주소 검색
+												</button>
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<label class="form-label" for="storeDetailAddress">상세 주소</label>
+											<div class="input-group">
+												<input type="text" id="storeDetailAddress" name="storeDetailAddress" class="form-control" required />
+											</div>
+										</div>
+
+										<div class="col-md-6">
+											<label class="form-label" for="storeZonecode">우편번호 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<input type="text" id="storeZonecode" name="storeZonecode" class="form-control" readonly="readonly" required />
+											</div>
+										</div>
+
+										<input type="hidden" id="storeLatitude" />
+										<input type="hidden" id="storeLongitude" />
+
+										<div class="col-md-12">
+											<div id="map" style="width:100%; height:300px; margin-top:25px; border-radius: 0.375rem;"></div>
+										</div>
+
+
+									</div>
+								</form>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+								<button type="button" class="btn btn-primary" onclick="submitStoreRegistration()">저장</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</sec:authorize>
 			  	
      
             </div>

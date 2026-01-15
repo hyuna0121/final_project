@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html
   lang="en"
@@ -178,10 +179,12 @@
 				            <h5 class="mb-0"><i class="bx bx-briefcase text-primary" style="margin-right: 10px"></i>가맹점 담당자 이력</h5>
 				            <div>
 				            	<c:set var="hasManager" value="${not empty manageList}" />
-				                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updateManagerModal">
-				                    <span class="tf-icons bx ${hasManager ? 'bx-refresh' : 'bx-user-plus'}"></span> 
-				                    ${hasManager ? '담당자 교체' : '담당자 배정'}
-				                </button>
+								<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+									<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updateManagerModal">
+										<span class="tf-icons bx ${hasManager ? 'bx-refresh' : 'bx-user-plus'}"></span>
+										${hasManager ? '담당자 교체' : '담당자 배정'}
+									</button>
+								</sec:authorize>
 				            </div>
 				        </div>
 				        <div class="table-responsive text-nowrap">
@@ -229,105 +232,107 @@
                 </div>
 	          </div>
             </div>
-            
-           	<div class="modal fade" id="updateManagerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-		        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
-		            <div class="modal-content">
-		            
-		                <div class="modal-header">
-		                    <h5 class="modal-title"><i class="bx bx-briefcase text-primary" style="margin-right: 10px"></i>가맹점 담당자 배정</h5>
-		                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		                </div>
-		                
-		                <div class="modal-body">
-		                    <form id="updateManagerForm" onsubmit="return false;">
-		                        <div class="row g-3 mb-3">
-		                            <div class="col-md-6 position-relative">
-		                                <label class="form-label" for="managerNameInput">사원명 검색 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <input type="text" id="managerNameInput" class="form-control" placeholder="사원명 입력" onkeyup="if(window.event.keyCode==13){searchManager()}" required />
-		                                    <input type="hidden" id="memberId" name="memberId" />
-		                                    <button class="btn btn-primary" type="button" onclick="searchManager()">
-		                                        <i class="bx bx-search"></i>
-		                                    </button>
-		                                </div>
-		                                
-		                                <ul id="managerResultList" class="list-group position-absolute overflow-auto" 
-								        	style="max-height: 200px; width: 90%; z-index: 1050; display: none; margin-top: 5px; box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.15); background-color: rgba(255, 255, 255, 0.9);">
-								        </ul>
-		                            </div>
-		                            
-		                            <div class="col-md-6 position-relative">
-		                                <label class="form-label" for="manageStartDate">담당 시작일 <span class="text-danger">*</span></label>
-	                                    <input type="date" id="manageStartDate" class="form-control" />
-		                            </div>
-		                            <input type="hidden" id="storeId" value="${store.storeId}">
-		                        </div>
-		                        
-		                        <div id="selectedManager" class="mt-3">
-						            <label class="form-label">담당자</label>
-						            <div class="card">
-						                <div class="card-body p-3">
-						                	<div id="emptyState" class="text-center py-4">
-								                <i class="bx bx-search-alt text-muted fs-1 mb-2"></i>
-								                <p class="text-muted mb-0">사원명을 검색 후 선택해주세요</p>
-								            </div>
-								            
-						                    <div id="managerInfo" class="d-flex align-items-start" style="display: none !important;">
-						                    	<div class="avatar avatar-md me-3">
-								                    <span id="selectedAvatar" class="avatar-initial rounded-circle bg-label-primary fs-5"></span>
-								                </div>
-								                
-								               <div class="flex-grow-1">
-								                    <div class="mb-2">
-								                        <div class="d-flex justify-content-between align-items-center gap-2">
-								                            <h6 class="mb-1 fw-bold">
-								                            	<span id="selectedName"></span> 
-								                            	<small id="selectedId" class="text-muted"></small>
-								                            </h6>
-									                        <small class="text-primary">영업부</small>
-								                        </div>
-								                    </div>
-								                    
-								                    
-								                    <div class="mt-2 pt-2 border-top">
-								                    	<div class="row g-2">
-								                            <div class="col-12">
-								                                <small class="text-muted d-flex align-items-center">
-								                                    <i class="bx bx-envelope text-primary me-1"></i>
-								                                    <span id="selectedEmail"></span>
-								                                </small>
-								                            </div>
-								                            <div class="col-12">
-								                                <small class="text-muted d-flex align-items-center">
-								                                    <i class="bx bx-phone text-primary me-1"></i>
-								                                    <span id="selectedPhone"></span>
-								                                </small>
-								                            </div>
-								                            <div class="col-12">
-								                                <small class="text-muted d-flex align-items-center">
-								                                    <i class="bx bx-store text-primary me-1"></i>
-								                                    <span>현재 담당 가맹점 수: <strong id="selectedStoreCount" class="text-primary">0</strong>개</span>
-								                                </small>
-								                            </div>
-								                        </div>
-								                    </div>
-								               </div>
-						                    </div>
-						                </div>
-						            </div>
-						        </div>
-		                    </form>
-		                </div>
-		                
-		                <div class="modal-footer">
-		                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-		                    <button type="button" class="btn btn-primary" onclick="submitManagerUpdate()">배정</button>
-		                </div>
-		                
-		            </div>
-		        </div>
-		    </div>
+
+			  <sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+				<div class="modal fade" id="updateManagerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+					<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+						<div class="modal-content">
+
+							<div class="modal-header">
+								<h5 class="modal-title"><i class="bx bx-briefcase text-primary" style="margin-right: 10px"></i>가맹점 담당자 배정</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+
+							<div class="modal-body">
+								<form id="updateManagerForm" onsubmit="return false;">
+									<div class="row g-3 mb-3">
+										<div class="col-md-6 position-relative">
+											<label class="form-label" for="managerNameInput">사원명 검색 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<input type="text" id="managerNameInput" class="form-control" placeholder="사원명 입력" onkeyup="if(window.event.keyCode==13){searchManager()}" required />
+												<input type="hidden" id="memberId" name="memberId" />
+												<button class="btn btn-primary" type="button" onclick="searchManager()">
+													<i class="bx bx-search"></i>
+												</button>
+											</div>
+
+											<ul id="managerResultList" class="list-group position-absolute overflow-auto"
+												style="max-height: 200px; width: 90%; z-index: 1050; display: none; margin-top: 5px; box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.15); background-color: rgba(255, 255, 255, 0.9);">
+											</ul>
+										</div>
+
+										<div class="col-md-6 position-relative">
+											<label class="form-label" for="manageStartDate">담당 시작일 <span class="text-danger">*</span></label>
+											<input type="date" id="manageStartDate" class="form-control" />
+										</div>
+										<input type="hidden" id="storeId" value="${store.storeId}">
+									</div>
+
+									<div id="selectedManager" class="mt-3">
+										<label class="form-label">담당자</label>
+										<div class="card">
+											<div class="card-body p-3">
+												<div id="emptyState" class="text-center py-4">
+													<i class="bx bx-search-alt text-muted fs-1 mb-2"></i>
+													<p class="text-muted mb-0">사원명을 검색 후 선택해주세요</p>
+												</div>
+
+												<div id="managerInfo" class="d-flex align-items-start" style="display: none !important;">
+													<div class="avatar avatar-md me-3">
+														<span id="selectedAvatar" class="avatar-initial rounded-circle bg-label-primary fs-5"></span>
+													</div>
+
+												   <div class="flex-grow-1">
+														<div class="mb-2">
+															<div class="d-flex justify-content-between align-items-center gap-2">
+																<h6 class="mb-1 fw-bold">
+																	<span id="selectedName"></span>
+																	<small id="selectedId" class="text-muted"></small>
+																</h6>
+																<small class="text-primary">영업부</small>
+															</div>
+														</div>
+
+
+														<div class="mt-2 pt-2 border-top">
+															<div class="row g-2">
+																<div class="col-12">
+																	<small class="text-muted d-flex align-items-center">
+																		<i class="bx bx-envelope text-primary me-1"></i>
+																		<span id="selectedEmail"></span>
+																	</small>
+																</div>
+																<div class="col-12">
+																	<small class="text-muted d-flex align-items-center">
+																		<i class="bx bx-phone text-primary me-1"></i>
+																		<span id="selectedPhone"></span>
+																	</small>
+																</div>
+																<div class="col-12">
+																	<small class="text-muted d-flex align-items-center">
+																		<i class="bx bx-store text-primary me-1"></i>
+																		<span>현재 담당 가맹점 수: <strong id="selectedStoreCount" class="text-primary">0</strong>개</span>
+																	</small>
+																</div>
+															</div>
+														</div>
+												   </div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+								<button type="button" class="btn btn-primary" onclick="submitManagerUpdate()">배정</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			  </sec:authorize>
             <!-- / Content -->
 
             <!-- Footer -->

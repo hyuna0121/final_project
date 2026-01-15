@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html
   lang="en"
@@ -82,7 +83,7 @@
               <h4 class="fw-bold py-3 mb-4"><a href="/store/voc/list" class="text-muted fw-light">VOC /</a> 상세 내역</h4>
 
               <div class="row">
-                <div class="col-xl-7 col-lg-7 col-md-12">
+                <div class="col-xl-7 col-lg-7 col-md-12 mb-4 mb-lg-0">
                     <div class="card h-100 mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0"><i class="bx bx-user-voice me-1"></i> 불만 접수 내용</h5>
@@ -163,15 +164,17 @@
                           <div class="card-body overflow-auto" style="max-height: 500px; background-color: #f8f9fa; padding-bottom: 0;" id="replyArea">
                               <input type="hidden" value="${listSize}" id="isFirst">
                               <c:forEach var="process" items="${list}">
-                              	<c:set var="isMe" value="${process.memName == '최영업'}" />
-						        <div class="d-flex w-100 my-3 ${isMe ? 'justify-content-end' : 'justify-content-start'}">
-						            <div style="max-width: 80%;" class="${isMe ? 'text-end' : 'text-start'}">
+								  <sec:authentication property="principal.member" var="memberInfo"/>
+								  <c:set var="isMe" value="${process.memberId eq memberInfo.memberId}" />
+						        <div class=" d-flex w-100 my-3 ${isMe ? 'justify-content-end' : 'justify-content-start'}">
+						            <div style="max-width: 80%;" class="msg-container ${isMe ? 'text-end' : 'text-start'}">
 						                <small class="d-block mb-1 ${isMe ? 'me-2 text-primary fw-bold' : 'ms-2 text-dark fw-bold'}">
 						                    ${process.memName}
 						                </small>
 						                <div class="chat-bubble ${isMe ? 'chat-right' : 'chat-left'} text-start">
-										    <span>${process.processContents}</span>
-										
+											<c:if test="${process.processIsDeleted eq 0}"><span>${process.processContents}</span></c:if>
+											<c:if test="${process.processIsDeleted eq 1}"><span>삭제된 메세지입니다.</span></c:if>
+
 										    <c:if test="${not empty process.fileDTOs and not empty process.fileDTOs[0].fileOriginalName}">
 										        <c:if test="${not empty process.processContents}">
 										            <hr class="my-2 ${isMe ? 'border-white opacity-50' : 'border-secondary opacity-25'}">
@@ -181,7 +184,7 @@
 										            <c:forEach var="file" items="${process.fileDTOs}">
 										                <div class="d-flex align-items-center justify-content-between">
 										                    
-										                    <div class="d-flex align-items-center" style="cursor: pointer; width: 100%; min-width: 250px;" 
+										                    <div class="d-flex align-items-center" style="cursor: pointer; width: 100%;"
 										                         onclick="previewFile('${file.fileOriginalName}', '${file.fileSavedName}')">
 										                        <i class="bx bx-file me-1 ${isMe ? 'text-white' : 'text-secondary'}"></i>
 										                        <span class="${isMe ? 'text-white' : 'text-dark'} text-truncate" 
@@ -194,10 +197,20 @@
 										        </div>
 										    </c:if>
 										</div>
-						
-						                <div class="chat-time ${isMe ? 'me-1' : 'ms-1'}">
-						                    ${process.processCreatedAtStr}
-						                </div>
+
+										<div class="d-flex align-items-center ${isMe ? 'justify-content-end me-1' : 'justify-content-start ms-1'} mt-1">
+											<sec:authorize access="hasAnyRole('EXEC', 'MASTER')" var="isAdmin" />
+											<c:if test="${(isMe or isAdmin) and process.processIsDeleted ne 1}">
+												<i class="bx bx-trash text-secondary delete-btn me-2"
+												   style="cursor: pointer; font-size: 1rem;"
+												   onclick="deleteProcess('${process.processId}')"
+												   title="삭제"></i>
+											</c:if>
+
+											<span class="chat-time text-muted small me-2">
+												${process.processCreatedAtStr}
+											</span>
+										</div>
 						            </div>
 						        </div>
 						    </c:forEach>
@@ -206,21 +219,23 @@
                           <div class="card-footer p-3">
                               <div id="filePreview" class="d-flex flex-wrap gap-2 mb-2 small text-primary" style="display: none;">
 						    </div>
-						
-						    <div class="input-group input-group-merge">
-						        <label class="input-group-text bg-white border-end-0" for="replyFile" style="cursor: pointer;">
-						            <i class="bx bx-paperclip"></i>
-						        </label>
-						        
-						        <input type="file" multiple id="replyFile" style="display: none;" onchange="showFileName()">
-						
-								<input type="hidden" id="vocId" value="${dto.vocId}">
-						        <textarea class="form-control" id="processContents" rows="2" placeholder="메시지를 입력하세요..." style="resize: none; padding: 20px 10px 10px;"></textarea>
-						        
-						        <button class="btn btn-primary" type="button" onclick="submitVocProcess()">
-						            <i class="bx bx-send"></i> 등록
-						        </button>
-						    </div>
+
+						  	<sec:authorize access="hasAnyRole('STORE', 'DEPT_SALES','EXEC', 'MASTER')">
+								<div class="input-group input-group-merge">
+									<label class="input-group-text bg-white border-end-0" for="replyFile" style="cursor: pointer;">
+										<i class="bx bx-paperclip"></i>
+									</label>
+
+									<input type="file" multiple id="replyFile" style="display: none;" onchange="showFileName()">
+
+									<input type="hidden" id="vocId" value="${dto.vocId}">
+									<textarea class="form-control" id="processContents" rows="2" placeholder="메시지를 입력하세요..." style="resize: none; padding: 20px 10px 10px;"></textarea>
+
+									<button class="btn btn-primary" type="button" onclick="submitVocProcess()">
+										<i class="bx bx-send"></i> 등록
+									</button>
+								</div>
+							</sec:authorize>
                           </div>
                       </div>
                   </div>

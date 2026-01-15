@@ -2,6 +2,7 @@
 var currentContractData = null;
 var deletedFileIds = [];
 var isContractUpdated = false;
+let lastFocusedInput = null;
 
 document.addEventListener("DOMContentLoaded", function() {
 	const detailModal = document.getElementById('detailContractModal');
@@ -15,7 +16,29 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+
+    const inputs = document.querySelectorAll('.price-input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            lastFocusedInput = this;
+        });
+    });
 });
+
+function addAmount(amount) {
+    if (!lastFocusedInput) {
+        alert('금액을 입력할 칸을 먼저 선택(클릭)해주세요!');
+        return;
+    }
+
+    let currentValStr = lastFocusedInput.value.replace(/,/g, '');
+    let currentVal = currentValStr === '' ? 0 : parseInt(currentValStr);
+    let totalVal = currentVal + amount;
+
+    lastFocusedInput.value = totalVal.toLocaleString('ko-KR');
+
+    lastFocusedInput.focus();
+}
 
 // 금액 formatter
 function formatCurrency(amount) {
@@ -60,7 +83,10 @@ function appendFileField(containerId, inputName) {
 async function fetchJson(url, options = {}) {
     const response = await fetch(url, options);
     if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-    return response.json();
+    const text = await response.text();
+    if (!text) return null;
+
+    return JSON.parse(text);
 }
 
 async function searchStore() {
@@ -181,10 +207,13 @@ async function submitContractRegistration() {
     if (!els.deposit.value) { alert("여신(보증금)을 입력해주세요."); return; }
     if (!els.startDate.value || !els.endDate.value) { alert("계약기간을 입력해주세요."); return; }
 
+    const rawRoyalty = els.royalti.value.replace(/,/g, '');
+    const rawDeposit = els.deposit.value.replace(/,/g, '');
+
     const formData = new FormData();
     formData.append("storeId", els.storeId.value);
-    formData.append("contractRoyalti", els.royalti.value);
-    formData.append("contractDeposit", els.deposit.value);
+    formData.append("contractRoyalti", rawRoyalty);
+    formData.append("contractDeposit", rawDeposit);
     formData.append("contractStartDate", els.startDate.value);
     formData.append("contractEndDate", els.endDate.value);
 	
@@ -205,6 +234,16 @@ async function submitContractRegistration() {
         });
 
         if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
+
+        const result = await response.json();
+
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("계약 등록 중 오류가 발생했습니다.");
+            return;
+        }
         
         alert("계약이 성공적으로 등록되었습니다.");
         
@@ -222,9 +261,14 @@ async function submitContractRegistration() {
 async function getContractDetail(contractId) {
     try {
 		const data = await fetchJson(`/store/contract/detail?contractId=${contractId}`, { method: "GET" });
+
+		if (!data) {
+		    alert('해당 정보를 열람할 수 없습니다.');
+		    return;
+		}
         
 		// 전역 변수에 저장
-        currentContractData = data; 
+        currentContractData = data;
 
         document.getElementById('detailContractId').innerText = data.contractId;
         document.getElementById('detailStoreName').innerText = data.storeName;
@@ -383,8 +427,8 @@ function enableEditMode() {
 
     document.getElementById('editStartDate').value = currentContractData.contractStartDate;
     document.getElementById('editEndDate').value = currentContractData.contractEndDate;
-    document.getElementById('editRoyalty').value = currentContractData.contractRoyalti;
-    document.getElementById('editDeposit').value = currentContractData.contractDeposit;
+    document.getElementById('editRoyalty').value = Number(currentContractData.contractRoyalti).toLocaleString('ko-KR');
+    document.getElementById('editDeposit').value = Number(currentContractData.contractDeposit).toLocaleString('ko-KR');
 }
 
 function cancelEditMode() {
@@ -424,6 +468,9 @@ async function updateContract() {
 	if (!royalty) { alert("로얄티를 입력해주세요."); return; }
 	if (!deposit) { alert("여신(보증금)을 입력해주세요."); return; }
 	if (!startDate || !endDate) { alert("계약기간을 입력해주세요."); return; }
+
+	const rawRoyalty = royalty.replace(/,/g, '');
+    const rawDeposit = deposit.replace(/,/g, '');
 	
 	const status = getContractStatusByDate(startDate);
 	
@@ -432,8 +479,8 @@ async function updateContract() {
 	formData.append("contractId", contractId);
 	formData.append("contractStartDate", startDate);
 	formData.append("contractEndDate", endDate);
-	formData.append("contractRoyalti", parseInt(royalty));
-	formData.append("contractDeposit", parseInt(deposit));
+	formData.append("contractRoyalti", parseInt(rawRoyalty));
+	formData.append("contractDeposit", parseInt(rawDeposit));
 	formData.append("contractStatus", status);
 	
 	if (deletedFileIds.length > 0) {
@@ -457,7 +504,17 @@ async function updateContract() {
 
         if (!response.ok) throw new Error(`서버 오류: ${response.status}`);
 
-        alert("계약 정보가 수정되었습니다.");
+        const result = await response.json();
+
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("계약정보 수정 중 오류가 발생했습니다.");
+            return;
+        }
+
+        alert("계약정보가 수정되었습니다.");
 
 		isContractUpdated = true;
         await getContractDetail(contractId);
@@ -469,9 +526,17 @@ async function updateContract() {
     }
 }
 
-function searchVoc() {
+function searchContract() {
     document.getElementById("page").value = 1;
-    document.getElementById("contractSearchForm").submit();
+
+    const form = document.getElementById("contractSearchForm");
+    const inputs = form.querySelectorAll('.price-input');
+
+    inputs.forEach(input => {
+        input.value = input.value.replace(/,/g, '');
+    });
+
+    form.submit();
 }
 
 function resetSearchForm() {
@@ -490,6 +555,11 @@ function movePage(page) {
     if (page < 1) page = 1;
 
     const form = document.getElementById('contractSearchForm');
+    const inputs = form.querySelectorAll('.price-input');
+
+    inputs.forEach(input => {
+        input.value = input.value.replace(/,/g, '');
+    });
     const formData = new FormData(form);
     const params = new URLSearchParams(formData);
 
@@ -507,6 +577,11 @@ function movePage(page) {
 
 function downloadExcel() {
     const form = document.getElementById('contractSearchForm');
+    const inputs = form.querySelectorAll('.price-input');
+
+    inputs.forEach(input => {
+        input.value = input.value.replace(/,/g, '');
+    });
     const params = new URLSearchParams(new FormData(form));
 
     const currentUrlParams = new URLSearchParams(window.location.search);
@@ -524,6 +599,10 @@ function changePerPage(val) {
     document.querySelector('#hiddenPerPage').value = val;
     document.querySelector('#page').value = 1;
     const form = document.getElementById('contractSearchForm');
+    const inputs = form.querySelectorAll('.price-input');
+    inputs.forEach(input => {
+        input.value = input.value.replace(/,/g, '');
+    });
     const formData = new FormData(form);
     const params = new URLSearchParams(formData);
 
@@ -535,4 +614,16 @@ function changePerPage(val) {
     });
 
     location.href = form.action + '?' + params.toString();
+}
+
+function format(input) {
+    const val = input.value.replace(/[^0-9]/g, '');
+
+    if (!val) {
+        input.value = '';
+        return;
+    }
+
+    const formattedVal = Number(val).toLocaleString('ko-KR');
+    input.value = formattedVal;
 }

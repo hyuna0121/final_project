@@ -28,5 +28,22 @@ public class ContractSearchDTO extends Pager {
 
 	// 분기용
 	private Integer searchStoreId;
+
+	public String getsearchRoyaltyMinFormatted() {
+		if (this.searchRoyaltyMin == null) return "";
+		return String.format("%,d", this.searchRoyaltyMin);
+	}
+	public String getsearchRoyaltyMaxFormatted() {
+		if (this.searchRoyaltyMax == null) return "";
+		return String.format("%,d", this.searchRoyaltyMax);
+	}
+	public String getsearchDepositMinFormatted() {
+		if (this.searchDepositMin == null) return "";
+		return String.format("%,d", this.searchDepositMin);
+	}
+	public String getsearchDepositMaxFormatted() {
+		if (this.searchDepositMax == null) return "";
+		return String.format("%,d", this.searchDepositMax);
+	}
 	
 }

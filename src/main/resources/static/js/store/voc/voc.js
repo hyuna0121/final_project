@@ -193,6 +193,14 @@ async function submitVocRegistration() {
 
         const result = await response.json();
 
+        if (result.status === 'error') {
+            alert(result.message);
+            return;
+        } else if (result.status === 'fail') {
+            alert("VOC 등록 중 오류가 발생했습니다.");
+            return;
+        }
+
         alert("VOC가 성공적으로 등록되었습니다.");
         
         const modalEl = document.getElementById('registerVocModal');

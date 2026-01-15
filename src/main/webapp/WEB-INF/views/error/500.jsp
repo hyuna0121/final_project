@@ -73,7 +73,15 @@
 
             <div class="container-xxl flex-grow-1 container-p-y d-flex align-items-center justify-content-center">
               <div class="text-center">
-                <h1>존재하지 않는 가맹점 정보입니다.</h1>
+                <h2 class="mb-2 fw-bold text-dark">서비스 이용에 불편을 드려 죄송합니다.</h2>
+
+                <p class="mb-4 mx-2 text-muted">
+                  현재 일시적인 시스템 오류가 발생하여 요청을 처리할 수 없습니다.<br>
+                  시스템 관리자가 해당 내용을 확인하고 조치 중입니다.<br>
+                  잠시 후 다시 시도해 주시기 바랍니다.
+                </p>
+
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">이전 페이지</a>
               </div>
             </div>
             <!-- / Content -->

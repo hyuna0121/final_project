@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html
   lang="en"
@@ -171,9 +172,11 @@
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
 					            </button>
-					          	<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerVocModal">
-					                <i class="bx bx-plus me-1"></i> VOC 등록
-					          	</button>
+								<sec:authorize access="hasAnyRole('DEPT_CS', 'EXEC', 'MASTER')">
+									<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerVocModal">
+										<i class="bx bx-plus me-1"></i> VOC 등록
+									</button>
+								</sec:authorize>
 					     	</div>
 						</div>
 					  
@@ -235,84 +238,86 @@
                 </div>
 			  	
 	          </div>
-	          
-          	<div class="modal fade" id="registerVocModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
-		        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
-		            <div class="modal-content">
-		            
-		                <div class="modal-header">
-		                    <h5 class="modal-title">신규 VOC 등록</h5>
-		                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		                </div>
-		                
-		                <div class="modal-body">
-		                    <form id="registerStoreForm">
-		                        <div class="row g-3">
-		                            <div class="col-md-12">
-		                                <label class="form-label" for="storeNameInput">가맹점명 검색 <span class="text-danger">*</span></label>
-		                                <div class="input-group input-group-merge">
-		                                    <span class="input-group-text"><i class="bx bx-store"></i></span>
-		                                    <input type="text" id="storeNameInput" name="storeName" class="form-control" placeholder="가맹점명 입력" onkeyup="if(window.event.keyCode==13){searchStore()}" required />
-											<input type="hidden" id="storeId" name="storeId" />
-		                                    <button class="btn btn-primary" type="button" onclick="searchStore()">
-		                                        <i class="bx bx-search"></i>
-		                                    </button>
-		                                </div>
 
-										<ul id="storeResultList" class="list-group position-absolute overflow-auto" 
-								        	style="max-height: 200px; width: 90%; z-index: 1050; display: none; margin-top: 5px; box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.15); background-color: rgba(255, 255, 255, 0.9);">
-								        </ul>
-		                            </div>
+			<sec:authorize access="hasAnyRole('DEPT_CS', 'EXEC', 'MASTER')">
+				<div class="modal fade" id="registerVocModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+					<div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+						<div class="modal-content">
 
-									<div class="col-12"><hr class="my-2"></div>
-		
-		                            <div class="col-md-6">
-		                                <label class="form-label" for="vocType">불만 유형 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-											<select class="form-select" id="vocType">
-												<option value="HYGIENE" selected>위생</option>
-												<option value="TASTE">맛</option>
-												<option value="SERVICE">서비스</option>
-											</select>
-		                                </div>
-		                            </div>
+							<div class="modal-header">
+								<h5 class="modal-title">신규 VOC 등록</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
 
-									<div class="col-md-6 position-relative">
-		                                <label class="form-label" for="vocContact">고객 연락처 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <input type="text" id="vocContact" class="form-control" placeholder="연락처 입력" required />
-		                                </div>
-		                            </div>
+							<div class="modal-body">
+								<form id="registerStoreForm">
+									<div class="row g-3">
+										<div class="col-md-12">
+											<label class="form-label" for="storeNameInput">가맹점명 검색 <span class="text-danger">*</span></label>
+											<div class="input-group input-group-merge">
+												<span class="input-group-text"><i class="bx bx-store"></i></span>
+												<input type="text" id="storeNameInput" name="storeName" class="form-control" placeholder="가맹점명 입력" onkeyup="if(window.event.keyCode==13){searchStore()}" required />
+												<input type="hidden" id="storeId" name="storeId" />
+												<button class="btn btn-primary" type="button" onclick="searchStore()">
+													<i class="bx bx-search"></i>
+												</button>
+											</div>
 
-									<div class="col-12"><hr class="my-2"></div>
-		                            
-		                            <div class="col-md-12">
-		                                <label class="form-label" for="vocTitle">제목 <span class="text-danger">*</span></label>
-		                                <div class="input-group">
-		                                    <input type="text" id="vocTitle" name="vocTitle" class="form-control" placeholder="위생관련 컴플레인" required />
-		                                </div>
-		                            </div>
+											<ul id="storeResultList" class="list-group position-absolute overflow-auto"
+												style="max-height: 200px; width: 90%; z-index: 1050; display: none; margin-top: 5px; box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.15); background-color: rgba(255, 255, 255, 0.9);">
+											</ul>
+										</div>
 
-		                            <div class="col-md-12">
-		                                <label class="form-label" for="vocContents">상세 내용</label>
-		                                <div class="input-group">
-											<textarea class="form-control" rows="3" id="vocContents"></textarea>
-		                                </div>
-		                            </div>
-		                            
-		                        </div>
-		                    </form>
-		                </div>
-		                
-		                <div class="modal-footer">
-		                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
-		                    <button type="button" class="btn btn-primary" onclick="submitVocRegistration()">저장</button>
-		                </div>
-		                
-		            </div>
-		        </div>
-		    </div>
-			  	
+										<div class="col-12"><hr class="my-2"></div>
+
+										<div class="col-md-6">
+											<label class="form-label" for="vocType">불만 유형 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<select class="form-select" id="vocType">
+													<option value="HYGIENE" selected>위생</option>
+													<option value="TASTE">맛</option>
+													<option value="SERVICE">서비스</option>
+												</select>
+											</div>
+										</div>
+
+										<div class="col-md-6 position-relative">
+											<label class="form-label" for="vocContact">고객 연락처 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<input type="text" id="vocContact" class="form-control" placeholder="연락처 입력" required />
+											</div>
+										</div>
+
+										<div class="col-12"><hr class="my-2"></div>
+
+										<div class="col-md-12">
+											<label class="form-label" for="vocTitle">제목 <span class="text-danger">*</span></label>
+											<div class="input-group">
+												<input type="text" id="vocTitle" name="vocTitle" class="form-control" placeholder="위생관련 컴플레인" required />
+											</div>
+										</div>
+
+										<div class="col-md-12">
+											<label class="form-label" for="vocContents">상세 내용</label>
+											<div class="input-group">
+												<textarea class="form-control" rows="3" id="vocContents"></textarea>
+											</div>
+										</div>
+
+									</div>
+								</form>
+							</div>
+
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">취소</button>
+								<button type="button" class="btn btn-primary" onclick="submitVocRegistration()">저장</button>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</sec:authorize>
+
      
             </div>
             <!-- / Content -->

@@ -1,17 +1,18 @@
 package com.cafe.erp.store.qsc;
 
 import com.cafe.erp.security.UserDTO;
+import com.cafe.erp.store.StoreDTO;
+import com.cafe.erp.store.StoreService;
 import com.cafe.erp.store.qsc.dto.QscDTO;
 import com.cafe.erp.store.qsc.dto.QscQuestionDTO;
 import com.cafe.erp.store.qsc.dto.QscQuestionSearchDTO;
 import com.cafe.erp.store.qsc.dto.QscSearchDTO;
-import com.cafe.erp.store.voc.VocDTO;
 import com.cafe.erp.util.ExcelUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.Banner;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,33 +27,28 @@ public class QscController {
 
     @Autowired
     private QscService qscService;
+    @Autowired
+    private StoreService storeService;
 
     @GetMapping("list")
-    public String qscList(QscSearchDTO searchDTO, Model model, Authentication authentication) throws Exception {
-        UserDTO user = (UserDTO) authentication.getPrincipal();
-        String memberId = user.getUsername();
+    public String qscList(QscSearchDTO searchDTO, Model model, @AuthenticationPrincipal UserDTO user) throws Exception {
+        boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
 
-        if (memberId.startsWith("2")) {
-            if (user.getStore() != null) {
-                searchDTO.setSearchStoreId(user.getStore().getStoreId());
-            } else {
-                searchDTO.setSearchStoreId(-1);
+        if (isStoreOwner) {
+            if (user.getStore() == null) {
+                return "error/no_store_info";
             }
-
-            List<QscDTO> qscList = qscService.qscList(searchDTO);
-            model.addAttribute("list", qscList);
-            model.addAttribute("pager", searchDTO);
-
-            return "view_store/store/qsc_list";
-        } else {
-            List<QscDTO> qscList = qscService.qscList(searchDTO);
-            model.addAttribute("list", qscList);
-            model.addAttribute("pager", searchDTO);
-
-            return "qsc/list";
+            searchDTO.setSearchStoreId(user.getStore().getStoreId());
         }
+
+        List<QscDTO> qscList = qscService.qscList(searchDTO);
+        model.addAttribute("list", qscList);
+        model.addAttribute("pager", searchDTO);
+
+        return isStoreOwner ? "view_store/store/qsc_list" : "qsc/list";
     }
 
+    @PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
     @GetMapping("add")
     public String qscAdd(QscQuestionSearchDTO searchDTO, Model model) throws Exception {
         searchDTO.setSearchIsUse(true);
@@ -63,41 +59,77 @@ public class QscController {
         return "qsc/add";
     }
 
+    @PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
     @PostMapping("add")
     @ResponseBody
-    public Map<String, Object> qscAdd(@RequestBody QscDTO qscDTO, Authentication authentication) throws Exception {
-        Integer memberId = Integer.parseInt(authentication.getName());
-        qscDTO.setMemberId(memberId);
+    public Map<String, Object> qscAdd(@RequestBody QscDTO qscDTO, @AuthenticationPrincipal UserDTO user) throws Exception {
+        Integer writerId = user.getMember().getMemberId();
+        boolean isSales = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEPT_SALES"));
+
+        if (isSales) {
+            boolean isManager = storeService.isCurrentManager(qscDTO.getStoreId(), writerId);
+            if (!isManager) return result("해당 가맹점의 담당자가 아닙니다.");
+        }
+
+        qscDTO.setMemberId(writerId);
 
         return result(qscService.addQsc(qscDTO));
     }
 
     @GetMapping("detail")
-    public String qscDetail(Integer qscId, Model model) throws Exception {
+    public String qscDetail(Integer qscId, Model model, @AuthenticationPrincipal UserDTO user) throws Exception {
+        boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
+
         QscDTO qscDTO = qscService.qscDetail(qscId);
+        if (qscDTO == null) return "error/404";
+        if (isStoreOwner) {
+            StoreDTO store = user.getStore();
+            if (store == null) return "error/no_store_info";
+            if (!store.getStoreId().equals(qscDTO.getStoreId())) return "error/403";
+        }
+
         model.addAttribute("dto", qscDTO);
 
         return "qsc/detail";
     }
 
+    @PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
     @GetMapping("edit")
-    public String qscEdit(Integer qscId, Model model, Authentication authentication) throws Exception {
+    public String qscEdit(Integer qscId, Model model, @AuthenticationPrincipal UserDTO user) throws Exception {
+        boolean isSales = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEPT_SALES"));
         QscDTO qscDTO = qscService.qscDetail(qscId);
-        if (! authentication.getName().equals(qscDTO.getMemberId().toString())) return "error/forbidden";
+        if (isSales && (user.getMember().getMemberId() != qscDTO.getMemberId())) return "error/403";
 
         model.addAttribute("dto", qscDTO);
 
         return "qsc/edit";
     }
 
+    @PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
     @PostMapping("update")
     @ResponseBody
-    public Map<String, Object> qscUpdate(@RequestBody QscDTO qscDTO) throws Exception {
+    public Map<String, Object> qscUpdate(@RequestBody QscDTO qscDTO, @AuthenticationPrincipal UserDTO user) throws Exception {
+        boolean isSales = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEPT_SALES"));
+        if (isSales) {
+            QscDTO originQsc = qscService.qscDetail(qscDTO.getQscId());
+            if (user.getMember().getMemberId() != originQsc.getMemberId()) return result("해당 QSC 점검의 담당자가 아닙니다.");
+        }
+
         return result(qscService.updateQsc(qscDTO));
     }
 
     @GetMapping("/downloadExcel")
-    public void downloadExcel(QscSearchDTO searchDTO, HttpServletResponse response) throws Exception {
+    public void downloadExcel(QscSearchDTO searchDTO, HttpServletResponse response, @AuthenticationPrincipal UserDTO user) throws Exception {
+        boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));
+
+        if (isStoreOwner) {
+            if (user.getStore() == null) {
+                response.sendRedirect("/error/noStoreInfo");
+                return;
+            }
+            searchDTO.setSearchStoreId(user.getStore().getStoreId());
+        }
+
         List<QscDTO> list = qscService.excelList(searchDTO);
         String[] headers = {"ID", "가맹점명", "점주명", "가맹점주소", "점검담당자명", "제목", "점검일시", "만점", "총점", "환산점수", "등급", "종합의견"};
 
@@ -117,11 +149,9 @@ public class QscController {
         });
     }
 
+    @PreAuthorize("hasRole('HQ')")
     @GetMapping("admin/question")
-    public String questionList(QscQuestionSearchDTO searchDTO, Authentication authentication, Model model) throws Exception {
-        String memberId = authentication.getName();
-        if (memberId.startsWith("2")) return "error/forbidden";
-
+    public String questionList(QscQuestionSearchDTO searchDTO, Model model) throws Exception {
         List<QscQuestionDTO> questionList = qscService.questionList(searchDTO);
         model.addAttribute("list", questionList);
         model.addAttribute("pager", searchDTO);
@@ -129,18 +159,21 @@ public class QscController {
         return "qsc/question_list";
     }
 
+    @PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
     @PostMapping("admin/question/add")
     @ResponseBody
     public Map<String, Object> addQuestion(@RequestBody QscQuestionDTO questionDTO) throws Exception {
         return result(qscService.addQuestion(questionDTO));
     }
 
+    @PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
     @PostMapping("admin/question/update")
     @ResponseBody
     public Map<String, Object> updateQuestion(@RequestBody QscQuestionDTO questionDTO) throws Exception {
         return result(qscService.updateQuestion(questionDTO));
     }
 
+    @PreAuthorize("hasRole('HQ')")
     @GetMapping("question/downloadExcel")
     public void downloadExcelQuestion(QscQuestionSearchDTO searchDTO, HttpServletResponse response) throws Exception {
         List<QscQuestionDTO> list = qscService.excelQuestionList(searchDTO);
@@ -159,12 +192,19 @@ public class QscController {
         Map<String, Object> response = new HashMap<>();
 
         if (result > 0) {
-            response.put("message", "등록 완료");
             response.put("status", "success");
         } else {
-            response.put("status", "error");
-            response.put("message", "등록 실패");
+            response.put("status", "fail");
         }
+
+        return response;
+    }
+
+    private Map<String, Object> result(String message) {
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("status", "error");
+        response.put("message", message);
 
         return response;
     }

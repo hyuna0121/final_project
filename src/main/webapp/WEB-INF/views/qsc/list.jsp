@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html
   lang="en"
@@ -165,9 +166,11 @@
 					       		<button type="button" class="btn btn-outline-success me-2" onclick="downloadExcel()">
 					            	<i class='bx bx-download me-1'></i> 엑셀 다운로드
 					            </button>
-								<a href="/store/qsc/add" class="btn btn-primary">
-									<i class="bx bx-plus me-1"></i> QSC 등록
-								</a>
+								<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+									<a href="/store/qsc/add" class="btn btn-primary">
+										<i class="bx bx-plus me-1"></i> QSC 등록
+									</a>
+								</sec:authorize>
 					     	</div>
 						</div>
 					  
