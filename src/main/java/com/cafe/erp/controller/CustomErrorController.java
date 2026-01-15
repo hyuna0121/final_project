@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class CustomErrorController implements ErrorController {
 
-//    @GetMapping("/error")
-//    public String handleError(HttpServletRequest request) {
-//        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-//
+    @GetMapping("/error")
+    public String handleError(HttpServletRequest request) {
+        Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
+
 //        if (status != null) {
 //            int statusCode = Integer.parseInt(status.toString());
 //
@@ -24,9 +24,9 @@ public class CustomErrorController implements ErrorController {
 //                default: break;
 //            }
 //        }
-//
-//        return "error/common";
-//    }
+
+        return "error/common";
+    }
 
     @GetMapping("/error/noStoreInfo")
     public String noStoreInfo() { return "error/no_store_info"; }
