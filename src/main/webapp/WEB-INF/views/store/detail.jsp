@@ -93,25 +93,34 @@
 				            <div class="info-container">
 				            	<div class="d-flex justify-content-between align-items-center">
 					            	<h5 class="ps-md-2 mb-0"><span class="fw-bold text-primary">${store.storeName}</span></h5>
-					            	<button type="button" class="btn btn-outline-warning btn-sm" id="btnEditInfo">
-						                <span class="tf-icons bx bx-edit-alt" id="btnIcon"></span> <span id="btnText">정보 수정</span>
-						            </button>
+									<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+										<c:if test="${store.storeStatus ne '폐업'}">
+											<button type="button" class="btn btn-outline-warning btn-sm" id="btnEditInfo">
+												<span class="tf-icons bx bx-edit-alt" id="btnIcon"></span> <span id="btnText">정보 수정</span>
+											</button>
+										</c:if>
+									</sec:authorize>
 				            	</div>
 				                <div class="bg-white border rounded-3 p-3 mt-3 mb-3">
 							    	<h6 class="fw-bold mb-3"><i class='bx bx-info-circle'></i> 상태</h6>
 								    <div class="row g-3">
 				                        <div class="col-md-3 mb-2 ps-md-4">
 				                            <span class="text-muted small d-block mb-1">현재 상태</span>
-				                            <div>
-				                            	<c:if test="${store.storeStatus eq '오픈'}"><span class="badge bg-label-info">${store.storeStatus}</span></c:if>
-								            	<c:if test="${store.storeStatus eq '오픈 준비'}"><span class="badge bg-label-warning">${store.storeStatus}</span></c:if>
-								            	<c:if test="${store.storeStatus eq '폐업'}"><span class="badge bg-label-danger">${store.storeStatus}</span></c:if>
+				                            <div id="viewStatus" data-status="${store.storeStatus}">
+				                            	<c:if test="${store.storeStatus eq '오픈'}"><span class="badge bg-label-info" id="statusBadge">${store.storeStatus}</span></c:if>
+								            	<c:if test="${store.storeStatus eq '오픈 준비'}"><span class="badge bg-label-warning" id="statusBadge">${store.storeStatus}</span></c:if>
+								            	<c:if test="${store.storeStatus eq '폐업'}"><span class="badge bg-label-danger" id="statusBadge">${store.storeStatus}</span></c:if>
 				                            </div>
+
+											<div id="editStatus" class="d-none">
+												<select class="form-select from-select-sm" name="storeStatus" id="selectStatus"
+														style="padding: 0.25rem 1.875rem 0.25rem 0.875rem; font-size: 0.75rem; height: auto;"></select>
+											</div>
 				                        </div>
 				                        <div class="col-md-9">
 				                            <span class="text-muted small d-block mb-1">영업시간</span>
 				                            <div id="viewTime">
-				                            	<c:if test="${store.storeStatus eq '오픈'}"><span>${store.storeStartTime} ~ ${store.storeCloseTime}</span></c:if>
+				                            	<c:if test="${store.storeStatus eq '오픈'}"><span>${store.formattedStartTime} ~ ${store.formattedCloseTime}</span></c:if>
 								            	<c:if test="${store.storeStatus ne '오픈'}"><span>-</span></c:if>
 				                            </div>
 				                            
@@ -391,5 +400,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     
     <script type="text/javascript" src="/js/store/detail.js"></script>
+	<script type="text/javascript" src="/js/store/detail-edit.js"></script>
   </body>
 </html>

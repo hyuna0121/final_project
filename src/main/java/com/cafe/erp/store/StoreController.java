@@ -106,6 +106,43 @@ public class StoreController {
 		return isStoreOwner ? "view_store/store/info" : "store/detail";
 	}
 
+	@PreAuthorize("hasAnyRole('STORE')")
+	@PostMapping("updateTime")
+	@ResponseBody
+	public Map<String, Object> updateTime(@RequestBody StoreDTO storeDTO, @AuthenticationPrincipal UserDTO user) throws Exception {
+		Map<String, Object> response = new HashMap<>();
+		if (!user.getStore().getStoreId().equals(storeDTO.getStoreId())) {
+			response.put("status", "fail");
+			return response;
+		}
+
+		int result = storeService.updateTime(storeDTO);
+
+		if (result > 0) {
+			response.put("status", "success");
+		} else {
+			response.put("status", "error");
+		}
+
+		return response;
+	}
+
+	@PreAuthorize("hasAnyRole('')")
+	@PostMapping("updateStatus")
+	@ResponseBody
+	public Map<String, Object> updateStatus(@RequestBody StoreDTO storeDTO) throws Exception {
+		int result = storeService.updateInfo(storeDTO);
+
+		Map<String, Object> response = new HashMap<>();
+		if (result > 0) {
+			response.put("status", "success");
+		} else {
+			response.put("status", "error");
+		}
+
+		return response;
+	}
+
 	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("manage/update")
 	@ResponseBody

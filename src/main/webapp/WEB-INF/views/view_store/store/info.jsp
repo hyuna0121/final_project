@@ -123,6 +123,7 @@
 							    	<h6 class="fw-bold mb-3"><i class='bx bx-info-circle'></i> 상태</h6>
 								    <div class="row g-3">
 				                        <div class="col-md-3 mb-2 ps-md-4">
+											<input type="hidden" id="storeId" value="${store.storeId}">
 				                            <span class="text-muted small d-block mb-1">현재 상태</span>
 				                            <div>
 				                            	<c:if test="${store.storeStatus eq '오픈'}"><span class="badge bg-label-info">${store.storeStatus}</span></c:if>
@@ -133,7 +134,7 @@
 				                        <div class="col-md-9">
 				                            <span class="text-muted small d-block mb-1">영업시간</span>
 				                            <div id="viewTime">
-				                            	<c:if test="${store.storeStatus eq '오픈'}"><span>${store.storeStartTime} ~ ${store.storeCloseTime}</span></c:if>
+				                            	<c:if test="${store.storeStatus eq '오픈'}"><span>${store.formattedStartTime} ~ ${store.formattedCloseTime}</span></c:if>
 								            	<c:if test="${store.storeStatus ne '오픈'}"><span>-</span></c:if>
 				                            </div>
 				                            
@@ -313,5 +314,6 @@
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     
     <script type="text/javascript" src="/js/store/detail.js"></script>
+	<script type="text/javascript" src="/js/store/detail-edit-store.js"></script>
   </body>
 </html>

@@ -2,6 +2,8 @@ package com.cafe.erp.store;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,9 +31,17 @@ public class StoreDTO {
 	private String memName;
 	private String memEmail;
 	private String memPhone;
+
+	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("a hh:mm", Locale.KOREAN);
 	
-	public String getStoreZonecodeStr() {
-		return String.format("%05d", storeZonecode);
+	public String getStoreZonecodeStr() { return String.format("%05d", storeZonecode); }
+	public String getFormattedStartTime() {
+		if (this.storeStartTime == null) return "";
+		return storeStartTime.format(TIME_FORMATTER);
+	}
+	public String getFormattedCloseTime() {
+		if (this.storeCloseTime == null) return "";
+		return storeCloseTime.format(TIME_FORMATTER);
 	}
 	
 }

@@ -35,4 +35,8 @@ public interface StoreDAO {
     public List<StoreDTO> searchMyStore(String keyword, String memberId) throws Exception;
 
     public int isCurrentManager(@Param("storeId") Integer storeId, @Param("memberId") Integer memberId) throws Exception;
+
+    public int updateInfo(StoreDTO storeDTO) throws Exception;
+
+	public int updateTime(StoreDTO storeDTO) throws Exception;
 }

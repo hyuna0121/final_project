@@ -96,4 +96,12 @@ public class StoreService {
 	public boolean isCurrentManager(Integer storeId, Integer memberId) throws Exception {
 		return storeDAO.isCurrentManager(storeId, memberId) > 0;
 	}
+
+    public int updateInfo(StoreDTO storeDTO) throws Exception {
+		return storeDAO.updateInfo(storeDTO);
+    }
+
+	public int updateTime(StoreDTO storeDTO) throws Exception {
+		return storeDAO.updateTime(storeDTO);
+	}
 }

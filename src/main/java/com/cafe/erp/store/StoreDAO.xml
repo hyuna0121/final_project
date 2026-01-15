@@ -82,6 +82,25 @@
 		INSERT INTO store 
 		VALUE (#{storeId}, #{storeName}, #{memberId}, #{storeAddress}, #{storeLatitude}, #{storeLongitude}, "오픈 준비", null, null, now(), now(), #{storeZonecode});
 	</insert>
+
+	<update id="updateInfo" parameterType="storeDTO">
+		UPDATE store
+		SET
+			store_status = #{storeStatus},
+			store_start_time = #{storeStartTime},
+			store_close_time = #{storeCloseTime},
+			store_updated_at = now()
+		WHERE store_id = #{storeId}
+	</update>
+
+	<update id="updateTime" parameterType="storeDTO">
+		UPDATE store
+		SET
+			store_start_time = #{storeStartTime},
+			store_close_time = #{storeCloseTime},
+			store_updated_at = now()
+		WHERE store_id = #{storeId}
+	</update>
 	
 	<select id="searchStore" parameterType="String">
 		SELECT 
@@ -189,7 +208,7 @@
 		WHERE store_id = #{storeId}
 		AND manage_end_date IS NULL
 	</update>
-	
+
 	<insert id="addManager" parameterType="StoreManageDTO">
 		INSERT INTO store_manager_history
 		VALUE (null, #{storeId}, #{memberId}, #{manageStartDate}, null)
