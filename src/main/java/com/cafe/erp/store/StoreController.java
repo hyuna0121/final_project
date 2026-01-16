@@ -127,7 +127,7 @@ public class StoreController {
 		return response;
 	}
 
-	@PreAuthorize("hasAnyRole('')")
+	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("updateStatus")
 	@ResponseBody
 	public Map<String, Object> updateStatus(@RequestBody StoreDTO storeDTO) throws Exception {

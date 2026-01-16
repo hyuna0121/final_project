@@ -78,6 +78,7 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
+		  	<sec:authentication property="principal.member" var="memberInfo"/>
 
             <div class="container-xxl flex-grow-1 container-p-y">
               <h4 class="fw-bold py-3 mb-4"><a href="/store/voc/list" class="text-muted fw-light">VOC /</a> 상세 내역</h4>
@@ -85,70 +86,90 @@
               <div class="row">
                 <div class="col-xl-7 col-lg-7 col-md-12 mb-4 mb-lg-0">
                     <div class="card h-100 mb-4">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0"><i class="bx bx-user-voice me-1"></i> 불만 접수 내용</h5>
-                            <c:if test="${dto.vocStatus eq 0}"><span class="badge bg-label-warning">처리 대기</span></c:if>
-			            	<c:if test="${dto.vocStatus eq 1}"><span class="badge bg-label-info">처리 중</span></c:if>
-			            	<c:if test="${dto.vocStatus eq 2}"><span class="badge bg-label-success">처리 완료</span></c:if>
+                        <div class="card-header" style="padding-bottom: 10px;">
+							<div class="d-flex justify-content-between align-items-center mb-4">
+								<h5 class="mb-0"><i class="bx bx-user-voice me-1"></i> 불만 접수 내용</h5>
+								<c:if test="${dto.vocStatus eq 0}"><span class="badge bg-label-warning">처리 대기</span></c:if>
+								<c:if test="${dto.vocStatus eq 1}"><span class="badge bg-label-info">처리 중</span></c:if>
+								<c:if test="${dto.vocStatus eq 2}"><span class="badge bg-label-success">처리 완료</span></c:if>
+							</div>
+							<div class="d-flex justify-content-between">
+								<div class="d-flex align-items-center small gap-3">
+									<div class="d-flex align-items-center">
+										<div class="avatar avatar-xs me-2">
+											<span class="avatar-initial rounded-circle bg-label-success">${dto.memName.charAt(0)}</span>
+										</div>
+										${dto.memName}
+									</div>
+									<span>${dto.vocCreatedAtStr}</span>
+								</div>
+								<div class="small">
+									<sec:authorize access="hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')">
+										<c:if test="${dto.vocStatus eq 1}">
+											<button type="button" id="updateBtn" class="btn btn-sm btn-success"><i class='bx bx-check-double'></i> 완료 처리</button>
+										</c:if>
+										<c:if test="${dto.vocStatus eq 2}">
+											<span>${dto.vocUpdatedAtStr}</span>
+										</c:if>
+									</sec:authorize>
+								</div>
+							</div>
                         </div>
-                        
                         <div class="card-body">
-                        	<div class="row mb-3">
-		                        <div class="p-3 bg-light border rounded-3">
-		                            <h6 class="fw-bold mb-3"><i class="bx bx-store me-1"></i> 가맹점 정보</h6>
+							<div class="col-12"><hr class="mt-1 mb-0 border-light"></div>
+                        	<div style="padding-top: 20px;">
+		                        <div class="p-3 bg-light border rounded-3 mb-3">
+		                            <h6 class="fw-bold mb-3 d-flex align-items-center gap-1"><i class='bx bx-notepad'></i><span>정보</span></h6>
 		                            <div class="row g-3">
-		                                <div class="col-md-3 ps-md-4 border-end">
-		                                    <label class="text-muted small d-block">가맹점명</label>
-		                                    <span id="detailStoreName" class="fw-semibold fs-6 text-primary">${dto.storeName}</span>
+		                                <div class="col-md-4 ps-md-4">
+		                                    <label class="small d-block">가맹점</label>
+		                                    <span id="detailStoreName" class="fw-semibold fs-6 text-primary">${dto.storeName} (${dto.ownerName})</span>
 		                                </div>
-		                                <div class="col-md-3 ps-md-4 border-end">
-		                                    <label class="text-muted small d-block">가맹점주</label>
-		                                    <span id="detailMemName" class="fw-semibold fs-6">${dto.ownerName}</span>
-		                                </div>
-		                                <div class="col-md-6 ps-md-4">
-		                                    <label class="text-muted small d-block">주소</label>
-		                                    <span id="detailStoreAddress" class="fw-semibold fs-6">${dto.storeAddress}</span>
-		                                </div>
+										<div class="col-md-3 ps-md-4">
+											<label class="small d-block mb-1">불만 유형</label>
+											<c:if test="${dto.vocType eq 'HYGIENE'}"><span class="badge bg-label-primary">위생</span></c:if>
+											<c:if test="${dto.vocType eq 'SERVICE'}"><span class="badge bg-label-secondary">서비스</span></c:if>
+											<c:if test="${dto.vocType eq 'TASTE'}"><span class="badge bg-label-danger">맛</span></c:if>
+										</div>
+										<div class="col-md-4">
+											<label class="small d-block mb-1">고객 연락처</label>
+											<span class="fw-semibold fs-6">${dto.vocContact}</span>
+										</div>
+
 		                            </div>
 		                        </div>
 		                    </div>
-		                    
-                            <div class="row g-3 mb-4">
-					            <div class="col-md-3 ps-md-4 border-end">
-					                <label class="text-muted small d-block mb-1">불만 유형</label>
-					                <span class="fw-bold fs-6 text-danger">${dto.vocType}</span>
-					            </div>
-					            <div class="col-md-3 ps-md-4 border-end">
-					                <label class="text-muted small d-block mb-1">작성자</label>
-					                <span class="fw-semibold fs-6 text-dark">${dto.memName}</span>
-					            </div>
-					            <div class="col-md-3 ps-md-4 border-end">
-					                <label class="text-muted small d-block mb-1">고객 연락처</label>
-					                <span class="fw-semibold fs-6 text-dark">${dto.vocContact}</span>
-					            </div>
-					            <div class="col-md-3 ps-md-4">
-					                <label class="text-muted small d-block mb-1">접수 일시</label>
-					                <span class="fw-semibold fs-6 text-dark">${dto.vocCreatedAtStr}</span>
-					            </div>
-					        </div>
-					        
-                            <div class="row mb-3">
-                                <div class="col-12 ps-md-4">
-					                <label class="text-muted small d-block mb-2">제목</label>
-					                <span class="fw-bold fs-5 text-dark">${dto.vocTitle}</span>
-					            </div>
-                            </div>
-                            <div class="row mb-3">
-                                <div class="col-12 ps-md-4">
-					                <label class="text-muted small d-block mb-2">상세 내용</label>
-					                <div class="p-3 bg-white border rounded-2" style="min-height: 200px;">
-					                    <span class="fs-6 text-secondary" style="white-space: pre-line; line-height: 1.6;">${dto.vocContents}</span>
-					                </div>
-					            </div>
-                            </div>
-                            
+							<div class="p-3 bg-light border rounded-3 mb-3">
+								<input type="hidden" id="vocId" value="${dto.vocId}">
+								<div class="row mb-3">
+									<div class="col-12 ps-md-4">
+										<label class="small d-block mb-2">제목</label>
+										<span id="titleDisplay" class="fw-bold fs-5">${dto.vocTitle}</span>
+										<input type="text" id="titleEdit" class="form-control fw-bold" value="${dto.vocTitle}" style="display: none;">
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-12 ps-md-4">
+										<label class="small d-block mb-2">상세 내용</label>
+										<div style="min-height: 200px;">
+											<span id="contentsDisplay" class="fs-6 text-secondary" style="white-space: pre-line; line-height: 1.6;">${dto.vocContents}</span>
+											<textarea id="contentsEdit" class="form-control" style="display: none; white-space: pre-line;">${dto.vocContents}</textarea>
+										</div>
+									</div>
+								</div>
+
+							</div>
+
                             <div class="text-end">
-                                <a href="/store/voc/list" class="btn btn-outline-secondary">목록</a>
+                                <a href="/store/voc/list" id="listBtn" class="btn btn-outline-secondary" style="margin-right: 10px;">목록</a>
+
+								<sec:authorize access="hasAnyRole('DEPT_CS', 'EXEC', 'MASTER')">
+									<c:if test="${dto.vocStatus eq 0 and dto.memberId eq memberInfo.memberId}">
+										<button type="button" id="editBtn" class="btn btn-primary">수정</button>
+										<button type="button" id="cancelBtn" class="btn btn-secondary" style="display: none; margin-right: 10px;">취소</button>
+										<button type="button" id="saveBtn" class="btn btn-primary" style="display: none;">저장</button>
+									</c:if>
+								</sec:authorize>
                             </div>
                         </div>
                         
@@ -164,7 +185,6 @@
                           <div class="card-body overflow-auto" style="max-height: 500px; background-color: #f8f9fa; padding-bottom: 0;" id="replyArea">
                               <input type="hidden" value="${listSize}" id="isFirst">
                               <c:forEach var="process" items="${list}">
-								  <sec:authentication property="principal.member" var="memberInfo"/>
 								  <c:set var="isMe" value="${process.memberId eq memberInfo.memberId}" />
 						        <div class=" d-flex w-100 my-3 ${isMe ? 'justify-content-end' : 'justify-content-start'}">
 						            <div style="max-width: 80%;" class="msg-container ${isMe ? 'text-end' : 'text-start'}">
@@ -228,7 +248,6 @@
 
 									<input type="file" multiple id="replyFile" style="display: none;" onchange="showFileName()">
 
-									<input type="hidden" id="vocId" value="${dto.vocId}">
 									<textarea class="form-control" id="processContents" rows="2" placeholder="메시지를 입력하세요..." style="resize: none; padding: 20px 10px 10px;"></textarea>
 
 									<button class="btn btn-primary" type="button" onclick="submitVocProcess()">

@@ -88,6 +88,35 @@ public class VocController {
 		return "voc/detail";
 	}
 
+	@PreAuthorize("hasAnyRole('DEPT_CS', 'EXEC', 'MASTER')")
+	@PostMapping("edit")
+	@ResponseBody
+	public Map<String, Object> editVoc(@RequestBody VocDTO vocDTO, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isCS = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEPT_CS"));
+
+		if (isCS) {
+			VocDTO originDTO = vocService.detail(vocDTO.getVocId());
+			if (!originDTO.getMemberId().equals(user.getMember().getMemberId())) return result("해당 VOC의 작성자가 아닙니다.");
+		}
+
+		return result(vocService.editVoc(vocDTO));
+	}
+
+	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
+	@PostMapping("updateStatus")
+	@ResponseBody
+	public Map<String, Object> updateStatus(@RequestBody VocDTO vocDTO, @AuthenticationPrincipal UserDTO user) throws Exception {
+		boolean isSALES = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DEPT_SALES"));
+
+		if (isSALES) {
+			VocDTO originDTO = vocService.detail(vocDTO.getVocId());
+			boolean isManager = storeService.isCurrentManager(originDTO.getStoreId(), user.getMember().getMemberId());
+			if (!isManager) return result("해당 가맹점의 담당자가 아닙니다.");
+		}
+
+		return result(vocService.editStatus(vocDTO.getVocId()));
+	}
+
 	@PreAuthorize("hasAnyRole('STORE', 'DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("addProcess")
 	@ResponseBody

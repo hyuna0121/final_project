@@ -165,4 +165,12 @@ public class VocService {
 	public VocProcessDTO getProcess(Integer processId) throws Exception {
 		return vocDAO.getProcess(processId);
 	}
+
+    public int editVoc(VocDTO vocDTO) throws Exception {
+		return vocDAO.editVoc(vocDTO);
+    }
+
+	public int editStatus(Integer vocId) throws Exception {
+		return vocDAO.editStatus(vocId);
+	}
 }

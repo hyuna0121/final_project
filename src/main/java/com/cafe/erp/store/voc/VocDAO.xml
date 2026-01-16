@@ -81,6 +81,19 @@
 		INSERT INTO voc(member_id, store_id, voc_title , voc_type, voc_contact, voc_contents, voc_status, voc_created_at, voc_updated_at) 
 		VALUES (#{memberId}, #{storeId}, #{vocTitle}, #{vocType}, #{vocContact}, #{vocContents}, 0, now(), now())
 	</insert>
+
+	<update id="editVoc" parameterType="VocDTO">
+		UPDATE voc
+		SET voc_title = #{vocTitle}, voc_contents = #{vocContents}, voc_updated_at = now()
+		WHERE voc_id = #{vocId}
+	</update>
+
+	<update id="editStatus" parameterType="Integer">
+		UPDATE voc
+		SET voc_status = 2, voc_updated_at = now()
+		WHERE voc_id = #{vocId}
+	</update>
+
 	<!-- 알림 용 가맹점주 정보 -->
 	<select id="vocOnwerInfo" parameterType="VocDTO" resultType="VocDTO">
 	    SELECT
