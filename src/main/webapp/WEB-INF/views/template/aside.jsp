@@ -204,6 +204,11 @@
            <div data-i18n="Text Divider">부서 목록</div>
          </a>
        </li>
+       <li class="menu-item">
+         <a href="/member/admin_login_history" class="menu-link">
+           <div data-i18n="Text Divider">로그인 이력 목록</div>
+         </a>
+       </li>
       </ul>
     </li>
     <!-- User interface -->

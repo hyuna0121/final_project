@@ -39,4 +39,7 @@ public class MemberCommuteService {
 	public List<MemberAttendanceDTO> getApprovedAttendance(int memberId) throws Exception {
 	    return memberAttendanceDAO.selectApprovedAttendance(memberId);
 	}
+	public int updateCommute(MemberCommuteDTO commuteDTO) throws Exception{
+		return commuteDAO.updateCommute(commuteDTO);
+	}
 }

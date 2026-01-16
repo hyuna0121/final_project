@@ -26,6 +26,8 @@ public class SecurityConfig {
     private UserDetailsService userDetailsService;
     @Autowired
     private LoginSuccessHandler loginSuccessHandler;
+    @Autowired
+    private LoginFailureHandler loginFailureHandler;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(PasswordEncoder passwordEncoder) {
@@ -59,6 +61,7 @@ public class SecurityConfig {
                     .usernameParameter("memberId")
                     .passwordParameter("memPassword")
                     .successHandler(loginSuccessHandler)
+                    .failureHandler(loginFailureHandler)
                     .permitAll()
             )
             .logout(logout -> logout

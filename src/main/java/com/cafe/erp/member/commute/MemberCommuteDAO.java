@@ -13,6 +13,7 @@ public interface MemberCommuteDAO {
 	public int checkIn(MemberCommuteDTO commuteDTO) throws Exception;
 
 	public int checkOut(MemberCommuteDTO commuteDTO) throws Exception;
+	public int updateCommute(MemberCommuteDTO commuteDTO) throws Exception;
 
 
 	

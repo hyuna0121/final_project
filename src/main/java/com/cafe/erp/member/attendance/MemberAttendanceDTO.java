@@ -12,6 +12,7 @@ import lombok.ToString;
 @ToString
 public class MemberAttendanceDTO {
 
+	private int memberCommuteId;
 	private String memberAttendanceId;     
 	private String memAttendanceType;     
     private Date memAttendanceStartDate;  

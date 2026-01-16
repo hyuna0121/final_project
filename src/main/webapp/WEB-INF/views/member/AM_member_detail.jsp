@@ -18,25 +18,9 @@
     <link rel="stylesheet" href="/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
     <script src="/vendor/js/helpers.js"></script>
     <script src="/js/config.js"></script>
+    <link rel="stylesheet" href="/css/member/AM_member_detail.css" />
     
-    <style>
-        
-        .tab-content { padding-top: 20px; }
-        .image-overlay {
-        width: 120px; 
-        height: 120px;
-        background-color: rgba(0, 0, 0, 0.5); 
-        opacity: 0; 
-        transition: opacity 0.3s ease; 
-        cursor: pointer;
-        pointer-events: none;
-    }
-
-    .position-relative.editable:hover .image-overlay {
-        opacity: 1;
-        pointer-events: auto; 
-    }
-    </style>
+    
 </head>
 
 <body>
@@ -355,7 +339,7 @@
 									        
 									        <div class="card mb-4 border">
 									            <div class="card-body">
-									                <div class="row gx-3 gy-2 align-items-center">
+									                <div class="row gx-3 gy-2 align-items-center ">
 									                    <div class="col-md-2">
 									                        <label class="form-label">조회 기준</label>
 									                        <select id="dateType" name="dateType" class="form-select" onchange="toggleDateInputs()">
@@ -382,7 +366,7 @@
 									                    
 									                        <div id="input-year" class="date-input d-none">
 									                            <label class="form-label">대상 연도</label>
-									                            <select id="yearPicker" name="yearDate" class="form-select text-center" onchange="movePage(1)">
+									                            <select id="yearPicker" name="yearDate" class="form-select text-center">
 									                                <c:set var="selectedYearOnly" value="${not empty pager.yearDate ? pager.yearDate : curYear}" />
 									                                <c:forEach begin="${curYear - 10}" end="${curYear}" var="y">
 									                                    <option value="${y}" ${y == selectedYearOnly ? 'selected' : ''}>${y}년</option>
@@ -411,17 +395,17 @@
 									                            <option value="half" ${pager.statusFilter == 'half' ? 'selected' : ''}>반차</option>
 									                        </select>
 									                    </div>
-									                    <div class="col-md-3">
-									                        <label class="form-label d-block">&nbsp;</label>
-									                        <div class="d-flex gap-2">
-									                            <button type="button" class="btn btn-primary" onclick="movePage(1)">
-									                                <i class='bx bx-search me-1'></i> 조회
-									                            </button>
-									                            <button type="button" class="btn btn-outline-success flex-grow-1">
-									                                <i class='bx bx-download me-1'></i> Excel
-									                            </button>
-									                        </div>
-									                    </div>
+									                    <div class="col-md-3 ms-auto">
+														    <label class="form-label d-block">&nbsp;</label>
+														    <div class="d-flex gap-2">
+														        <button type="button" class="btn btn-primary" onclick="movePage(1)">
+														            <i class='bx bx-search me-1'></i> 조회
+														        </button>
+														        <button type="button" class="btn btn-outline-success flex-grow-1">
+														            <i class='bx bx-download me-1'></i> Excel
+														        </button>
+														    </div>
+														</div>
 									                </div>
 									            </div>
 									        </div>
@@ -470,13 +454,20 @@
 									                        </td>
 									                        <td>
 									                            <span class="text-muted small">
-									                                <c:out value="${attendance.note}" default="" />
+									                                <c:out value="${attendance.memCommuteNote}" default="" />
 									                            </span>
 									                        </td> 
 									                        <td class="text-center">
-									                            <button type="button" class="btn btn-sm btn-icon btn-outline-primary" onclick="openEditModal(this)">
-									                                <i class="bx bx-edit-alt"></i>
-									                            </button>
+									                            <button type="button" class="btn btn-sm btn-icon btn-outline-primary" 
+																    data-commute-id="${attendance.memberCommuteId}"
+																    data-date="${attendance.memCommuteWorkDate}"
+																    data-in-time="${fn:substring(attendance.memCommuteInTime, 11, 16)}"
+																    data-out-time="${fn:substring(attendance.memCommuteOutTime, 11, 16)}"
+																    data-state="${attendance.memCommuteState}"
+																    data-note="${attendance.memCommuteNote}"
+																    onclick="openEditModal(this)">
+																    <i class="bx bx-edit-alt"></i>
+																</button>
 									                        </td>
 									                    </tr>
 									                </c:forEach>
@@ -522,6 +513,51 @@
                     <!-- 휴가 현황 -->
                                    <div class="tab-pane fade" id="navs-vacation" role="tabpanel">
 
+									    <form action="./AM_member_detail" method="get" id="vacForm">
+									        <input type="hidden" name="vPage" id="vacPage" value="${empty vacationSearch.page ? 1 : vacationSearch.page}">
+									        <input type="hidden" name="memberId" value="${dto.memberId}">
+									        <input type="hidden" name="tab" value="vacation">
+									
+									        <div class="card mb-4 border">
+									            <div class="card-body">
+									                <div class="row gx-3 gy-2 align-items-center">
+    
+													    <div class="col-md-3">
+													        <label class="form-label">대상 연도</label>
+													        <c:set var="nowYear" value="<%=java.time.Year.now().getValue()%>"/>
+													        <select name="yearDate" class="form-select text-center">
+													            <c:forEach begin="${nowYear - 5}" end="${nowYear + 1}" var="y">
+													                <option value="${y}" ${y == vacationSearch.yearDate ? 'selected' : ''}>${y}년</option>
+													            </c:forEach>
+													        </select>
+													    </div>
+													
+													    <div class="col-md-3">
+													        <label class="form-label">결재 상태</label>
+													        <select name="statusFilter" class="form-select">
+													            <option value="">전체 상태</option>
+													            <option value="승인" ${vacationSearch.statusFilter == '승인' ? 'selected' : ''}>승인</option>
+													            <option value="반려" ${vacationSearch.statusFilter == '반려' ? 'selected' : ''}>반려</option>
+													            <option value="대기" ${vacationSearch.statusFilter == '대기' ? 'selected' : ''}>대기</option>
+													        </select>
+													    </div>
+													
+													    <div class="col-md-3 ms-auto">
+														    <label class="form-label d-block">&nbsp;</label>
+														    <div class="d-flex gap-2">
+														        <button type="button" class="btn btn-primary" onclick="movePage(1)">
+														            <i class='bx bx-search me-1'></i> 조회
+														        </button>
+														        <button type="button" class="btn btn-outline-success flex-grow-1">
+														            <i class='bx bx-download me-1'></i> Excel
+														        </button>
+														    </div>
+														</div>
+													</div>
+									            </div>
+									        </div>
+									    </form>
+									
 									    <div class="row mb-4 g-3">
 									        <div class="col-md-4">
 									            <div class="card h-100 border-0 shadow-sm" style="border-top: 4px solid #8592a3 !important;">
@@ -617,21 +653,20 @@
 									                            </td>
 									                            
 									                            <td class="text-center">
-																    <c:choose>
-																        <c:when test="${dto.appStatus eq '반려'}">
-																            <span class="text-muted text-decoration-line-through">
-																                -${dto.memAttendanceUsedDays}
-																            </span>
-																        </c:when>
-																        <c:otherwise>
-																            <span class="text-danger fw-bold">
-																                -${dto.memAttendanceUsedDays}
-																            </span>
-																        </c:otherwise>
-																    </c:choose>
-																</td>
-
-									                            
+									                                <c:choose>
+									                                    <c:when test="${dto.appStatus eq '반려'}">
+									                                        <span class="text-muted text-decoration-line-through">
+									                                            -${dto.memAttendanceUsedDays}
+									                                        </span>
+									                                    </c:when>
+									                                    <c:otherwise>
+									                                        <span class="text-danger fw-bold">
+									                                            -${dto.memAttendanceUsedDays}
+									                                        </span>
+									                                    </c:otherwise>
+									                                </c:choose>
+									                            </td>
+									
 									                            <td class="ps-4">
 									                                <span class="text-muted text-truncate d-inline-block" style="max-width: 300px; vertical-align: middle;">
 									                                    ${dto.memAttendanceReason}
@@ -656,9 +691,34 @@
 									                </tbody>
 									            </table>
 									        </div>
+									        
+									        <div class="card-footer d-flex justify-content-center border-top-0 bg-white">
+											    <nav aria-label="Page navigation">
+											        <ul class="pagination">
+											            
+											            <li class="page-item ${vacationSearch.begin == 1 ? 'disabled' : ''}">
+											                <a class="page-link" href="javascript:moveVacationPage(${vacationSearch.begin - 1})">
+											                    <i class="bx bx-chevron-left"></i>
+											                </a>
+											            </li>
+											
+											            <c:forEach begin="${vacationSearch.begin}" end="${vacationSearch.end}" var="i">
+											                <li class="page-item ${vacationSearch.page == i ? 'active' : ''}">
+											                    <a class="page-link" href="javascript:moveVacationPage(${i})">${i}</a>
+											                </li>
+											            </c:forEach>
+											
+											            <li class="page-item"> 
+											                 <a class="page-link" href="javascript:moveVacationPage(${vacationSearch.end + 1})">
+											                    <i class="bx bx-chevron-right"></i>
+											                 </a>
+											            </li>
+											            
+											        </ul>
+											    </nav>
+											</div>
 									    </div>
 									</div>
-									
 									
 									
 									
@@ -682,10 +742,10 @@
 </div>
 
 <div class="modal fade" id="modalAttendanceEdit" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">근태 기록 수정 (관리자)</h5>
+                <h5 class="modal-title">근태 기록 수정</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -710,13 +770,15 @@
                         <div class="col mb-3">
                             <label for="editStatus" class="form-label">상태 변경</label>
                             <select id="editStatus" class="form-select">
-                                <option value="normal">정상</option>
-                                <option value="late">지각</option>
-                                <option value="early">조퇴</option>
-                                <option value="absent">결근</option>
-                                <option value="vacation">연차/휴가</option>
-                                <option value="half">반차</option>
-                            </select>
+							    <option value="지각">지각</option>
+							    <option value="조퇴">조퇴</option>
+							    <option value="결근">결근</option>
+							    <option value="연차">연차</option>
+							    <option value="반차">반차</option>
+							    
+							    <option value="출근">출근</option>
+							    <option value="퇴근">퇴근</option>
+							</select>
                         </div>
                     </div>
                     <div class="row">
@@ -726,7 +788,7 @@
                         </div>
                     </div>
                     
-                    <input type="hidden" id="currentRowIndex" />
+                    <input type="hidden" id="editCommuteId" name="memberCommuteId" />
                 </form>
             </div>
             <div class="modal-footer">

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    <mapper namespace="com.cafe.erp.member.history.MemberHistoryDAO">
+    	
+    	
+    	
+    	<sql id="searchFrag">
+	        <where>
+	            <if test="startDate != null and startDate != ''">
+	                AND h.mem_log_his_created_time >= #{startDate}
+	            </if>
+	            <if test="endDate != null and endDate != ''">
+	                AND h.mem_log_his_created_time &lt;= CONCAT(#{endDate}, ' 23:59:59')
+	            </if>
+	            
+	            <if test="isSuccess != null">
+	                AND h.mem_log_his_is_success = #{isSuccess}
+	            </if>
+	            
+	            <if test="searchKeyword != null and searchKeyword != ''">
+	                AND (
+	                    h.mem_log_his_login_id LIKE CONCAT('%', #{searchKeyword}, '%')
+	                    OR m.mem_name LIKE CONCAT('%', #{searchKeyword}, '%')
+	                    OR h.mem_log_his_client_ip LIKE CONCAT('%', #{searchKeyword}, '%')
+	                )
+	            </if>
+	        </where>
+	    </sql>
+	    
+	    <insert id="insertLoginHistory" parameterType="MemberLoginHistoryDTO">
+	        INSERT INTO member_login_history (
+	            mem_log_his_created_time,
+	            mem_log_his_client_ip,
+	            mem_log_his_request_url,
+	            mem_log_his_action_type,
+	            mem_log_his_is_success,
+	            mem_log_his_login_id,
+	            member_id
+	        ) VALUES (
+	            NOW(),
+	            #{memLogHisClientIp},
+	            #{memLogHisRequestUrl},
+	            #{memLogHisActionType},
+	            #{memLogHisIsSuccess},
+	            #{memLogHisLoginId},
+	            #{memberId}
+	        )
+	    </insert>
+	    
+    	<select id="selectLoginHistoryList" parameterType="MemberHistorySearchDTO" resultType="MemberLoginHistoryDTO">
+	        SELECT 
+	            h.*, 
+	            m.mem_name AS memName
+	        FROM member_login_history h
+	        LEFT JOIN member m ON h.member_id = m.member_id
+	        <include refid="searchFrag"/> ORDER BY h.mem_log_his_created_time DESC
+	        LIMIT #{startNum}, #{perPage}
+	    </select>
+	
+	
+	    <select id="totalCount" parameterType="MemberHistorySearchDTO" resultType="Long">
+		        SELECT COUNT(*)
+		        FROM member_login_history h
+		        LEFT JOIN member m ON h.member_id = m.member_id
+		        <include refid="searchFrag"/> 
+	      </select>
+    </mapper>
+    
+    

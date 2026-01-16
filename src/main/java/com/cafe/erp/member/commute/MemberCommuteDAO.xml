@@ -57,26 +57,26 @@
 	    <select id="attendanceList" parameterType="MemberCommuteSearchDTO" resultType="MemberCommuteDTO">
 	        SELECT * FROM (
 	            SELECT 
-	                member_commute_id AS commuteId,
+	                member_commute_id AS memberCommuteId,
 	                mem_commute_work_date,
 	                mem_commute_in_time,
 	                mem_commute_out_time,
 	                mem_commute_state,
 	                member_id,
-	                '' AS note
+	                '' AS memCommuteNote
 	            FROM member_commute
 	            WHERE member_id = #{memberId}
 	    
 	            UNION ALL
 	    
 	            SELECT 
-	                0 AS commuteId,
+	                0 AS memberCommuteId,
 	                DATE(ma.mem_attendance_start_date) AS memCommuteWorkDate,
 	                NULL AS memCommuteInTime,
 	                NULL AS memCommuteOutTime,
 	                ma.mem_attendance_type AS memCommuteState,
 	                ma.member_id AS memberId,
-	                CONCAT(ma.mem_attendance_reason, ' (', ma.mem_attendance_used_days, '일)') AS note
+	                CONCAT(ma.mem_attendance_reason, ' (', ma.mem_attendance_used_days, '일)') AS memCommuteNote
 	            FROM member_attendance ma
 	            JOIN approval a ON ma.approval_id = a.approval_id
 	            WHERE ma.member_id = #{memberId}
@@ -119,4 +119,29 @@
 		 </update>
 		 
 		 
+		 <select id="selectAttendanceList" resultType="com.cafe.erp.member.commute.MemberCommuteDTO">
+		    SELECT 
+		        mem_commute_id          AS memberCommuteId,      mem_commute_work_date   AS memCommuteWorkDate,
+		        mem_commute_in_time     AS memCommuteInTime,
+		        mem_commute_out_time    AS memCommuteOutTime,
+		        mem_commute_state       AS memCommuteState,
+		        mem_commute_note        AS memCommuteNote
+		    FROM 
+		        mem_commute
+		    WHERE 
+		        member_id = #{memberId}
+		</select>
+		 
+		 
+		 <update id="updateCommute">
+		    UPDATE member_commute
+		    SET 
+		        mem_commute_in_time = #{memCommuteInTime},
+		        mem_commute_out_time = #{memCommuteOutTime},
+		        mem_commute_state = #{memCommuteState},
+		        
+		        mem_commute_note = #{memCommuteNote}
+		        
+		    WHERE member_commute_id = #{memberCommuteId}
+		</update>
     </mapper> 

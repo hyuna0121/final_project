@@ -3,51 +3,79 @@
     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
     
-    <mapper namespace="com.cafe.erp.member.attendance.MemberAttendanceDAO">
-	    <select id="attendanceList" parameterType="int" resultType="MemberAttendanceDTO">
-		    SELECT 
-		          ma.mem_attendance_start_date,
-		          ma.mem_attendance_end_date,
-		          ma.mem_attendance_type,
-		          ma.mem_attendance_used_days,
-		          ma.mem_attendance_reason,
-		          a.app_status,   a.approval_id
-		    FROM 
-		    	member_attendance ma
-		    JOIN 
-		    	approval a ON ma.approval_id = a.approval_id
-		    WHERE 
-		    	ma.member_id = #{memberId}
-		    ORDER BY 
-		    	ma.mem_attendance_start_date DESC
-	    </select>
-		
-		<select id="selectLeaveStats" parameterType="int" resultType="MemberLeaveStatsDTO">
-		    SELECT 
-		        ml.mem_leave_total_days,
-		        (
-		            SELECT COALESCE(SUM(ma.mem_attendance_used_days), 0)
-		            FROM member_attendance ma
-		            JOIN approval a ON ma.approval_id = a.approval_id
-		            WHERE ma.member_id = ml.member_id
-		              AND a.app_status = '승인'
-		              AND YEAR(ma.mem_attendance_start_date) = YEAR(NOW())
-		        ) AS mem_leave_used_days
-		    FROM member_leave ml
-		    WHERE ml.member_id = #{memberId}
-		      AND ml.mem_leave_year = YEAR(NOW())
-		</select>
-		
-		
-		<select id="selectApprovedAttendance" parameterType="int" resultType="MemberAttendanceDTO">
-		    SELECT 
-		        ma.mem_attendance_type, 
-		        ma.mem_attendance_start_date, 
-		        ma.mem_attendance_end_date, 
-		        ma.mem_attendance_used_days
-		    FROM member_attendance ma
-		    JOIN approval a ON ma.approval_id = a.approval_id
-		    WHERE ma.member_id = #{memberId}
-		      AND a.app_status = '승인'
-		</select>
-	 </mapper>
+<mapper namespace="com.cafe.erp.member.attendance.MemberAttendanceDAO">
+
+    <sql id="searchPart">
+        <where>
+            ma.member_id = #{memberId}
+            
+            <if test="startDate != null and startDate != ''">
+                AND ma.mem_attendance_start_date >= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND ma.mem_attendance_start_date &lt;= #{endDate}
+            </if>
+            
+            <if test="statusFilter != null and statusFilter != ''">
+                AND a.app_status = #{statusFilter}
+            </if>
+        </where>
+    </sql>
+
+    <select id="countAttendanceList" parameterType="MemberAttendanceSearchDTO" resultType="Long">
+        SELECT COUNT(*)
+        FROM member_attendance ma
+        JOIN approval a ON ma.approval_id = a.approval_id
+        <include refid="searchPart"/>
+    </select>
+
+    <select id="attendanceList" parameterType="MemberAttendanceSearchDTO" resultType="MemberAttendanceDTO">
+        SELECT 
+              ma.mem_attendance_start_date,
+              ma.mem_attendance_end_date,
+              ma.mem_attendance_type,
+              ma.mem_attendance_used_days,
+              ma.mem_attendance_reason,
+              a.app_status,   
+              a.approval_id
+        FROM 
+            member_attendance ma
+        JOIN 
+            approval a ON ma.approval_id = a.approval_id
+        
+        <include refid="searchPart"/>
+        
+        ORDER BY 
+            ma.mem_attendance_start_date DESC
+        LIMIT #{startNum}, #{perPage}
+    </select>
+    
+    <select id="selectLeaveStats" parameterType="int" resultType="MemberLeaveStatsDTO">
+        SELECT 
+            ml.mem_leave_total_days,
+            (
+                SELECT COALESCE(SUM(ma.mem_attendance_used_days), 0)
+                FROM member_attendance ma
+                JOIN approval a ON ma.approval_id = a.approval_id
+                WHERE ma.member_id = ml.member_id
+                  AND a.app_status = '승인'
+                  AND YEAR(ma.mem_attendance_start_date) = YEAR(NOW())
+            ) AS mem_leave_used_days
+        FROM member_leave ml
+        WHERE ml.member_id = #{memberId}
+          AND ml.mem_leave_year = YEAR(NOW())
+    </select>
+    
+    <select id="selectApprovedAttendance" parameterType="int" resultType="MemberAttendanceDTO">
+        SELECT 
+            ma.mem_attendance_type, 
+            ma.mem_attendance_start_date, 
+            ma.mem_attendance_end_date, 
+            ma.mem_attendance_used_days
+        FROM member_attendance ma
+        JOIN approval a ON ma.approval_id = a.approval_id
+        WHERE ma.member_id = #{memberId}
+          AND a.app_status = '승인'
+    </select>
+    
+ </mapper>

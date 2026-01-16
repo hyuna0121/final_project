@@ -66,7 +66,24 @@ function movePage(page) {
 }
 
 
+function moveVacationPage(page) {
+    if (page < 1) page = 1; 
+    
+    document.getElementById("vacPage").value = page;
+    
+    document.getElementById("vacForm").submit();
+}
 
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('tab') === 'vacation') {
+        const triggerEl = document.querySelector('button[data-bs-target="#navs-vacation"]');
+        if(triggerEl){
+            const tab = new bootstrap.Tab(triggerEl);
+            tab.show();
+        }
+    }
+});
 
 		
 		
@@ -253,29 +270,88 @@ function InActive(memberId){
 
 
 function openEditModal(btn) {
-    const tr = btn.closest('tr');
+    const id = btn.dataset.commuteId; 
     
-    const date = tr.getAttribute('data-date') || "";
-    const inTime = tr.getAttribute('data-in') || "";
-    const outTime = tr.getAttribute('data-out') || "";
-    const status = tr.getAttribute('data-status') || "normal";
-    const note = tr.getAttribute('data-note') || "";
-    
+    const workDate = btn.dataset.date;
+    const inTime = btn.dataset.inTime;
+    const outTime = btn.dataset.outTime;
+    const state = btn.dataset.state;
+    const note = btn.dataset.note;
 
-    document.getElementById('editDate').value = date;
-    document.getElementById('editInTime').value = inTime; 
-    document.getElementById('editOutTime').value = outTime;
-    document.getElementById('editStatus').value = status;
+    document.getElementById('editCommuteId').value = id;
+    document.getElementById('editDate').value = workDate;
+    
+    document.getElementById('editInTime').value = inTime ? inTime : "";
+    document.getElementById('editOutTime').value = outTime ? outTime : "";
+    
+    document.getElementById('editStatus').value = state;
     document.getElementById('editNote').value = note;
 
-    document.getElementById('currentRowIndex').value = tr.rowIndex;
+    const editModal = new bootstrap.Modal(document.getElementById('modalAttendanceEdit'));
+    editModal.show();
+}
 
-    const myModal = new bootstrap.Modal(document.getElementById('modalAttendanceEdit'));
-    myModal.show();
+function formatDateTime(dateStr, timeStr) {
+    if (!timeStr) return null; 
+    
+    let cleanTime = timeStr.replace("T", " ");
+    
+    if (!cleanTime.startsWith(dateStr)) {
+        cleanTime = dateStr + " " + cleanTime;
+    }
+    if (cleanTime.length === 16) {
+        cleanTime += ":00";
+    }
+    
+    if (cleanTime.length > 19) {
+        cleanTime = cleanTime.substring(0, 19);
+    }
+
+    return cleanTime;
 }
 
 function saveAttendanceChanges() {
-    alert("근태 정보가 수정되었습니다.");
-    
-    location.reload();
+	const idVal = document.getElementById('editCommuteId').value;
+	    const workDate = document.getElementById('editDate').value;
+	    const inTimeVal = document.getElementById('editInTime').value;
+	    const outTimeVal = document.getElementById('editOutTime').value;
+
+	    const fullInTime = formatDateTime(workDate, inTimeVal);
+	    const fullOutTime = formatDateTime(workDate, outTimeVal);
+
+	    const updateData = {
+	        memberCommuteId: idVal,
+	        memCommuteState: document.getElementById('editStatus').value,
+	        memCommuteNote: document.getElementById('editNote').value,
+	        memCommuteInTime: fullInTime,
+	        memCommuteOutTime: fullOutTime
+	    };
+
+
+    fetch('/member/updateCommute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('서버 응답 에러: ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if(data.success || data.result > 0) {
+            alert("수정되었습니다.");
+			const currentUrl = new URL(window.location.href);
+	        currentUrl.searchParams.set("tab", "attendance");
+			
+			window.location.href = currentUrl.toString();
+        } else {
+            alert("수정 실패");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("저장 중 오류가 발생했습니다. (콘솔 확인)");
+    });
 }

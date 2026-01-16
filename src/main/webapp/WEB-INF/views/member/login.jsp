@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <!-- beautify ignore:start -->
 <html
@@ -128,7 +129,12 @@
 	  color: #fff;
 	  cursor: pointer;
 	}
-	    	
+	
+	.login-error {
+	  color: #ff6b6b;
+	  font-size: 0.9rem;
+	}
+		    	
     
     </style>
   </head>
@@ -143,8 +149,14 @@
               <img src="/img/돌고래.jpg" alt="Logo" />
               <span>ERP</span>
           </div>
-
+		
+		
           <form action="/login" class="auth-login-form" method="post">
+			<c:if test="${not empty param.error }">
+				<div class="alert alert-danger alert-dismissible login-error" role="alert">
+			        아이디 또는 비밀번호를 다시 확인해 주세요.
+			    </div>
+			</c:if>
             <input type="text" name="memberId" id="memberId" placeholder="아이디를 입력하세요" />
 
             <input type="password" name="memPassword" id="memPassword" placeholder="비밀번호를 입력하세요" />

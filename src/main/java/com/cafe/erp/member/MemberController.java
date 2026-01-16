@@ -1,5 +1,7 @@
 package com.cafe.erp.member;
 
+import java.time.YearMonth;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +15,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,10 +29,14 @@ import com.cafe.erp.company.CompanyHolidayDTO;
 import com.cafe.erp.company.CompanyHolidayService;
 import com.cafe.erp.member.attendance.MemberAttendanceDAO;
 import com.cafe.erp.member.attendance.MemberAttendanceDTO;
+import com.cafe.erp.member.attendance.MemberAttendanceSearchDTO;
 import com.cafe.erp.member.attendance.MemberLeaveStatsDTO;
 import com.cafe.erp.member.commute.MemberCommuteDTO;
 import com.cafe.erp.member.commute.MemberCommuteSearchDTO;
 import com.cafe.erp.member.commute.MemberCommuteService;
+import com.cafe.erp.member.history.MemberHistorySearchDTO;
+import com.cafe.erp.member.history.MemberHistoryService;
+import com.cafe.erp.member.history.MemberLoginHistoryDTO;
 import com.cafe.erp.security.UserDTO;
 
 import jakarta.validation.Valid;
@@ -52,6 +61,9 @@ public class MemberController {
 	
 	@Autowired
 	private MemberAttendanceDAO memberAttendanceDAO;
+	
+	@Autowired
+	private MemberHistoryService memberHistoryService;
 	
 	
 
@@ -213,6 +225,8 @@ public class MemberController {
 	}
 	
 	
+	
+	
 
 	@GetMapping("checkCount")
 	@ResponseBody
@@ -295,7 +309,9 @@ public class MemberController {
 	@GetMapping("AM_member_detail")
 	public String detail(MemberDTO memberDTO, Model model, 
 	                     @AuthenticationPrincipal UserDTO userDTO, 
-	                     MemberCommuteSearchDTO memberCommuteSearchDTO) throws Exception {
+	                     MemberCommuteSearchDTO memberCommuteSearchDTO,
+	                     @ModelAttribute("vacationSearch") MemberAttendanceSearchDTO memberAttendanceSearchDTO,
+	                     @RequestParam(value = "vPage", defaultValue = "1") Long vPage) throws Exception {
 	    
 	    int targetMemberId = memberDTO.getMemberId();
 	    if (targetMemberId == 0) {
@@ -315,16 +331,17 @@ public class MemberController {
 	        
 	        if (dateType == null || "month".equals(dateType) || dateType.isEmpty()) {
 	            String mDate = memberCommuteSearchDTO.getMonthDate();
+
 	            if (mDate == null || mDate.isEmpty()) {
-	                mDate = java.time.LocalDate.now().toString().substring(0, 7);
+	                mDate = YearMonth.now().toString(); 
 	                memberCommuteSearchDTO.setMonthDate(mDate);
 	            }
-	            String[] parts = mDate.split("-");
-	            java.time.YearMonth yearMonth = java.time.YearMonth.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-	            memberCommuteSearchDTO.setStartDate(yearMonth.atDay(1).toString());
-	            memberCommuteSearchDTO.setEndDate(yearMonth.atEndOfMonth().toString());
+
+	            YearMonth ym = YearMonth.parse(mDate); 
+	            memberCommuteSearchDTO.setStartDate(ym.atDay(1).toString());
+	            memberCommuteSearchDTO.setEndDate(ym.atEndOfMonth().toString());
 	            memberCommuteSearchDTO.setDateType("month");
-	        } 
+	        }
 	        else if ("year".equals(dateType)) {
 	            String yDate = memberCommuteSearchDTO.getYearDate();
 	            if (yDate == null || yDate.isEmpty()) {
@@ -337,7 +354,7 @@ public class MemberController {
 	        else if ("all".equals(dateType)) {
 	            memberCommuteSearchDTO.setStartDate(null);
 	            memberCommuteSearchDTO.setEndDate(null);
-	        }
+	        } 
 
 	        List<MemberCommuteDTO> attendanceList = commuteService.attendanceList(memberCommuteSearchDTO);
 	        
@@ -345,12 +362,62 @@ public class MemberController {
 	        
 	        model.addAttribute("pager", memberCommuteSearchDTO); 
 
-	        model.addAttribute("vacationList", memberAttendanceDAO.attendanceList(targetMemberId));
+	        memberAttendanceSearchDTO.setMemberId(targetMemberId);
+	        memberAttendanceSearchDTO.setPage(vPage); 
+
+	        String vYear = memberAttendanceSearchDTO.getYearDate();
+	        if (vYear == null || vYear.isEmpty()) {
+	            vYear = String.valueOf(java.time.Year.now().getValue());
+	            memberAttendanceSearchDTO.setYearDate(vYear);
+	        }
+	        
+	        memberAttendanceSearchDTO.setStartDate(vYear + "-01-01");
+	        memberAttendanceSearchDTO.setEndDate(vYear + "-12-31");
+
+	        Long totalVacationCount = memberAttendanceDAO.countAttendanceList(memberAttendanceSearchDTO);
+	        memberAttendanceSearchDTO.pageing(totalVacationCount);
+
+	        List<MemberAttendanceDTO> vacationList = memberAttendanceDAO.attendanceList(memberAttendanceSearchDTO);
+	        
+	        model.addAttribute("vacationList", vacationList);
+	        
 	        model.addAttribute("stats", memberAttendanceDAO.selectLeaveStats(targetMemberId));
+	    
 	    }
 
 	    return "member/AM_member_detail";
 	}
+	
+	
+	
+	
+	
+	@GetMapping("admin_login_history")
+    public String loginHistory(Model model, MemberHistorySearchDTO memberHistorySearchDTO) throws Exception{
+		
+		/* 최근 3개월 이력 출력 */
+		if (memberHistorySearchDTO.getStartDate() == null || memberHistorySearchDTO.getStartDate().equals("")) {
+	        LocalDate today = LocalDate.now();
+	        LocalDate threeMonthsAgo = today.minusMonths(3);
+	        
+	        memberHistorySearchDTO.setStartDate(threeMonthsAgo.toString()); 
+	        memberHistorySearchDTO.setEndDate(today.toString());          
+	    }
+        List<MemberLoginHistoryDTO> list = memberHistoryService.selectLoginHistoryList(memberHistorySearchDTO);
+        
+        model.addAttribute("historyList", list);
+        model.addAttribute("pager", memberHistorySearchDTO); 
+        model.addAttribute("totalCount", memberHistorySearchDTO.getTotalCount());
+        
+        return "member/admin_login_history";
+    }
+	
+	
+	
+	
+	
+	
+	
 	
 	
 
@@ -368,6 +435,26 @@ public class MemberController {
 		return "success";
 	}
 
+	
+	@PostMapping("/updateCommute")
+	@ResponseBody
+	public Map<String, Object> updateCommute(@RequestBody @Valid MemberCommuteDTO commuteDTO) {
+	    
+	    Map<String, Object> response = new HashMap<>();
+	    try {
+	        int result = commuteService.updateCommute(commuteDTO);
+	        if (result > 0) {
+	            response.put("success", true);
+	        } else {
+	            response.put("success", false);
+	            response.put("message", "변경사항이 없습니다.");
+	        }
+	    } catch (Exception e) {
+	        response.put("success", false);
+	        response.put("message", e.getMessage());
+	    }
+	    return response;
+	}
 	
 	
 	@PostMapping("reset_password")

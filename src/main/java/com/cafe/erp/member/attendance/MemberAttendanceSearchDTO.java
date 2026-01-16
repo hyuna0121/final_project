@@ -1,5 +1,4 @@
-package com.cafe.erp.member.commute;
-
+package com.cafe.erp.member.attendance;
 
 import com.cafe.erp.util.Pager;
 
@@ -10,16 +9,15 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class MemberCommuteSearchDTO extends Pager{
-	
+public class MemberAttendanceSearchDTO extends Pager{
+
 	private Integer memberId;
     
     private String dateType;     
-    private String startDate;    
-    private String endDate;       
+    private String yearDate;     
     private String statusFilter;
+	
+    private String startDate;  
+    private String endDate;
     
-    private String monthDate;     
-    private String yearDate;
-
 }

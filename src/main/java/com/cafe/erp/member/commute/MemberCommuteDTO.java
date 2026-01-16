@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import com.cafe.erp.member.MemberDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,14 +16,18 @@ import lombok.ToString;
 @ToString
 public class MemberCommuteDTO extends MemberDTO{
 
+	
 	private int memberCommuteId;
 	private Date memCommuteWorkDate;
-	private LocalDateTime memCommuteInTime;
-	private LocalDateTime memCommuteOutTime;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime memCommuteInTime;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime memCommuteOutTime;
 	private String memCommuteState;
 	private int memberId;
 	
-	private String note;
+	private String memCommuteNote;
 	
 	public String getFormattedInTime() {
         if (memCommuteInTime == null) return "-";
