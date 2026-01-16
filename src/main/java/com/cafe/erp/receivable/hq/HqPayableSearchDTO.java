@@ -19,7 +19,6 @@ public class HqPayableSearchDTO {
 
     private String payStatus;
 
-    /** 페이징 */
     private Pager pager;
 	
 }

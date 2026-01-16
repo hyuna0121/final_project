@@ -93,8 +93,6 @@ public interface ReceivableDAO {
 	public HqPayableTotalSummaryDTO selectHqPayableTotalSummaryAllGroupedByMonth(HqPayableSearchDTO dto);
 	
 	
-	// 거래처 detail page
-	public VendorDTO selectVendorInfo(Integer vendorCode);
 	
 	
 	

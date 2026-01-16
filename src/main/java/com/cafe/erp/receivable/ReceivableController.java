@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cafe.erp.receivable.detail.ReceivableAmountSummaryDTO;
-import com.cafe.erp.receivable.detail.ReceivableItemDTO;
 import com.cafe.erp.receivable.detail.ReceivableOrderSummaryDTO;
 import com.cafe.erp.receivable.detail.ReceivableRoyaltyDTO;
 import com.cafe.erp.receivable.detail.ReceivableTransactionDTO;
@@ -83,12 +82,11 @@ public class ReceivableController {
 
 	@PostMapping("vendor/search")
 	public String hqPayableSearch(HqPayableSearchDTO dto, Model model) {
-
+		
 		List<HqPayableSummaryDTO> list = service.hqPayableSearchList(dto);
 
 		model.addAttribute("list", list);
 		model.addAttribute("pager", dto.getPager());
-
 		return "receivable/hq-payable-table";
 	}
 
@@ -98,28 +96,6 @@ public class ReceivableController {
 		return service.getHqPayableSummary(dto);
 	}
 	
-	@GetMapping("vendor/detail")
-	public String vendorReceivableDetail(
-			@RequestParam Integer vendorCode,
-			@RequestParam String baseMonth,
-			Model model
-	) {
-		// 거래처 정보 조회
-		VendorDTO vendor = service.selectVendorInfo(vendorCode);
-		// 거래처 물품대금 내역
-		List<ReceivableOrderSummaryDTO> orderList = ;
-		
-		System.out.println(vendor.toString());
-		model.addAttribute("vendor",vendor);
-		model.addAttribute("baseMonth", baseMonth);
-		
-		
-		
-		
-		
-		
-	    return "receivable/hq-payable-detail";
-	}
 	
 	
 	

@@ -204,14 +204,16 @@ public class ReceivableService {
 		Long totalCount = hasBaseMonth
 				? dao.selectHqPayableCountByMonth(dto)
 				: dao.selectHqPayableCountAllGroupedByMonth(dto);
-
+		
 		try {
 			Pager pager = dto.getPager();
+			
+
 			pager.pageing(totalCount);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return hasBaseMonth
 				? dao.selectHqPayableListByMonth(dto)
 				: dao.selectHqPayableListAllGroupedByMonth(dto);
@@ -225,13 +227,5 @@ public class ReceivableService {
 				? dao.selectHqPayableTotalSummaryByMonth(dto)
 				: dao.selectHqPayableTotalSummaryAllGroupedByMonth(dto);
 	}
-    
 	
-	
-	// 거래처 detail page 거래처 정보 조회
-	public VendorDTO selectVendorInfo(Integer vendorCode) {
-		return dao.selectVendorInfo(vendorCode);
-	}
-	
-    
 }

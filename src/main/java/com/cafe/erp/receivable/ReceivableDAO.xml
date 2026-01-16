@@ -883,23 +883,5 @@
   ) t
 </select>
 	
-	<!-- 거래처 detail page 거래처 정보 조회 -->
-	<select id="selectVendorInfo" resultType="com.cafe.erp.vendor.VendorDTO">
-	    SELECT
-	        v.vendor_code   AS vendorCode,
-	        v.vendor_name   AS vendorName
-	    FROM vendor v
-	    WHERE v.vendor_code = #{vendorCode}
-	</select>
-		
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 </mapper>
