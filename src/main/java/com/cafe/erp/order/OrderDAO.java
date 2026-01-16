@@ -31,6 +31,9 @@ public interface OrderDAO {
 	public List<OrderDetailDTO> getStoreOrderDetail(@Param("orderNo") String orderNo);
 	public int getOrderStoreId(@Param("orderNo") String orderNo);
 	
+	public List<OrderDTO> getStoreReleaseTarget(List<Integer> statuses, MemberDTO member);
+	public List<OrderDTO> getStoreReleaseRequests(List<Integer> statuses, MemberDTO member);
+	
 	public void approveHqOrder(String orderNo, int orderApproverId);
 	public void approveStoreOrder(String orderNo, int orderApproverId);
 	

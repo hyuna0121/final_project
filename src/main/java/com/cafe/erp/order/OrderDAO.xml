@@ -144,8 +144,6 @@
     	<update id="approveStoreOrder">
     		update order_store set store_order_status = 200, store_order_approver = #{orderApproverId}, store_order_approvaled_at = NOW() where store_order_id = #{orderNo}
     	</update>
-    	<!-- 발주 자동 승인 처리 -->
-    	
     	
     	<!-- 반려 처리 -->
     	<update id="rejectOrder" parameterType="OrderRejectDTO">
@@ -189,4 +187,42 @@
 			INSERT INTO order_in_out
   			values(NULL, #{inputType}, #{warehouseId}, #{hqOrderId} , #{storeOrderId})
 		</insert>
+		
+		<!-- 출고 목록 조회 -->
+		<select id="getStoreReleaseTarget" resultType="OrderDTO">
+			select 
+				s.store_order_id          as hqOrderId,
+		        s.store_order_total_amount as hqOrderTotalAmount,
+		        s.member_id               as memberId,
+		        s.store_order_approver    as storeOrderApprover,
+		        s.store_rejection_reason  as storeRejectionReason,
+		        s.store_order_status      as hqOrderStatus
+		        from order_store s
+				    where store_order_status in
+				    <foreach collection="statuses"
+				             item="status"
+				             open="("
+				             separator=","
+				             close=")">
+				        #{status}
+				    </foreach>
+		</select>
+		<select id="getStoreReleaseRequests" resultType="OrderDTO">
+		select 
+			s.store_order_id          as hqOrderId,
+	        s.store_order_total_amount as hqOrderTotalAmount,
+	        s.member_id               as memberId,
+	        s.store_order_approver    as storeOrderApprover,
+	        s.store_rejection_reason  as storeRejectionReason,
+	        s.store_order_status      as hqOrderStatus
+	        from order_store s
+		    where store_order_status in
+		    <foreach collection="statuses"
+		             item="status"
+		             open="("
+		             separator=","
+		             close=")">
+		        #{status}
+		    </foreach>
+		</select>
     </mapper>
