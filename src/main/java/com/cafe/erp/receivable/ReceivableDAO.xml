@@ -850,6 +850,87 @@
 
 </select>
 
-	
+<select id="selectReceivableIdByVendorAndBaseMonth"
+        resultType="com.cafe.erp.receivable.hq.ReceivableRemainDTO">
+    SELECT
+        r.receivable_id AS receivableId,
+        r.receivable_total_amount
+          - IFNULL(paid.paid_amount, 0) AS remainAmount
+    FROM receivable r
+    JOIN order_hq_detail ohd
+      ON r.hq_order_id = ohd.hq_order_id
+    LEFT JOIN (
+        SELECT
+            receivable_id,
+            SUM(transaction_amount) AS paid_amount
+        FROM receivable_transaction
+        WHERE transaction_type = 'P'
+        GROUP BY receivable_id
+    ) paid
+      ON paid.receivable_id = r.receivable_id
+    WHERE ohd.vendor_code = #{vendorCode}
+      AND DATE_FORMAT(ohd.hq_order_created_at, '%Y-%m') = #{baseMonth}
+    ORDER BY r.receivable_date ASC
+</select>
+
+
+<select id="selectVendorTotalAmountByMonth" resultType="int">
+    SELECT IFNULL(SUM(oh.hq_order_total_amount), 0)
+    FROM order_hq oh
+    JOIN order_hq_detail ohd
+      ON oh.hq_order_id = ohd.hq_order_id
+    WHERE ohd.vendor_code = #{vendorCode}
+      AND DATE_FORMAT(oh.hq_order_created_at, '%Y-%m') = #{baseMonth}
+</select>
+
+<select id="selectVendorRemainAmountByMonth" resultType="int">
+    SELECT
+        IFNULL(SUM(
+            r.receivable_total_amount
+            - IFNULL(paid.paid_amount, 0)
+        ), 0)
+    FROM receivable r
+    JOIN order_hq_detail ohd
+      ON r.hq_order_id = ohd.hq_order_id
+    LEFT JOIN (
+        SELECT
+            receivable_id,
+            SUM(transaction_amount) AS paid_amount
+        FROM receivable_transaction
+        WHERE transaction_type = 'P'
+        GROUP BY receivable_id
+    ) paid
+      ON paid.receivable_id = r.receivable_id
+    WHERE ohd.vendor_code = #{vendorCode}
+      AND DATE_FORMAT(r.receivable_date, '%Y-%m') = #{baseMonth}
+</select>
+
+<insert id="insertHqPayment"
+        parameterType="com.cafe.erp.receivable.detail.ReceivableCollectionRequestDTO">
+    INSERT INTO receivable_transaction (
+        transaction_type,
+        transaction_amount,
+        transaction_date,
+        transaction_memo,
+        receivable_id,
+        member_id
+    ) VALUES (
+        'P',
+        #{amount},
+        NOW(),
+        #{memo},
+        #{receivableId},
+        #{memberId}
+    )
+</insert>
+
+<update id="updateReceivableStatusByVendorAndMonth">
+    UPDATE receivable r
+    JOIN order_hq_detail ohd
+      ON r.hq_order_id = ohd.hq_order_id
+    SET r.receivable_status = #{status}
+    WHERE ohd.vendor_code = #{vendorCode}
+      AND DATE_FORMAT(r.receivable_date, '%Y-%m') = #{baseMonth}
+</update>
 	
 </mapper>

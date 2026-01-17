@@ -18,6 +18,8 @@ import com.cafe.erp.receivable.hq.HqPayablePaymentDTO;
 import com.cafe.erp.receivable.hq.HqPayableSearchDTO;
 import com.cafe.erp.receivable.hq.HqPayableSummaryDTO;
 import com.cafe.erp.receivable.hq.HqPayableTotalSummaryDTO;
+import com.cafe.erp.receivable.hq.ReceivableRemainDTO;
+import com.cafe.erp.security.UserDTO;
 import com.cafe.erp.util.Pager;
 import com.cafe.erp.vendor.VendorDTO;
 
@@ -217,29 +219,16 @@ public class ReceivableService {
         return dao.selectHqPayableTotalSummaryByMonth(dto);
     }
 
-	
     @Transactional
     public void payHqReceivable(
             HqPayablePaymentDTO paymentDTO,
-            Integer memberId
+            UserDTO userDTO
     ) {
+        Integer memberId = userDTO.getMember().getMemberId();
 
-        String receivableId = dao.selectReceivableIdByVendorAndBaseMonth(
-                paymentDTO.getVendorCode(),
-                paymentDTO.getBaseMonth()
-        );
-
-        if (receivableId == null) {
-            throw new IllegalStateException("지급 대상 채권이 존재하지 않습니다.");
-        }
-
-        Integer totalAmount = dao.selectVendorTotalAmountByMonth(
-                paymentDTO.getVendorCode(),
-                paymentDTO.getBaseMonth()
-        );
-
-        if (totalAmount == null || totalAmount == 0) {
-            throw new IllegalStateException("해당 거래처의 발주 금액이 없습니다.");
+        Integer payAmount = paymentDTO.getPayAmount();
+        if (payAmount == null || payAmount <= 0) {
+            throw new IllegalArgumentException("지급 금액이 올바르지 않습니다.");
         }
 
         Integer remainAmount = dao.selectVendorRemainAmountByMonth(
@@ -247,50 +236,42 @@ public class ReceivableService {
                 paymentDTO.getBaseMonth()
         );
 
-        if (remainAmount == null) {
-            throw new IllegalStateException("남은 미지급 금액 조회 실패");
-        }
-
-        Integer payAmount = paymentDTO.getPayAmount();
-
-        if (payAmount == null || payAmount <= 0) {
-            throw new IllegalArgumentException("지급 금액이 올바르지 않습니다.");
+        if (remainAmount == null || remainAmount <= 0) {
+            throw new IllegalStateException("지급 대상 채권이 없습니다.");
         }
 
         if (payAmount > remainAmount) {
             throw new IllegalArgumentException("지급 금액이 남은 미지급 금액을 초과했습니다.");
         }
 
-        ReceivableCollectionRequestDTO insertDTO =
-                new ReceivableCollectionRequestDTO();
-
-        insertDTO.setReceivableId(receivableId);
-        insertDTO.setAmount(payAmount);
-        insertDTO.setMemo(paymentDTO.getMemo());
-        insertDTO.setMemberId(memberId);
-
-        dao.insertHqPayment(insertDTO);
-
-        Integer afterRemainAmount = dao.selectVendorRemainAmountByMonth(
-                paymentDTO.getVendorCode(),
-                paymentDTO.getBaseMonth()
-        );
-
-        String status;
-        if (afterRemainAmount.equals(totalAmount)) {
-            status = "O";   // 미지급
-        } else if (afterRemainAmount == 0) {
-            status = "C";   // 완납
-        } else {
-            status = "P";   // 부분지급
+        List<ReceivableRemainDTO> receivables =
+                dao.selectReceivablesByVendorAndBaseMonth(
+                        paymentDTO.getVendorCode(),
+                        paymentDTO.getBaseMonth()
+                );
+        if (receivables == null || receivables.isEmpty()) {
+            throw new IllegalStateException("지급 대상 채권이 없습니다.");
         }
 
-        insertDTO.setStatus(status);
-        dao.updateReceivableStatus(insertDTO);
-    }
+        int remainToPay = payAmount;
+        
+        
+        for (ReceivableRemainDTO r : receivables) {
+            if (remainToPay <= 0) break;
 
-    
-    
-    
-    
+            int pay = Math.min(r.getRemainAmount(), remainToPay);
+
+            ReceivableCollectionRequestDTO insertDTO =
+                    new ReceivableCollectionRequestDTO();
+
+            insertDTO.setReceivableId(r.getReceivableId());
+            insertDTO.setAmount(pay);
+            insertDTO.setMemo(paymentDTO.getMemo());
+            insertDTO.setMemberId(memberId);
+
+            dao.insertHqPayment(insertDTO);
+
+            remainToPay -= pay;
+        }
+    }
 }

@@ -14,4 +14,6 @@ public class HqPayablePaymentDTO {
 
     private Integer payAmount;       // 이번 지급 금액
     private String memo;          // 비고
+    
+    private boolean fullPay;
 }

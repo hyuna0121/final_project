@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.cafe.erp.receivable.detail.ReceivableAmountSummaryDTO;
 import com.cafe.erp.receivable.detail.ReceivableAvailableDTO;
@@ -16,6 +17,7 @@ import com.cafe.erp.receivable.hq.HqPayablePaymentDTO;
 import com.cafe.erp.receivable.hq.HqPayableSearchDTO;
 import com.cafe.erp.receivable.hq.HqPayableSummaryDTO;
 import com.cafe.erp.receivable.hq.HqPayableTotalSummaryDTO;
+import com.cafe.erp.receivable.hq.ReceivableRemainDTO;
 import com.cafe.erp.vendor.VendorDTO;
 
 @Mapper
@@ -87,27 +89,30 @@ public interface ReceivableDAO {
 
 	public void payHqReceivable(HqPayablePaymentDTO dto);
     
-	
-	// 1. vendor + 기준월 → receivable_id 조회
-	String selectReceivableIdByVendorAndBaseMonth(
-	        Integer vendorCode,
-	        String baseMonth
-	);
+    List<ReceivableRemainDTO> selectReceivablesByVendorAndBaseMonth(
+            @Param("vendorCode") Integer vendorCode,
+            @Param("baseMonth") String baseMonth
+    );
 
-	// 2. vendor + 기준월 → 총 발주 금액
-	Integer selectVendorTotalAmountByMonth(
-	        Integer vendorCode,
-	        String baseMonth
-	);
+    // 2) vendor + 기준월 -> 총 발주 금액 (너가 쓰던거)
+    Integer selectVendorTotalAmountByMonth(
+            @Param("vendorCode") Integer vendorCode,
+            @Param("baseMonth") String baseMonth
+    );
 
-	// 3. vendor + 기준월 → 남은 미지급 금액 (차선책)
-	Integer selectVendorRemainAmountByMonth(
-	        Integer vendorCode,
-	        String baseMonth
-	);
+    // 3) vendor + 기준월 -> 남은 미지급 금액 (너가 쓰던거)
+    Integer selectVendorRemainAmountByMonth(
+            @Param("vendorCode") Integer vendorCode,
+            @Param("baseMonth") String baseMonth
+    );
 
-	// 4. HQ 지급 INSERT
-	void insertHqPayment(
-			ReceivableCollectionRequestDTO dto
-	);
+    // 4) 지급 insert
+    void insertHqPayment(ReceivableCollectionRequestDTO dto);
+
+    // 5) 상태 업데이트 (vendor+month 단위로)
+    void updateReceivableStatusByVendorAndMonth(
+            @Param("vendorCode") Integer vendorCode,
+            @Param("baseMonth") String baseMonth,
+            @Param("status") String status
+    );
 }

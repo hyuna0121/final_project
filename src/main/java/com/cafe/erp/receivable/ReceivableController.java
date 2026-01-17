@@ -21,6 +21,7 @@ import com.cafe.erp.receivable.hq.HqPayablePaymentDTO;
 import com.cafe.erp.receivable.hq.HqPayableSearchDTO;
 import com.cafe.erp.receivable.hq.HqPayableSummaryDTO;
 import com.cafe.erp.receivable.hq.HqPayableTotalSummaryDTO;
+import com.cafe.erp.security.UserDTO;
 import com.cafe.erp.util.Pager;
 import com.cafe.erp.vendor.VendorDTO;
 
@@ -102,9 +103,9 @@ public class ReceivableController {
 	@ResponseBody	
 	public void payHqReceivable(
 			HqPayablePaymentDTO dto,
-			@AuthenticationPrincipal Integer memberId
+			@AuthenticationPrincipal UserDTO userDTO
 			) {
-		service.payHqReceivable(dto,memberId);
+		service.payHqReceivable(dto,userDTO);
 	}
 
 	
