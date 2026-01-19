@@ -67,6 +67,7 @@ public class ReceivableController {
 		List<ReceivableOrderSummaryDTO> receivableOrderSummaryDTO = service.orderSummary(receivableSummaryDTO);
 		ReceivableRoyaltyDTO receivableRoyaltyDTO = service.receivableRoyalty(receivableSummaryDTO);
 		ReceivableAmountSummaryDTO receivableAmountSummaryDTO = service.selectAmountSummary(receivableSummaryDTO);
+		System.out.println(receivableAmountSummaryDTO.toString());
 		List<ReceivableTransactionDTO> receivableTransactionDTO = service.paidAmount(receivableSummaryDTO);
 		
 		

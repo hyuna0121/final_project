@@ -122,38 +122,36 @@ public class ReceivableService {
 	
 	// detail page 금액 요약
 	public ReceivableAmountSummaryDTO selectAmountSummary(ReceivableSummaryDTO receivableSummaryDTO) {
-		ReceivableAmountSummaryDTO dto = dao.selectAmountSummary(receivableSummaryDTO);
-		
-		int royaltyTotal = dto.getRoyaltyTotal();
-		int productTotal = dto.getProductTotal();
-		
-		int amountTotal = royaltyTotal + productTotal;
-		dto.setTotalAmount(amountTotal);
-		
-		List<ReceivableTransactionDTO> list  = dao.paidAmount(receivableSummaryDTO);
-		
-		int paidAmount = 0;
-		int UnpaidAmount = 0;
-		
-		if (list.isEmpty()) {
-			dto.setPaidAmount(paidAmount);
-			dto.setUnpaidAmount(UnpaidAmount);
-		} else {
-			
-			Iterator<ReceivableTransactionDTO> item = list.iterator();
-			
-			while (item.hasNext()) {
-				ReceivableTransactionDTO receivableTransactionDTO = item.next();
-				 paidAmount += receivableTransactionDTO.getTransactionAmount();
-			}
-			
-			dto.setPaidAmount(paidAmount);
-			
-			UnpaidAmount = amountTotal - paidAmount;
-			
-			dto.setUnpaidAmount(UnpaidAmount);
-		}
-		return dto; 
+	    ReceivableAmountSummaryDTO dto = dao.selectAmountSummary(receivableSummaryDTO);
+
+	    int royaltyTotal = dto.getRoyaltyTotal();
+	    int productTotal = dto.getProductTotal();
+
+	    int amountTotal = royaltyTotal + productTotal;
+	    dto.setTotalAmount(amountTotal);
+
+	    List<ReceivableTransactionDTO> list = dao.paidAmount(receivableSummaryDTO);
+
+	    int paidAmount = 0;
+
+	    // 수금 내역이 있으면 합산
+	    if (list != null && !list.isEmpty()) {
+	        for (ReceivableTransactionDTO t : list) {
+	            paidAmount += t.getTransactionAmount();
+	        }
+	    }
+
+	    dto.setPaidAmount(paidAmount);
+
+	    // ⭐ 핵심: 미수금은 "총액 - 수금액"
+	    int unpaidAmount = amountTotal - paidAmount;
+
+	    // 방어코드: 혹시 paidAmount가 더 큰 비정상 케이스면 0으로
+	    if (unpaidAmount < 0) unpaidAmount = 0;
+
+	    dto.setUnpaidAmount(unpaidAmount);
+
+	    return dto;
 	}
 	
 	// detail page 지급 내역

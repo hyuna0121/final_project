@@ -52,7 +52,6 @@
                                 <span class="text-muted fw-light">매출/수금 관리 ></span> 미수금 상세 조회
                             </h5>
                             <div>
-                                <button class="btn btn-secondary btn-erp"><i class="bx bx-printer me-1"></i>인쇄</button>
                                 <button class="btn btn-primary btn-erp" onclick="history.back()"><i class="bx bx-list-ul me-1"></i>목록</button>
                             </div>
                         </div>
@@ -165,13 +164,19 @@
                                                             <td class="text-end"><fmt:formatNumber value="${receivableRoyaltyDTO.supplyAmount}" type="number"/></td>
                                                             <td class="text-end"><fmt:formatNumber value="${receivableRoyaltyDTO.taxAmount}" type="number"/></td>
                                                             <td class="text-end fw-bold"><fmt:formatNumber value="${receivableRoyaltyDTO.totalAmount}" type="number"/></td>
-                                                            <td class="text-center">
-                                                                <c:choose>
-                                                                    <c:when test="${receivableRoyaltyDTO.status eq 'O'}"><span class="badge bg-label-danger">미지급</span></c:when>
-                                                                    <c:when test="${receivableRoyaltyDTO.status eq 'P'}"><span class="badge bg-label-warning">부분지급</span></c:when>
-                                                                    <c:when test="${receivableRoyaltyDTO.status eq 'C'}"><span class="badge bg-label-success">완납</span></c:when>
-                                                                </c:choose>
-                                                            </td>
+                                                         <td class="text-center">
+														    <c:choose>
+														        <c:when test="${receivableRoyaltyDTO.status eq 'O'}">
+														            <span class="badge bg-label-danger">미지급</span>
+														        </c:when>
+														        <c:when test="${receivableRoyaltyDTO.status eq 'P'}">
+														            <span class="badge bg-label-warning">부분지급</span>
+														        </c:when>
+														        <c:when test="${receivableRoyaltyDTO.status eq 'C'}">
+														            <span class="badge bg-label-success">완납</span>
+														        </c:when>
+														    </c:choose>
+														</td>
                                                         </tr>
                                                     </c:when>
                                                     <c:otherwise>
