@@ -71,7 +71,7 @@ public interface ReceivableDAO {
     // 발주 공급가액 조회 (본사 - 거래처)
     public Integer selectHqOrderSupplyAmount(String hqOrderId);
     // 발주테이블 상태값이 400이면 채권생성 
-    public void insertReceivableForHqOrder(String hqOrderId, Integer supplyAmount );
+    public void insertReceivableForHqOrder(String hqOrderId);
     
     // 생성된 채권인지 확인 (본사 - 가맹점)
     public boolean existsByStoreOrderId(String storeOrderId);
