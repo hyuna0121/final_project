@@ -179,8 +179,7 @@ public class ReceivableService {
         		dao.selectHqOrderSupplyAmount(hqOrderId);
 
         dao.insertReceivableForHqOrder(
-                hqOrderId,
-                supplyAmount
+                hqOrderId
         );
     }
     
