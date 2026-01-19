@@ -99,7 +99,7 @@
                 <div id="tab-content-area">
         		    <div class="card shadow-none border bg-white mb-4">
 				        <div class="card-body py-4 px-4">
-				            <form id="contractSearchForm" method="get" action="/store/contract/list">
+				            <form id="contractSearchForm" method="get" action="${baseUrl}">
 				            	<input type="hidden" name="page" id="page" value="1">
 								<input type="hidden" name="perPage" id="hiddenPerPage" value="${pager.perPage}">
 				                <div class="row g-3">

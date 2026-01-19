@@ -100,7 +100,7 @@
                 <div id="tab-content-area">
                    	<div class="card shadow-none border bg-white mb-4">
 						<div class="card-body py-3 px-3">
-					    	<form id="storeSearchForm" method="get" action="/store/list">
+					    	<form id="storeSearchForm" method="get" action="${baseUrl}">
 					    		<input type="hidden" name="page" id="page" value="1">
 								<input type="hidden" name="perPage" id="hiddenPerPage" value="${pager.perPage}">
 					      		<div class="row g-3">

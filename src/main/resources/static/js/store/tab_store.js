@@ -236,25 +236,6 @@ async function submitStoreRegistration() {
     }
 }
 
-function movePage(page) {
-    if (page < 1) page = 1;
-
-    const form = document.getElementById('storeSearchForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
-
-    params.set('page', page);
-
-    const currentUrlParams = new URLSearchParams(window.location.search);
-    currentUrlParams.forEach((value, key) => {
-        if (key.startsWith('sortConditions')) {
-            params.append(key, value);
-        }
-    });
-
-    location.href = form.action + '?' + params.toString();
-}
-
 function searchStores() {
     document.getElementById("page").value = 1;
     document.getElementById("storeSearchForm").submit();
@@ -262,7 +243,7 @@ function searchStores() {
 
 function resetSearchForm() {
 	const form = document.getElementById('storeSearchForm');
-	
+
 	const inputs = form.querySelectorAll('input[type="text"], input[type="time"]');
     inputs.forEach(input => {
         input.value = '';
@@ -270,7 +251,7 @@ function resetSearchForm() {
 
     const selects = form.querySelectorAll('select');
     selects.forEach(select => {
-        select.value = ''; 
+        select.value = '';
     });
 
     if(document.getElementById('page')) {
@@ -290,22 +271,59 @@ function downloadExcel() {
         }
     });
 
-    location.href = '/store/downloadExcel?' + params.toString();
+    const currentPath = window.location.pathname;
+
+    let url = `/store/downloadExcel`;
+
+    if (currentPath.includes(`my-list`)) url = `/store/my-downloadExcel`;
+
+    location.href = url + '?' + params.toString();
 }
 
-function changePerPage(val) {
-    document.querySelector('#hiddenPerPage').value = val;
-    document.querySelector('#page').value = 1;
+function movePage(page) {
+    if (page < 1) page = 1;
+
+    document.getElementById("page").value = page;
+
     const form = document.getElementById('storeSearchForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
 
     const currentUrlParams = new URLSearchParams(window.location.search);
     currentUrlParams.forEach((value, key) => {
         if (key.startsWith('sortConditions')) {
-            params.append(key, value);
+            if (form.querySelector(`input[name="${key}"]`)) {
+                form.querySelector(`input[name="${key}"]`).value = value;
+            } else {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.value = value;
+                form.appendChild(input);
+            }
         }
     });
 
-    location.href = form.action + '?' + params.toString();
+    form.submit();
+}
+
+
+function changePerPage(val) {
+    document.querySelector('#hiddenPerPage').value = val;
+    document.querySelector('#page').value = 1;
+
+    const form = document.getElementById('storeSearchForm');
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            if (form.querySelector(`input[name="${key}"]`)) {
+                form.querySelector(`input[name="${key}"]`).value = value;
+            } else {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.value = value;
+                form.appendChild(input);
+            }
+        }
+    });
+
+    form.submit();
 }

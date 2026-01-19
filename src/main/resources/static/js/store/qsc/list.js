@@ -66,25 +66,6 @@ $(function() {
     });
 });
 
-function movePage(page) {
-    if (page < 1) page = 1;
-
-    const form = document.getElementById('qscSearchForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
-
-    params.set('page', page);
-
-    const currentUrlParams = new URLSearchParams(window.location.search);
-    currentUrlParams.forEach((value, key) => {
-        if (key.startsWith('sortConditions')) {
-            params.append(key, value);
-        }
-    });
-
-    location.href = form.action + '?' + params.toString();
-}
-
 function searchQsc() {
     document.getElementById("page").value = 1;
     document.getElementById("qscSearchForm").submit();
@@ -114,22 +95,56 @@ function downloadExcel() {
         }
     });
 
-    location.href = '/store/qsc/downloadExcel?' + params.toString();
+    const currentPath = window.location.pathname;
+    let url = `/store/qsc/downloadExcel`;
+
+    if (currentPath.includes(`my-list`)) url = `/store/qsc/my-downloadExcel`;
+
+    location.href = url + '?' + params.toString();
+}
+
+function movePage(page) {
+    if (page < 1) page = 1;
+
+    document.getElementById("page").value = page;
+
+    const form = document.getElementById('qscSearchForm');
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            if (form.querySelector(`input[name="${key}"]`)) {
+                form.querySelector(`input[name="${key}"]`).value = value;
+            } else {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.value = value;
+                form.appendChild(input);
+            }
+        }
+    });
+
+    form.submit();
 }
 
 function changePerPage(val) {
     document.querySelector('#hiddenPerPage').value = val;
     document.querySelector('#page').value = 1;
     const form = document.getElementById('qscSearchForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
 
     const currentUrlParams = new URLSearchParams(window.location.search);
     currentUrlParams.forEach((value, key) => {
         if (key.startsWith('sortConditions')) {
-            params.append(key, value);
+            if (form.querySelector(`input[name="${key}"]`)) {
+                form.querySelector(`input[name="${key}"]`).value = value;
+            } else {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.value = value;
+                form.appendChild(input);
+            }
         }
     });
 
-    location.href = form.action + '?' + params.toString();
+    form.submit();
 }

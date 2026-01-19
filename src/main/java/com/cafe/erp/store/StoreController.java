@@ -80,12 +80,32 @@ public class StoreController {
 		return response; 
 	}
 
+	@PreAuthorize("hasRole('DEPT_SALES')")
+	@GetMapping("my-downloadExcel")
+	public void myStoreDownloadExcel(StoreSearchDTO searchDTO, @AuthenticationPrincipal UserDTO user, HttpServletResponse response) throws Exception {
+		searchDTO.setManagerId(user.getMember().getMemberId());
+
+		List<StoreDTO> list = storeService.excelList(searchDTO);
+		String[] headers = {"ID", "가맹점명", "점주ID", "점주명", "주소", "상태", "오픈시간", "마감시간"};
+		
+		ExcelUtil.download(list, headers, "가맹점 목록", response, (row, dto) -> {
+			row.createCell(0).setCellValue(dto.getStoreId());
+			row.createCell(1).setCellValue(dto.getStoreName());
+			row.createCell(2).setCellValue(dto.getMemberId());
+			row.createCell(3).setCellValue(dto.getMemName());
+			row.createCell(4).setCellValue(dto.getStoreAddress());
+			row.createCell(5).setCellValue(dto.getStoreStatus());
+			row.createCell(6).setCellValue(dto.getStoreStartTime() != null ? dto.getStoreStartTime().toString() : "");
+			row.createCell(7).setCellValue(dto.getStoreCloseTime() != null ? dto.getStoreCloseTime().toString() : "");
+		});
+	}
+
 	@PreAuthorize("hasRole('HQ')")
 	@GetMapping("downloadExcel")
 	public void downloadExcel(StoreSearchDTO searchDTO, HttpServletResponse response) throws Exception {
 		List<StoreDTO> list = storeService.excelList(searchDTO);
 		String[] headers = {"ID", "가맹점명", "점주ID", "점주명", "주소", "상태", "오픈시간", "마감시간"};
-		
+
 		ExcelUtil.download(list, headers, "가맹점 목록", response, (row, dto) -> {
 			row.createCell(0).setCellValue(dto.getStoreId());
 			row.createCell(1).setCellValue(dto.getStoreName());

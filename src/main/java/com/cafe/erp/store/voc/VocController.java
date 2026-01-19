@@ -201,6 +201,35 @@ public class VocController {
 		});
 	}
 
+	@PreAuthorize("hasRole('DEPT_SALES')")
+	@GetMapping("my-downloadExcel")
+	public void myStoreDownloadExcel(VocSearchDTO searchDTO, HttpServletResponse response, @AuthenticationPrincipal UserDTO user) throws Exception {
+		searchDTO.setManagerId(user.getMember().getMemberId());
+
+		List<VocDTO> list = vocService.excelList(searchDTO);
+		String[] headers = {"ID", "작성자ID", "작성자", "가맹점ID", "가맹점명", "점주ID", "점주명", "주소",
+				"불만유형", "제목", "처리상태", "고객연락처", "상세내용", "작성일시", "수정일시"};
+
+		ExcelUtil.download(list, headers, "VOC 목록", response, (row, dto) -> {
+			row.createCell(0).setCellValue(dto.getVocId());
+			row.createCell(1).setCellValue(dto.getMemberId());
+			row.createCell(2).setCellValue(dto.getMemName());
+			row.createCell(3).setCellValue(dto.getStoreId());
+			row.createCell(4).setCellValue(dto.getStoreName());
+			row.createCell(5).setCellValue(dto.getOwnerId());
+			row.createCell(6).setCellValue(dto.getOwnerName());
+			row.createCell(7).setCellValue(dto.getStoreAddress());
+
+			row.createCell(8).setCellValue(dto.getVocType());
+			row.createCell(9).setCellValue(dto.getVocTitle());
+			row.createCell(10).setCellValue(dto.getVocStatusStr());
+			row.createCell(11).setCellValue(dto.getVocContact());
+			row.createCell(12).setCellValue(dto.getVocContents());
+			row.createCell(13).setCellValue(dto.getVocCreatedAtStr());
+			row.createCell(14).setCellValue(dto.getVocUpdatedAtStr());
+		});
+	}
+
 	@PreAuthorize("hasRole('HQ')")
 	@GetMapping("statistics")
 	public String statistics() throws Exception {

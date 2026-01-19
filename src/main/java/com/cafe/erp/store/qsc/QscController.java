@@ -130,6 +130,30 @@ public class QscController {
         return result(qscService.updateQsc(qscDTO));
     }
 
+    @PreAuthorize("hasAnyRole('DEPT_SALES')")
+    @GetMapping("/my-downloadExcel")
+    public void myStoreDownloadExcel(QscSearchDTO searchDTO, HttpServletResponse response, @AuthenticationPrincipal UserDTO user) throws Exception {
+        searchDTO.setManagerId(user.getMember().getMemberId());
+        
+        List<QscDTO> list = qscService.excelList(searchDTO);
+        String[] headers = {"ID", "가맹점명", "점주명", "가맹점주소", "점검담당자명", "제목", "점검일시", "만점", "총점", "환산점수", "등급", "종합의견"};
+
+        ExcelUtil.download(list, headers, "QSC 목록", response, (row, dto) -> {
+            row.createCell(0).setCellValue(dto.getQscId());
+            row.createCell(1).setCellValue(dto.getStoreName());
+            row.createCell(2).setCellValue(dto.getOwnerName());
+            row.createCell(3).setCellValue(dto.getStoreAddress());
+            row.createCell(4).setCellValue(dto.getMemName());
+            row.createCell(5).setCellValue(dto.getQscTitle());
+            row.createCell(6).setCellValue(dto.getQscDateStr());
+            row.createCell(7).setCellValue(dto.getQscQuestionTotalScore());
+            row.createCell(8).setCellValue(dto.getQscTotalScore());
+            row.createCell(9).setCellValue(dto.getQscScore());
+            row.createCell(10).setCellValue(dto.getQscGrade());
+            row.createCell(11).setCellValue(dto.getQscOpinion());
+        });
+    }
+
     @GetMapping("/downloadExcel")
     public void downloadExcel(QscSearchDTO searchDTO, HttpServletResponse response, @AuthenticationPrincipal UserDTO user) throws Exception {
         boolean isStoreOwner = user.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_STORE"));

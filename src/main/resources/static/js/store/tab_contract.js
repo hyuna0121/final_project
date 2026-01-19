@@ -526,6 +526,18 @@ async function updateContract() {
     }
 }
 
+function format(input) {
+    const val = input.value.replace(/[^0-9]/g, '');
+
+    if (!val) {
+        input.value = '';
+        return;
+    }
+
+    const formattedVal = Number(val).toLocaleString('ko-KR');
+    input.value = formattedVal;
+}
+
 function searchContract() {
     document.getElementById("page").value = 1;
 
@@ -551,30 +563,6 @@ function resetSearchForm() {
     }
 }
 
-function movePage(page) {
-    if (page < 1) page = 1;
-
-    const form = document.getElementById('contractSearchForm');
-    const inputs = form.querySelectorAll('.price-input');
-
-    inputs.forEach(input => {
-        input.value = input.value.replace(/,/g, '');
-    });
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
-
-    params.set('page', page);
-
-    const currentUrlParams = new URLSearchParams(window.location.search);
-    currentUrlParams.forEach((value, key) => {
-        if (key.startsWith('sortConditions')) {
-            params.append(key, value);
-        }
-    });
-
-    location.href = form.action + '?' + params.toString();
-}
-
 function downloadExcel() {
     const form = document.getElementById('contractSearchForm');
     const inputs = form.querySelectorAll('.price-input');
@@ -592,38 +580,67 @@ function downloadExcel() {
         }
     });
 
-    location.href = '/store/contract/downloadExcel?' + params.toString();
+    const currentPath = window.location.pathname;
+    let url = `/store/contract/downloadExcel`;
+
+    if (currentPath.includes(`my-list`)) url = `/store/contract/my-downloadExcel`;
+
+    location.href = url + '?' + params.toString();
+}
+
+function movePage(page) {
+    if (page < 1) page = 1;
+
+    document.getElementById('page').value = page;
+
+    const form = document.getElementById('contractSearchForm');
+
+    const inputs = form.querySelectorAll('.price-input');
+    inputs.forEach(input => {
+        input.value = input.value.replace(/,/g, '');
+    });
+
+    const currentUrlParams = new URLSearchParams(window.location.search);
+    currentUrlParams.forEach((value, key) => {
+        if (key.startsWith('sortConditions')) {
+            if (form.querySelector(`input[name="${key}"]`)) {
+                form.querySelector(`input[name="${key}"]`).value = value;
+            } else {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.value = value;
+                form.appendChild(input);
+            }
+        }
+    });
+
+    form.submit();
 }
 
 function changePerPage(val) {
     document.querySelector('#hiddenPerPage').value = val;
     document.querySelector('#page').value = 1;
+
     const form = document.getElementById('contractSearchForm');
+
     const inputs = form.querySelectorAll('.price-input');
     inputs.forEach(input => {
         input.value = input.value.replace(/,/g, '');
     });
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData);
 
     const currentUrlParams = new URLSearchParams(window.location.search);
     currentUrlParams.forEach((value, key) => {
         if (key.startsWith('sortConditions')) {
-            params.append(key, value);
+            if (form.querySelector(`input[name="${key}"]`)) {
+                form.querySelector(`input[name="${key}"]`).value = value;
+            } else {
+                const input = document.createElement("input");
+                input.type = "hidden";
+                input.value = value;
+                form.appendChild(input);
+            }
         }
     });
 
-    location.href = form.action + '?' + params.toString();
-}
-
-function format(input) {
-    const val = input.value.replace(/[^0-9]/g, '');
-
-    if (!val) {
-        input.value = '';
-        return;
-    }
-
-    const formattedVal = Number(val).toLocaleString('ko-KR');
-    input.value = formattedVal;
+    form.submit();
 }
