@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 
 <html
@@ -61,7 +62,12 @@
   <div class="layout-container">
 
     <!-- Menu -->
-    <c:import url="/WEB-INF/views/template/aside.jsp"/>
+    <sec:authorize access="hasAnyRole('STORE')">
+      <c:import url="/WEB-INF/views/template/aside_store.jsp"></c:import>
+    </sec:authorize>
+    <sec:authorize access="!hasAnyRole('STORE')">
+      <c:import url="/WEB-INF/views/template/aside.jsp"></c:import>
+    </sec:authorize>
     <!-- / Menu -->
 
     <!-- Layout page -->
@@ -75,10 +81,6 @@
         <div class="container-fluid flex-grow-1 container-p-y">
 
           <!-- ✅ 여기부터 너가 말한 "중복 wrapper" 구조 그대로 유지 -->
-          <div class="layout-wrapper layout-content-navbar">
-            <div class="layout-container">
-              <div class="layout-page">
-                <div class="content-wrapper">
 
                   <!-- ================= 제목 ================= -->
                   <div class="row mb-4">
@@ -189,10 +191,6 @@
                   </div>
 
                   <!-- ✅ 중복 wrapper 끝 -->
-                </div>
-              </div>
-            </div>
-          </div>
 
         </div>
         <!-- / Content -->

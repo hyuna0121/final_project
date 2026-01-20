@@ -75,7 +75,7 @@
       <c:import url="/WEB-INF/views/template/header.jsp"/>
 
       <!-- Content wrapper -->
-      <div class="content-wrapper d-flex flex-column">
+      <div class="content-wrapper">
 
         <!-- Content -->
         <div class="container-fluid flex-grow-1 container-p-y">
