@@ -401,12 +401,12 @@
             </div>
             <!-- / Content -->
 
-            <!-- Footer -->
-            <c:import url="/WEB-INF/views/template/footer.jsp"></c:import>
-            <!-- / Footer -->
 
             <div class="content-backdrop fade"></div>
           </div>
+            <!-- Footer -->
+            <c:import url="/WEB-INF/views/template/footer.jsp"></c:import>
+            <!-- / Footer -->
           <!-- Content wrapper -->
         </div>
         <!-- / Layout page -->
