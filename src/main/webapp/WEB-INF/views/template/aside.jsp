@@ -1,25 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 
-<style>
-.asd {
-transform: translateY(-50%) rotate(135deg);
-right: 1rem;
-transition-duration: 0.3s;
-    transition-property: transform;
-  content: "";
-  position: absolute;
-  top: 50%;
-  display: block;
-  width: 0.42em;
-  height: 0.42em;
-  border: 1px solid;
-  border-bottom: 0;
-  border-left: 0;
-  transform: translateY(-50%) rotate(45deg);
-}
-</style>
 
 <!-- Menu -->
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
@@ -55,7 +38,6 @@ transition-duration: 0.3s;
       </a>
     </li>
 
-    
 
     <!-- Layouts -->
     <li class="menu-header small text-uppercase">
@@ -64,7 +46,7 @@ transition-duration: 0.3s;
     <!-- 물품 등록 -->
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-dock-top"></i>
+        <i class="menu-icon tf-icons bx bx-coffee"></i>
         <div data-i18n="Account Settings">원재료</div>
       </a>
       <ul class="menu-sub">
@@ -88,7 +70,7 @@ transition-duration: 0.3s;
     <!-- 본사 발주 -->
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-cube-alt"></i>
+        <i class="menu-icon tf-icons bx bx-task"></i>
         <div data-i18n="Misc">발주</div>
       </a>
       <ul class="menu-sub">
@@ -150,16 +132,12 @@ transition-duration: 0.3s;
       </ul>
     </li>
     
-    
-    
-    
-    
     <!-- 인사관리 -->
     <li class="menu-header small text-uppercase"><span class="menu-header-text">인사</span></li>
     <!-- Cards -->
     <li class="menu-item">
       <a href="javascript:void(0)" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-collection"></i>
+        <i class="menu-icon tf-icons bx bx-user"></i>
         <div data-i18n="Basic">사원</div>
       </a>
       <ul class="menu-sub">
@@ -187,7 +165,7 @@ transition-duration: 0.3s;
     <!-- User interface -->
     <li class="menu-item">
       <a href="javascript:void(0)" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-box"></i>
+        <i class="menu-icon tf-icons bx bx-buildings"></i>
         <div data-i18n="User interface">회사</div>
       </a>
       <ul class="menu-sub">
@@ -204,7 +182,7 @@ transition-duration: 0.3s;
     <!-- 상세내역 -->
     <li class="menu-item">
       <a href="javascript:void(0)" class="menu-link menu-toggle">
-        <i class='menu-icon tf-icons bx bxl-bitcoin'></i> 
+        <i class='menu-icon tf-icons bx bx-receipt'></i>
         <div>채권</div>
       </a>
       <ul class="menu-sub">
