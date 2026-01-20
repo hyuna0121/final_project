@@ -19,7 +19,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>물품 단가 목록</title>
 
     <meta name="description" content="" />
 
@@ -69,12 +69,12 @@
         <div class="layout-page">
         <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
             
             <!-- Content -->	
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
-              	<h4 class="fw-bold mb-3">단가</h4>
+              	<h4 class="fw-bold mb-3">단가 목록</h4>
               
               	<!-- 검색 영역 -->
 				<div class="card mb-4">
@@ -141,22 +141,19 @@
 				    <table class="table">
 				      <thead>
 				        <tr>
-				          <th>물품코드</th>
+				          <th style="width: 5%;">물품코드</th>
+				          <th style="width: 5%;">카테고리</th>
 				          <th>물품명</th>
-				          <th>거래처코드</th>
+				          <th style="width: 5%;">거래처코드</th>
 				          <th>거래처명</th>
-				          <th>카테고리</th>
-				          <th>사용여부</th>
-				          <th>단가</th>
+				          <th style="width: 13%; text-align: right;">단가</th>
+				          <th style="width: 8%;">사용여부</th>
 				        </tr>
 				      </thead>
 				      <tbody id="priceTableBody">
 				       <c:forEach var="itemPrice" items="${priceList}">
 				          <tr>
 				            <td>${itemPrice.itemCode}</td>
-				            <td>${itemPrice.itemName}</td>
-				            <td>${itemPrice.vendorCode}</td>
-				            <td>${itemPrice.vendorName}</td>
 				            <td class="text">
 			           			<c:choose>
 						            <c:when test="${fn:startsWith(itemPrice.itemCode, 'FD')}">
@@ -167,27 +164,32 @@
 									</c:otherwise>
 					            </c:choose>
 				            </td>
+				            <td>${itemPrice.itemName}</td>
+				            <td>${itemPrice.vendorCode}</td>
+				            <td>${itemPrice.vendorName}</td>
+				            <td class="price" style="text-align: right;"><fmt:formatNumber value="${itemPrice.itemSupplyPrice}" pattern="#,###" /></td>
 				            <td class="text">
-				            	<c:choose>
-						            <c:when test="${!itemPrice.itemPriceEnable}">
-									  <span class="badge bg-label-success">사용</span>
-									</c:when>
-									<c:otherwise>
-									  <span class="badge bg-label-danger">미사용</span>
-									</c:otherwise>
-					            </c:choose>	
-					            
-								<form action="priceCheck" method="post">
-								  <input type="hidden" name="itemPriceId" value="${itemPrice.itemPriceId}">
-								  <input type="hidden" name="itemPriceEnable" value="${itemPrice.itemPriceEnable}">
-						            <button class="btn btn-sm btn-outline-warning btn-update-item"
-									  data-bs-toggle="modal"
-									  data-bs-target="#editModal">
-									  변경
-									</button>
-								</form>
+								<div class="d-flex align-items-center gap-3">
+									<c:choose>
+										<c:when test="${!itemPrice.itemPriceEnable}">
+										  <span class="badge bg-label-success" style="width: 46px;">사용</span>
+										</c:when>
+										<c:otherwise>
+										  <span class="badge bg-label-danger" style="width: 46px;">미사용</span>
+										</c:otherwise>
+									</c:choose>
+
+									<form action="priceCheck" method="post">
+									  <input type="hidden" name="itemPriceId" value="${itemPrice.itemPriceId}">
+									  <input type="hidden" name="itemPriceEnable" value="${itemPrice.itemPriceEnable}">
+										<button class="btn btn-sm btn-outline-warning btn-update-item" style="padding: 1px 10px;"
+										  data-bs-toggle="modal"
+										  data-bs-target="#editModal">
+										  변경
+										</button>
+									</form>
+								</div>
 				            </td>
-				            <td class="price"><fmt:formatNumber value="${itemPrice.itemSupplyPrice}" pattern="#,###" /></td>
 				          </tr>
 				        </c:forEach>
 				      </tbody>

@@ -83,7 +83,7 @@
     </div>
 
       <sec:authentication property="principal.member" var="Info"/>
-      <c:if test="${fn:startsWith(Info.memberId, '1')}">
+      <sec:authorize access="!hasAnyRole('STORE')">
         <div class="header-actions d-flex gap-2">
               <button id="inCommute" class="btn btn-sm d-flex align-items-center gap-1 fw-bold">
                   <i class='bx bx-log-in-circle fs-5'></i>
@@ -95,7 +95,7 @@
                   <span style="font-size: 0.85rem;">퇴근</span>
               </button>
            </div>
-      </c:if>
+      </sec:authorize>
 
     <ul class="navbar-nav flex-row align-items-center ms-auto">
 		<li class="nav-item dropdown me-2">

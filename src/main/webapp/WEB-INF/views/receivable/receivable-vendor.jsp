@@ -66,7 +66,7 @@
         <div class="layout-page">
           <c:import url="/WEB-INF/views/template/header.jsp"/>
 
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
 <div class="container-xxl flex-grow-1 container-p-y">
   <div class="row">
     <div class="col-12">

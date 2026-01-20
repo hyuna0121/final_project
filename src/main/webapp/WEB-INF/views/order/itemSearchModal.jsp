@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <div class="modal fade" id="productSearchModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+  <div class="modal-dialog modal-lg  modal-dialog-scrollable">
     <div class="modal-content">
 
       <div class="modal-header">

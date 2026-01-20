@@ -81,7 +81,7 @@
 		<c:import url="/WEB-INF/views/template/header.jsp"></c:import>
         
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
             <!-- Content -->
 
 <div class="container-xxl flex-grow-1 container-p-y">

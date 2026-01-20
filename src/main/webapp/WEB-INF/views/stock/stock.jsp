@@ -64,7 +64,7 @@
       <c:import url="/WEB-INF/views/template/header.jsp" />
 
       <!-- Content -->
-      <div class="content-wrapper">
+      <div class="content-wrapper d-flex flex-column">
         <div class="container-fluid flex-grow-1 container-p-y">
 
           <!-- 타이틀 -->

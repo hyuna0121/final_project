@@ -18,7 +18,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>거래처 목록</title>
 
     <meta name="description" content="" />
 
@@ -68,7 +68,7 @@
         <div class="layout-page">
         <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
             
             <!-- Content -->
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -138,7 +138,6 @@
 				          <th>사업자번호</th>
 				          <th>사업자주소</th>
 				          <th>대표자명</th>
-				          <th>생성일자</th>
 				          <th>담당자명</th>
 				          <th>전화번호</th>
 				          <th>이메일</th>
@@ -152,7 +151,6 @@
 				            <td>${v.vendorBusinessNumber}</td>
 				            <td>${v.vendorAddress}</td>
 				            <td  class="text">${v.vendorCeoName}</td>
-				            <td><fmt:formatDate value="${v.vendorCreatedAt}" pattern="yyyy-MM-dd"/> </td>
 				            <td>${v.vendorManagerName}</td>
 				            <td>${v.vendorManagerTel}</td>
 				            <td>${v.vendorManagerEmail}</td>
@@ -192,7 +190,7 @@
 
  <!-- 수정 모달창 -->
 	<div class="modal fade" id="editModal" tabindex="-1">
-	  <div class="modal-dialog modal-dialog-scrollable">
+	  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 	    <form class="modal-content" action="/vendor/update" method="post">
 	      <div class="modal-header">
 	        <h5 class="modal-title">거래처 정보 수정</h5>
@@ -228,7 +226,7 @@
 
 	<!-- 거래처 등록 모달 -->
 	<div class="modal fade" id="vendorAddModal" tabindex="-1" aria-hidden="true">
-	  <div class="modal-dialog modal-lg modal-dialog-centered modal-scrollable">
+	  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
 	    <div class="modal-content">
 	
 	      <!-- 헤더 -->

@@ -29,7 +29,7 @@
   <ul class="menu-inner py-1">
     <!-- Dashboard -->
     <li class="menu-item">
-      <a href="/" class="menu-link">
+      <a href="/member/member_mypage" class="menu-link">
         <i class="menu-icon tf-icons bx bx-home-circle"></i>
         <div data-i18n="Analytics">HOME</div>
       </a>
@@ -166,11 +166,6 @@
 	       </li>
 	    </sec:authorize>
        <li class="menu-item">
-         <a href="/member/member_mypage" class="menu-link">
-           <div data-i18n="Text Divider">근태 목록</div>
-         </a>
-       </li>
-       <li class="menu-item">
          <a href="/member/AM_group_chart" class="menu-link">
            <div data-i18n="Text Divider">부서 목록</div>
          </a>
@@ -199,26 +194,6 @@
       </ul>
     </li>
 
-    <!-- Extended components -->
-    <li class="menu-item">
-      <a href="" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-copy"></i>
-        <div data-i18n="Extended UI">Extended UI</div>
-      </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-            <div data-i18n="Perfect Scrollbar">Perfect scrollbar</div>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a href="extended-ui-text-divider.html" class="menu-link">
-            <div data-i18n="Text Divider">.</div>
-          </a>
-        </li>
-      </ul>
-    </li>
-
 	<!-- 채권 -->
     <li class="menu-header small text-uppercase"><span class="menu-header-text">채권</span></li>
     <!-- 상세내역 -->
@@ -238,45 +213,6 @@
            <div>미지급금 목록</div>
          </a>
        </li>
-      </ul>
-    </li>
-    <!-- 지급 -->
-    <li class="menu-item">
-      <a href="javascript:void(0)" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-box"></i>
-        <div data-i18n="User interface">User interface</div>
-      </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="ui-accordion.html" class="menu-link">
-            <div data-i18n="Accordion">Accordion</div>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a href="ui-alerts.html" class="menu-link">
-            <div data-i18n="Alerts">Alerts</div>
-          </a>
-        </li>
-      </ul>
-    </li>
-
-    <!-- 수급 -->
-    <li class="menu-item">
-      <a href="" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-copy"></i>
-        <div data-i18n="Extended UI">Extended UI</div>
-      </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="extended-ui-perfect-scrollbar.html" class="menu-link">
-            <div data-i18n="Perfect Scrollbar">Perfect scrollbar</div>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a href="extended-ui-text-divider.html" class="menu-link">
-            <div data-i18n="Text Divider">Text Divider</div>
-          </a>
-        </li>
       </ul>
     </li>
 

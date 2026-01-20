@@ -23,24 +23,24 @@ function searchItems() {
         $.each(list, function(i, item) {
           html += `
             <tr>
-			  <td class="text">
+			  <td class="text" style="width: 5%;">
 			      <button class="btn btn-sm btn-light"
 				      onclick="toggleFavorite(this, 'am0012')"
 				      title="즐겨찾기">
 				      <i class="bx bx-star"></i>
 				  </button>
 			  </td>
-			  <td>${item.itemCode}</td>
+			  <td style="width: 5%;">${item.itemCode}</td>
+		      <td class="text" style="width: 5%;">${item.itemCategory}</td>
 		      <td>${item.itemName}</td>
-		      <td class="text">${item.itemCategory}</td>
-			  <td class="text">
+			  <td class="text" style="width: 5%;">
 			    ${
 			      item.itemEnable == 0
-			        ? '<span class="badge bg-label-success">사용</span>'
-			        : '<span class="badge bg-label-danger">미사용</span>'
+			        ? '<span class="badge bg-label-success" style="width: 46px;">사용</span>'
+			        : '<span class="badge bg-label-danger" style="width: 46px;">미사용</span>'
 			    }
 			  </td>
-		      <td class="text">
+		      <td class="text" style="width: 5%;">
 				<button class="btn btn-sm btn-outline-warning btn-update-item"
 				  data-bs-toggle="modal"
 				  data-bs-target="#editModal"				  
@@ -108,32 +108,34 @@ function searchPrices(){
 	          /* 사용 여부 뱃지 */
 	          const priceEnableBadge =
 	            itemPrice.itemPriceEnable
-	              ? `<span class="badge bg-label-danger">미사용</span>`
-	              : `<span class="badge bg-label-success">사용</span>`;
+	              ? `<span class="badge bg-label-danger" style="width: 46px;">미사용</span>`
+	              : `<span class="badge bg-label-success" style="width: 46px;">사용</span>`;
 
 	          /* 숫자 포맷 */
 	          const price =
 	            Number(itemPrice.itemSupplyPrice).toLocaleString();
 				
 				html += `<tr>
-			               <td>${itemPrice.itemCode}</td>
+			               <td style="width: 5%;">${itemPrice.itemCode}</td>
+			               <td class="text" style="width: 5%;">${categoryBadge}</td>
 			               <td>${itemPrice.itemName}</td>
-			               <td>${itemPrice.vendorCode}</td>
+			               <td style="width: 5%;">${itemPrice.vendorCode}</td>
 			               <td>${itemPrice.vendorName}</td>
-			               <td class="text">${categoryBadge}</td>
-			               <td class="text">
-			                 ${priceEnableBadge}
-							 <form action="priceCheck" method="post">
-							  <input type="hidden" name="itemPriceId" value="${itemPrice.itemPriceId}">
-							  <input type="hidden" name="itemPriceEnable" value="${itemPrice.itemPriceEnable}">
-					            <button class="btn btn-sm btn-warning btn-update-item"
-								  data-bs-toggle="modal"
-								  data-bs-target="#editModal">
-								  변경
-								</button>
-							 </form>
+			               <td class="price" style="width: 13%; text-align: right;">${price}</td>
+			               <td class="text" style="width: 8%;">
+			                 <div class="d-flex align-items-center gap-3">
+                                 ${priceEnableBadge}
+                                 <form action="priceCheck" method="post">
+                                  <input type="hidden" name="itemPriceId" value="${itemPrice.itemPriceId}">
+                                  <input type="hidden" name="itemPriceEnable" value="${itemPrice.itemPriceEnable}">
+                                    <button class="btn btn-sm btn-outline-warning btn-update-item" style="padding: 1px 10px;"
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#editModal">
+                                      변경
+                                    </button>
+                                 </form>
+			                 </div>
 			               </td>
-			               <td class="price">${price}</td>
 			             </tr>`
 				;
 			});

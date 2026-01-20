@@ -44,7 +44,7 @@
             <div class="layout-page">
                 <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
 
-                <div class="content-wrapper">
+                <div class="content-wrapper d-flex flex-column">
                     <div class="container-xxl flex-grow-1 container-p-y">
                         
                         <div class="d-flex justify-content-between align-items-center mb-3">

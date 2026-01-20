@@ -20,7 +20,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>발주 요청</title>
 
     <meta name="description" content="" />
 
@@ -86,7 +86,7 @@
 				  	<div class="row mb-4">
 					  <div class="col">
 					    <h4 class="fw-bold">
-					      <span class="text-muted fw-normal">발주 관리 /</span> 발주 등록
+					      <span class="text-muted fw-normal">발주 관리 /</span> 요청
 					    </h4>
 					  </div>
 					</div>
@@ -157,9 +157,6 @@
 						      <button button type="button" class="btn btn-sm btn-outline-secondary"
 						      			onclick="removeSelectedItems()">물품 삭제
 						      </button>
-						      <button button type="button" class="btn btn-sm btn-outline-success">
-						        <i class="bx bx-download"></i> 엑셀 다운
-						      </button>
 						      <button button type="button" class="btn btn-sm btn-outline-primary" 
 						      			data-bs-toggle="modal"
 						      			data-bs-target="#productSearchModal">
@@ -182,13 +179,13 @@
 						    <table class="table table-bordered table-hover text-center">
 						      <thead class="table-light">
 						        <tr>
-						          <th class="chk-td">
-								      <input type="checkbox" id="checkAll" onclick="toggleAllCheckboxes()">
+						          <th class="chk-td" style="width: 5%;">
+								      <input type="checkbox" id="checkAll" onclick="toggleAllCheckboxes()" style="margin-bottom: 0px;">
 								  </th>
-						          <th>물품코드</th>
+						          <th style="width: 10%;">물품코드</th>
 						          <th>물품명</th>
 						          <th>단가</th>
-						          <th style="width:120px;">수량</th>
+						          <th style="width: 10%;">수량</th>
 						          <th>합계</th>
 						        </tr>
 						      </thead>
@@ -199,14 +196,18 @@
 						    </table>
 						  </div>
 						  
-						  <div class="card-body text-end">
+						  <div class="card-body d-flex justify-content-end">
 						    <h5 class="mb-0">
-						      총 발주 금액 :
-						      <!-- 화면 표시용 -->
-							  <input type="text"
-								     class="text-primary fw-bold totalAmount"
-								     id="grandTotalView"
-								       readonly>
+								<div class="d-flex align-items-center gap-2">
+								  총 발주 금액 :
+								  <!-- 화면 표시용 -->
+								  <input type="text"
+										 class="form-control text-primary fw-bold totalAmount"
+										 id="grandTotalView"
+										 style="width: 200px; text-align: end;"
+										   readonly>
+									원
+								</div>
 						      <!-- 서버 전송용 (순수 숫자) -->
 							  <input type="hidden" id="grandTotal" name="hqOrderTotalAmount">
 						    </h5>

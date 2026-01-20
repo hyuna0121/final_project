@@ -19,7 +19,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>Dashboard - Analytics | Sneat - Bootstrap 5 HTML Admin Template - Pro</title>
+    <title>물품</title>
 
     <meta name="description" content="" />
 
@@ -69,7 +69,7 @@
         <div class="layout-page">
         <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
             
             <!-- Content -->	
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -139,12 +139,12 @@
 				    <table class="table">
 				      <thead>
 				        <tr>
-				          <th>즐겨찾기</th>
-				          <th>물품코드</th>
+				          <th style="width: 5%;">즐겨찾기</th>
+				          <th style="width: 5%;">물품코드</th>
+				          <th style="width: 5%;">카테고리</th>
 				          <th>물품명</th>
-				          <th>카테고리</th>
-				          <th>사용여부</th>
-				          <th>관리</th>
+				          <th style="width: 5%;">사용여부</th>
+				          <th style="width: 5%;">관리</th>
 				        </tr>
 				      </thead>
 				      <tbody id="itemTableBody">
@@ -158,15 +158,15 @@
 								  </button>
 							  </td>
 						      <td>${item.itemCode}</td>
-						      <td>${item.itemName}</td>
 						      <td class="text">${item.itemCategory}</td>
+						      <td>${item.itemName}</td>
 						      <td class="text">
 						      	<c:choose>
 						            <c:when test="${item.itemEnable == false}">
-									  <span class="badge bg-label-success">사용</span>
+									  <span class="badge bg-label-success" style="width: 46px;">사용</span>
 									</c:when>
 									<c:otherwise>
-									  <span class="badge bg-label-danger">미사용</span>
+									  <span class="badge bg-label-danger" style="width: 46px;">미사용</span>
 									</c:otherwise>
 					            </c:choose>
 						      </td>
@@ -216,7 +216,7 @@
 
 	<!-- 수정 모달창 -->
 	<div class="modal fade" id="editModal" tabindex="-1">
-	  <div class="modal-dialog modal-dialog-scrollable">
+	  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 	    <form class="modal-content"  method="post">
 	      <div class="modal-header">
 	        <h5 class="modal-title">title</h5>
