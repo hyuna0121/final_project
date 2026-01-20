@@ -20,7 +20,7 @@
     content="width=device-width, initial-scale=1.0, user-scalable=no"
   />
 
-  <title>출고 처리</title>
+  <title>발주 출고</title>
 
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />

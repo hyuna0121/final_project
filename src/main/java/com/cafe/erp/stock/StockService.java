@@ -42,7 +42,7 @@ public class StockService {
 	public List<StockDTO> getStockByMember(Integer memberId){
 		int storeId = 0;
 		int warehouseId = 0;
-		if(String.valueOf(memberId).charAt(0) == '1') {
+		if(String.valueOf(memberId).charAt(0) == '1' || String.valueOf(memberId).charAt(0) == '9') {
 			warehouseId = 11;
 		} else {
 			storeId = stockDAO.getStoreIdBymemberId(memberId);

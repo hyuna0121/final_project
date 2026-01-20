@@ -119,7 +119,7 @@
 				                  <div class="d-flex gap-2">
 								  <!-- 본사 -->
 				                  <c:choose>
-									  <c:when test="${fn:startsWith(member.memberId, '1')}">
+									  <c:when test="${fn:startsWith(member.memberId, '1') or fn:startsWith(member.memberId, '9')}">
 									  	
 									    <c:if test="${hasRequest}">
 									      <button type="button" class="btn btn-sm btn-success" id="approveBtn">승인</button>
@@ -134,7 +134,7 @@
 				                <div class="card-body pb-0">
 				                  <ul class="nav nav-tabs">
 				                    <!-- 본사의 경우 본사/가맹 둘다 표시 -->
-								    <c:if test="${fn:startsWith(member.memberId, '1')}">
+								    <c:if test="${fn:startsWith(member.memberId, '1') or fn:startsWith(member.memberId, '9')}">
 					                    <li class="nav-item">
 					                      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#hqOrderTab">
 					                        본사 발주
@@ -159,7 +159,7 @@
 				
 				                <!-- 목록 -->
 				                <div class="tab-content order-left-body">
-								  <c:if test="${fn:startsWith(member.memberId, '1')}">
+								  <c:if test="${fn:startsWith(member.memberId, '1') or fn:startsWith(member.memberId, '9')}">
 				                  <!-- 본사 발주 -->
 				                  <div class="tab-pane fade show active" id="hqOrderTab">
 				                    <table class="table table-bordered text-center align-middle mb-0">

@@ -20,7 +20,7 @@
     content="width=device-width, initial-scale=1.0, user-scalable=no"
   />
 
-  <title>입고 처리</title>
+  <title>발주 입고</title>
 
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
@@ -99,7 +99,7 @@
                             <h5 class="mb-0">입고 대상 목록</h5>
 
                             <div class="d-flex gap-2">
-                            <c:if test="${fn:startsWith(member.memberId, '1')}">
+                            <c:if test="${fn:startsWith(member.memberId, '1')or fn:startsWith(member.memberId, '9')}">
                                 <button class="btn btn-primary btn-sm" id="receiveBtn">입고</button>
                                 <button class="btn btn-danger btn-sm" id="cancelReceiveBtn">입고취소</button>
                               </c:if>
