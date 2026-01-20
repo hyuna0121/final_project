@@ -1,6 +1,26 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
+
+<style>
+.asd {
+transform: translateY(-50%) rotate(135deg);
+right: 1rem;
+transition-duration: 0.3s;
+    transition-property: transform;
+  content: "";
+  position: absolute;
+  top: 50%;
+  display: block;
+  width: 0.42em;
+  height: 0.42em;
+  border: 1px solid;
+  border-bottom: 0;
+  border-left: 0;
+  transform: translateY(-50%) rotate(45deg);
+}
+</style>
+
 <!-- Menu -->
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
 <div class="app-brand demo" style="height: 80px;">
@@ -35,6 +55,8 @@
       </a>
     </li>
 
+    
+
     <!-- Layouts -->
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">업무</span>
@@ -43,12 +65,12 @@
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-dock-top"></i>
-        <div data-i18n="Account Settings">물품</div>
+        <div data-i18n="Account Settings">원재료</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
           <a href="/item/list" class="menu-link">
-            <div data-i18n="Notifications">물품검색</div>
+            <div data-i18n="Notifications">원재료검색</div>
           </a>
         </li>
         <li class="menu-item">
@@ -56,19 +78,9 @@
             <div data-i18n="Notifications">단가조회</div>
           </a>
         </li>
-      </ul>
-    </li>
-    <!-- 거래처 등록 -->
-    
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-        <div data-i18n="Authentications">거래처</div>
-      </a>
-      <ul class="menu-sub">
         <li class="menu-item">
           <a href="/vendor/list" class="menu-link">
-            <div data-i18n="Notifications">거래처조회</div>
+            <div data-i18n="Notifications">거래처</div>
           </a>
         </li>
       </ul>
@@ -100,22 +112,15 @@
             <div data-i18n="Under Maintenance">출고</div>
           </a>
         </li>
-      </ul>
-    </li>
-    <!-- 재고 -->
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
-        <div data-i18n="Authentications">재고</div>
-      </a>
-      <ul class="menu-sub">
+        <!-- 제고 -->
         <li class="menu-item">
           <a href="/stock/stock" class="menu-link">
-            <div data-i18n="Notifications">재고정보</div>
+            <div data-i18n="Under Maintenance">재고</div>
           </a>
         </li>
       </ul>
     </li>
+    <!-- 가맹점 -->
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-store"></i>

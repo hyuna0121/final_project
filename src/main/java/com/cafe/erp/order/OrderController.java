@@ -133,7 +133,6 @@ public class OrderController {
 	    return "order/receive";
 	}
 	
-	
 	//출고 목록 요청
 	@GetMapping("release")
 	public String releaseEntry(@AuthenticationPrincipal UserDTO userDTO) {
