@@ -412,15 +412,23 @@ public class OrderService {
 	public void cancelReceive(List<OrderRequestDTO> orderNos) {
 		for (OrderRequestDTO orderNo : orderNos) {	
 			OrderDTO storeOrder = orderDAO.isHqAlreadyReceived(orderNo.getOrderNo());
-			System.out.println(storeOrder.getHqOrderStatus());
+			 if (storeOrder == null || storeOrder.getHqOrderStatus() != 400) {
+		            continue; // 입고 완료 상태가 아니면 스킵
+		        }
 			if(storeOrder != null && storeOrder.getHqOrderStatus() == 400 ) {
+				// 입고 이력 조회
 				List<OrderStockHistoryDTO> deleteStock = orderDAO.getDeleteStock(orderNo.getOrderNo());
-				orderDAO.cancelReceive(orderNo.getOrderNo());
 				for (OrderStockHistoryDTO orderRequestDTO : deleteStock) {
+					// 본사재고확인
+					Integer updated = orderDAO.decreaseStockForCancel(orderRequestDTO.getItemId(),orderRequestDTO.getOrderQty(), orderRequestDTO.getWarehouseId());
+					if (updated == null || updated == 0) {
+						throw new IllegalStateException("입고 취소 불가(재고 부족): itemId=" + orderRequestDTO.getItemId());
+					}
+					// 입고 이력 삭제
 					orderDAO.deleteStockHistory(orderRequestDTO.getInputID());
 					orderDAO.deleteInput(orderRequestDTO.getInputID());
-					orderDAO.updateStockDelete(orderRequestDTO.getItemId(),orderRequestDTO.getOrderQty(), orderRequestDTO.getWarehouseId());
 				}
+				orderDAO.cancelReceive(orderNo.getOrderNo());
 			}
 		}
 	}

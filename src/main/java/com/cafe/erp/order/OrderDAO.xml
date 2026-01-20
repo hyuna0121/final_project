@@ -209,6 +209,13 @@
 		<delete id="deleteInput" parameterType="Integer">
 			DELETE FROM order_in_out WHERE input_id = #{inputId};
 		</delete>
+		<update id="decreaseStockForCancel">
+		  update order_stock
+		  set stock_quantity = stock_quantity - #{orderQty}
+		  where warehouse_id = #{warehouseId}
+		    and item_id = #{itemId}
+		    and stock_quantity >= #{orderQty}
+		</update>
 		<update id="updateStockDelete">
 			UPDATE order_stock
 			SET stock_quantity = stock_quantity - #{orderQty}
@@ -260,7 +267,7 @@
     	<!-- 가맹점 발주 상세 조회: getStoreOrderDetail -->
     	<!-- 본사 창고 재고 조회 -->
     	<select id="selectStockQty" resultType="Integer">
-		  select quantity
+		  select stock_quantity
 		  from order_stock
 		  where warehouse_id = 11
 		    and item_id = #{itemId}

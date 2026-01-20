@@ -51,6 +51,7 @@ public interface OrderDAO {
 	public void deleteStockHistory(@Param("inputId") Integer inputId);
 	public void deleteInput(@Param("inputId") Integer inputId);
 	public void updateStockDelete(Integer itemId, Integer orderQty, Integer warehouseId);
+	public Integer decreaseStockForCancel(Integer itemId, Integer orderQty, Integer warehouseId);
 	
 	public OrderDTO isHqAlreadyReceived(@Param("orderNo") String orderNo);
 	public OrderDTO isStoreAlreadyReceived(@Param("orderNo") String orderNo);
