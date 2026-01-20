@@ -52,6 +52,7 @@
   <!-- Helpers -->
   <script src="/vendor/js/helpers.js"></script>
   <script src="/js/config.js"></script>
+  <base href="${pageContext.request.contextPath}/">
 </head>
 
 <body data-user-type="${fn:startsWith(member.memberId, '1') ? 'HQ' : 'STORE'}">
@@ -104,9 +105,6 @@
                                 <button class="btn btn-danger btn-sm" id="updateCancelReceiveStatusByStoreOrder">출고취소</button>
                               </c:if>
 
-                              <c:if test="${fn:startsWith(member.memberId, '2')}">
-                                <button class="btn btn-success btn-sm" id="requestReleaseBtn">출고요청</button>
-                              </c:if>
                             </div>
                           </div>
 
@@ -242,11 +240,15 @@
     </div>
     <!-- / Layout page -->
   </div>
+  
+  
 
   <!-- Overlay -->
   <div class="layout-overlay layout-menu-toggle"></div>
 </div>
 <!-- / Layout wrapper -->
+
+
 
 <!-- Core JS -->
 <script src="/vendor/libs/jquery/jquery.js"></script>

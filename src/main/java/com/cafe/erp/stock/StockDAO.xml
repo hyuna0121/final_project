@@ -13,7 +13,11 @@
     	<!-- 입고 요약 반영 -->
     	<!-- 재고 여부 -->
     	<select id="existsStock" parameterType="StockDTO" resultType="int">
-		  SELECT COUNT(*) FROM order_stock
+		  SELECT count(stock_quantity) FROM order_stock
+		  WHERE warehouse_id = #{warehouseId} AND item_id = #{itemId}
+		</select>
+		<select id="existsStockForRelease" parameterType="StockDTO" resultType="Integer">
+		  SELECT stock_quantity FROM order_stock
 		  WHERE warehouse_id = #{warehouseId} AND item_id = #{itemId}
 		</select>
 		<!-- 재고 보유 -->
@@ -41,4 +45,78 @@
 		    NOW()
 		  )
 		</insert>
+		
+		<!-- 창고번호 조회 -->
+		<select id="getStoreIdBymemberId" resultType="Integer">
+		  select store_id from store where member_id = #{memberId}
+		</select>
+		<select id="getWarehouseIdByStoreId" resultType="Integer">
+		  select warehouse_id from order_warehouse where store_id = #{storeId}
+		</select>
+		<select id="getStockByWarehouseId" resultType="StockDTO">
+		  select *
+		  from order_stock os
+		  join vendor_item vi on os.item_id = vi.item_id 
+		  where warehouse_id = #{warehouseId}
+		</select>
+		
+		<select id="selectStoreInventory"
+            parameterType="Integer"
+            resultType="StoreInventoryDTO">
+	        SELECT
+	            vi.item_id     AS itemId,
+		        vi.item_name   AS itemName,
+		        s.stock_quantity   AS stockQuantity
+		    FROM order_stock s
+		    JOIN vendor_item vi
+		      ON s.item_id = vi.item_id
+		    WHERE s.warehouse_id = #{warehouseId}
+		      AND s.stock_quantity> 0
+		    ORDER BY vi.item_name;
+
+    	</select>
+		<!-- 출고 상세 기록 -->
+		<insert id="insertReleaseDetail">
+			INSERT INTO order_release_detail (input_id, release_created_at, release_approved_at, release_type, release_reason) 
+			VALUES (#{inputId}, NOW(), NOW(), #{releaseType}, #{releaseReason})
+		</insert>
+		<!-- 재고차감 -->
+		<update id="updateStock" parameterType="StoreInventoryDTO">
+		  UPDATE order_stock
+		  SET stock_quantity = stock_quantity - #{quantity},
+		      stock_updated_at = NOW()
+		  WHERE warehouse_id = #{warehouseId}
+		    AND item_id = #{itemId}
+		</update>
+
+		
+		<!-- 가맹 출고 마스터 -->
+	    <select id="selectStoreReleaseList"
+	            resultType="com.cafe.erp.stock.StockReleaseDTO">
+	        SELECT
+	            rd.input_id        AS inputId,
+	            rd.release_type    AS releaseType,
+	            rd.release_reason  AS releaseReason,
+	            rd.release_created_at AS releaseCreatedAt
+	        FROM order_release_detail rd
+	        JOIN order_in_out io
+	          ON rd.input_id = io.input_id
+	        WHERE io.warehouse_id = #{warehouseId}
+	          AND io.input_type = 'OUT'
+	        ORDER BY rd.release_created_at DESC
+	    </select>
+	
+	    <!-- 출고 상세 -->
+	    <select id="selectStoreReleaseDetail"
+	            resultType="StockReleaseItemDTO">
+	        SELECT
+	            vi.item_name      AS itemName,
+	            h.stock_quantity  AS quantity
+	        FROM order_stock_history h
+	        JOIN vendor_item vi
+	          ON h.item_id = vi.item_id
+	        WHERE h.input_id = #{inputId}
+	          AND h.stock_in_out_type = 'OUT'
+	    </select>
+		
     </mapper>

@@ -201,7 +201,7 @@
 			osh.item_id as itemId,
 			osh.stock_quantity as orderQty 
 			from order_in_out oio
-			join order_stock_history osh on oio.input_id = osh.input_id  where oio.hq_order_id = #{orderNo}
+			join order_stock_history osh on oio.input_id = osh.input_id where oio.hq_order_id = #{orderNo}
 		</select>
 		<delete id="deleteStockHistory" parameterType="Integer">
 			DELETE FROM order_stock_history WHERE input_id = #{inputId};
@@ -209,11 +209,19 @@
 		<delete id="deleteInput" parameterType="Integer">
 			DELETE FROM order_in_out WHERE input_id = #{inputId};
 		</delete>
+		<update id="decreaseStockForCancel">
+		  update order_stock
+		  set stock_quantity = stock_quantity - #{orderQty}
+		  where warehouse_id = #{warehouseId}
+		    and item_id = #{itemId}
+		    and stock_quantity >= #{orderQty}
+		</update>
 		<update id="updateStockDelete">
 			UPDATE order_stock
 			SET stock_quantity = stock_quantity - #{orderQty}
 			WHERE warehouse_id = #{warehouseId}
-  			AND item_id = #{itemId};
+  			AND item_id = #{itemId}
+  			AND stock_quantity >= #{orderQty}
 		</update>
 		
 		
@@ -255,22 +263,30 @@
 		    </foreach>
 		</select>
 		
-		
+		<!-- 가맹점 발주 출고완료로 상태변환 -->
+    	<!-- 가맹점 발주 상세 조회: getStoreOrderDetail -->
+    	<!-- 본사 창고 재고 조회 -->
+    	<select id="selectStockQty" resultType="Integer">
+		  select stock_quantity
+		  from order_stock
+		  where warehouse_id = 11
+		    and item_id = #{itemId}
+		</select>
+		    	
     	<update id="updateReceiveStatusByStoreOrder" parameterType="String">
     		update order_store set store_order_status = 350 where store_order_id = #{orderNo}
     	</update>
+    	
     	<update id="updateCancelReceiveStatusByStoreOrder" parameterType="String">
     		update order_store set store_order_status = 330 where store_order_id = #{orderNo}
     	</update>
     	<!-- 본사 재고 출고 반영 -->
     	<update id="releaseByHq" parameterType="OrderDetailDTO">
-    		<foreach collection="list" item="item" separator=";">
 		    UPDATE order_stock
-		    SET stock_quantity = stock_quantity - #{item.hqOrderQty}
-		    WHERE item_id= #{item.itemId}
-		      AND warehouse_id = 11
-		      AND stock_quantity >= #{item.hqOrderQty}
-		  </foreach>
+		    SET stock_quantity = stock_quantity - #{hqOrderQty}
+		    WHERE item_id = #{itemId}
+		    AND warehouse_id = 11
+		    AND stock_quantity >= #{hqOrderQty}
     	</update>
     	
     	<!-- 입고 변경 시 order_hq_store에 insert 로직 -->
@@ -291,9 +307,5 @@
 		        NOW()
 		    )
 		</insert>
-    	
-    	
-    	
-    	
     	
     </mapper>

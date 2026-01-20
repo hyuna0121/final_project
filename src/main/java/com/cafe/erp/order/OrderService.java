@@ -17,6 +17,7 @@ import com.cafe.erp.notification.service.NotificationService;
 import com.cafe.erp.order.event.OrderReceivedEvent;
 import com.cafe.erp.receivable.ReceivableDAO;
 import com.cafe.erp.security.UserDTO;
+import com.cafe.erp.stock.StockDAO;
 import com.cafe.erp.stock.StockDTO;
 import com.cafe.erp.stock.StockInoutDTO;
 import com.cafe.erp.stock.StockService;
@@ -26,6 +27,9 @@ public class OrderService {
 	
 	@Autowired
 	private OrderDAO orderDAO;
+	
+	@Autowired
+	private StockDAO stockDAO;
 	
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
@@ -263,8 +267,10 @@ public class OrderService {
 				orderDAO.receiveHqOrder(orderNo.getOrderNo());							
 			} else if("STORE".equals(orderNo.getOrderType())){
 				OrderDTO storeOrder = orderDAO.isStoreAlreadyReceived(orderNo.getOrderNo());
-				if (storeOrder != null && (storeOrder.getHqOrderStatus() == 400 || storeOrder.getHqOrderStatus() == 330)) {
-					continue;
+				if (storeOrder != null && storeOrder.getHqOrderStatus() == 400 ) {
+					throw new IllegalArgumentException("이미 입고된 발주입니다.");
+				} else if(storeOrder != null && storeOrder.getHqOrderStatus() == 330) {
+					throw new IllegalArgumentException("본사 출고 대기중입니다.");
 				}
 				orderDAO.receiveStoreOrder(orderNo.getOrderNo());							
 			}
@@ -278,7 +284,7 @@ public class OrderService {
 	            orderDetailList = orderDAO.getHqOrderDetail(orderNo.getOrderNo());
 	            // order_hq_vendor 테이블에 발주 삽입 로직
 	            Map<Integer, OrderHqVendorDTO> vendorMap = new HashMap<>();
-
+	            
 	            for (OrderDetailDTO d : orderDetailList) {
 
 	                int vendorId = d.getVendorId();           // 반드시 있어야 함
@@ -330,6 +336,12 @@ public class OrderService {
 	            orderDetailList = orderDAO.getStoreOrderDetail(orderNo.getOrderNo());
 	            // 3 입출고번호 생성(입출고타입, 창고번호, 본사발주번호, 가맹발주번호)
 	            int storeId = orderDAO.getOrderStoreId(orderNo.getOrderNo());
+	            
+	            int supplyAmount = 0;
+	            for (OrderDetailDTO d : orderDetailList) {
+	            	supplyAmount += d.getHqOrderAmount();
+	            }
+	            receivableDAO.insertReceivableForStoreOrder(orderNo.getOrderNo(), supplyAmount);
 	            System.out.println(storeId);
 	            warehouseNo = orderDAO.findByWarehouseId(storeId);	            
 	            stockInoutDTO = settingStock(orderNo.getOrderType(), warehouseNo, orderNo.getOrderNo());
@@ -350,6 +362,7 @@ public class OrderService {
 	    		StockDTO stockDTO = new StockDTO();
 	        	stockDTO.setWarehouseId(warehouseNo);
 	            stockDTO.setInputId(inputId);
+	            stockDTO.setStockInoutType("IN");
 	            
 	            // 5-1️ 재고 이력 INSERT
 	            stockDTO = stockService.insertStockHistory(stockDTO, d);
@@ -384,10 +397,13 @@ public class OrderService {
 				orderDAO.cancelApproveHqOrder(orderNo.getOrderNo());							
 			} else if("STORE".equals(orderNo.getOrderType())){
 				OrderDTO storeOrder = orderDAO.isStoreAlreadyReceived(orderNo.getOrderNo());
-				if(storeOrder != null && storeOrder.getHqOrderStatus() == 350 ) {
-					continue;
+				if(storeOrder == null) {
+					throw new IllegalArgumentException("취소할 발주건이 없습니다.");
+				} else if(storeOrder.getHqOrderStatus() == 350) {
+					throw new IllegalArgumentException("이미 본사 출고 완료상태입니다.");
+				} else if(storeOrder.getHqOrderStatus() == 330) {
+					orderDAO.cancelApproveStoreOrder(orderNo.getOrderNo());							
 				}
-				orderDAO.cancelApproveStoreOrder(orderNo.getOrderNo());							
 			}
 		}
 	}
@@ -396,17 +412,49 @@ public class OrderService {
 	public void cancelReceive(List<OrderRequestDTO> orderNos) {
 		for (OrderRequestDTO orderNo : orderNos) {	
 			OrderDTO storeOrder = orderDAO.isHqAlreadyReceived(orderNo.getOrderNo());
-			System.out.println(storeOrder.getHqOrderStatus());
+			 if (storeOrder == null || storeOrder.getHqOrderStatus() != 400) {
+		            continue; // 입고 완료 상태가 아니면 스킵
+		        }
 			if(storeOrder != null && storeOrder.getHqOrderStatus() == 400 ) {
+				// 입고 이력 조회
 				List<OrderStockHistoryDTO> deleteStock = orderDAO.getDeleteStock(orderNo.getOrderNo());
-				orderDAO.cancelReceive(orderNo.getOrderNo());
 				for (OrderStockHistoryDTO orderRequestDTO : deleteStock) {
+					// 본사재고확인
+					Integer updated = orderDAO.decreaseStockForCancel(orderRequestDTO.getItemId(),orderRequestDTO.getOrderQty(), orderRequestDTO.getWarehouseId());
+					if (updated == null || updated == 0) {
+						throw new IllegalStateException("입고 취소 불가(재고 부족): itemId=" + orderRequestDTO.getItemId());
+					}
+					// 입고 이력 삭제
 					orderDAO.deleteStockHistory(orderRequestDTO.getInputID());
 					orderDAO.deleteInput(orderRequestDTO.getInputID());
-					orderDAO.updateStockDelete(orderRequestDTO.getItemId(),orderRequestDTO.getOrderQty(), orderRequestDTO.getWarehouseId());
 				}
+				orderDAO.cancelReceive(orderNo.getOrderNo());
 			}
 		}
+	}
+	@Transactional
+	public void shipStoreOrder(String storeOrderId) {
+
+	    // 1. 발주 상세 조회
+	    List<OrderDetailDTO> items =
+	    		orderDAO.getStoreOrderDetail(storeOrderId);
+
+	    if (items.isEmpty()) {
+	        throw new IllegalStateException("발주 상세 없음");
+	    }
+
+	    // 2. 재고 검증
+	    for (OrderDetailDTO item : items) {
+
+	        Integer stockQty = orderDAO.selectStockQty(item.getItemId());
+
+	        if (stockQty < item.getHqOrderQty() || stockQty == null ) {
+	            throw new IllegalStateException("재고 부족: itemId=" + item.getItemId());
+	        }
+	    }
+
+	    // 3. 상태 변경 (여기서만!)
+	    orderDAO.updateReceiveStatusByStoreOrder(storeOrderId);
 	}
 	public void updateReceiveStatusByStoreOrder(List<OrderRequestDTO> orderNos) {
 		for (OrderRequestDTO orderNo : orderNos) {
@@ -422,8 +470,18 @@ public class OrderService {
 	@Transactional
 	public void releaseByHq(List<OrderRequestDTO> orderNos) {
 		for (OrderRequestDTO orderNo : orderNos) {
-			 List<OrderDetailDTO> releaseItemList = orderDAO.getStoreOrderDetail(orderNo.getOrderNo());
-			orderDAO.releaseByHq(releaseItemList);
+			
+			List<OrderDetailDTO> releaseItemList = orderDAO.getStoreOrderDetail(orderNo.getOrderNo());
+			for (OrderDetailDTO d : releaseItemList) {
+
+	            int updated = orderDAO.releaseByHq(d);
+	            
+	            if (updated == 0) {
+	                throw new IllegalStateException(
+	                    "재고 부족으로 출고 불가 (itemId=" + d.getItemId() + ")"
+	                );
+	            }
+	        }
 		}
 	}
 	
