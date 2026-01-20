@@ -19,7 +19,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>가맹점 관리</title>
+    <title>계약 기록</title>
 
     <meta name="description" content="" />
 
@@ -77,11 +77,12 @@
 		<c:import url="/WEB-INF/views/template/header.jsp"></c:import>
         
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
             <!-- Content -->
 
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
+				<h4 class="fw-bold py-3 mb-3"><span class="text-muted fw-normal">계약 /</span> 목록</h4>
                 <div id="tab-content-area">
         		    <div class="card shadow-none border bg-white mb-4">
 				        <div class="card-body py-4 px-4">
@@ -400,12 +401,12 @@
             </div>
             <!-- / Content -->
 
-            <!-- Footer -->
-            <c:import url="/WEB-INF/views/template/footer.jsp"></c:import>
-            <!-- / Footer -->
 
             <div class="content-backdrop fade"></div>
           </div>
+            <!-- Footer -->
+            <c:import url="/WEB-INF/views/template/footer.jsp"></c:import>
+            <!-- / Footer -->
           <!-- Content wrapper -->
         </div>
         <!-- / Layout page -->

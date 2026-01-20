@@ -18,7 +18,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>QSC 등록</title>
+    <title>QSC 수정</title>
 
     <meta name="description" content="" />
 

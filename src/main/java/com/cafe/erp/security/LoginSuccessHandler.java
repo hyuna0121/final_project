@@ -62,7 +62,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         if (isStoreOwner) {
             StoreDTO store = user.getStore();
             if (store != null) response.sendRedirect("/store/detail?storeId=" + store.getStoreId() + (pwPass ? "&forcePw=1" : "")); // 가맹점주
-            if (store != null) response.sendRedirect("/"); // 가맹점주
             else response.sendRedirect("/error/noStoreInfo"); // 가맹점이 아직 생성되지 않은 가맹점주
         } else { // 본사 직원
             response.sendRedirect("/member/AM_group_chart" + (pwPass ? "?forcePw=1" : ""));

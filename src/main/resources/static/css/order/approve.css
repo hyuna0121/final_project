@@ -199,13 +199,6 @@ th, td {
 	width: 60px;
 }
 
-@media (min-width: 1200px) {
-  .layout-menu-fixed:not(.layout-menu-collapsed) .layout-page,
-  .layout-menu-fixed-offcanvas:not(.layout-menu-collapsed) .layout-page {
-    padding-left: 8.25rem;
-  }
-}
-
 .row-disabled {
   opacity: 0.5;
   pointer-events: none;

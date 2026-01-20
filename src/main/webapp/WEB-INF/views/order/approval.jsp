@@ -77,27 +77,22 @@
         <div class="layout-page ">
         <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column"">
             
             <!-- Content -->	
-            <div class="container-fluid flex-grow-1 container-p-y">
-              <div class="layout-wrapper layout-content-navbar">
-				  <div class="layout-container">
-				
-				    <div class="layout-page">
-				      <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
 					      <div class="row mb-4">
 							  <div class="col">
 							    <h4 class="fw-bold">
 							    	<c:choose>
 									<c:when test="${hasRequest}">
-							   		   <span class="text-muted fw-light">발주 관리 /</span> 승인 처리
+							   		   <span class="text-muted fw-normal">발주 관리 /</span> 승인 처리
 									</c:when>
 									<c:when test="${hasApproved}">
-							      		<span class="text-muted fw-light">발주 관리 /</span> 입고 처리
+							      		<span class="text-muted fw-normal">발주 관리 /</span> 입고 처리
 									</c:when>
 									<c:when test="${hasWaitRelease}">
-							      		<span class="text-muted fw-light">발주 관리 /</span> 출고 처리
+							      		<span class="text-muted fw-normal">발주 관리 /</span> 출고 처리
 									</c:when>
 								  </c:choose>
 							    </h4>
@@ -360,12 +355,6 @@
 				          </div>
 				        </div>
 				
-				      </div>
-				    </div>
-				  </div>
-				</div>
-              
-              
 			</div>
 			<!-- content 끝 -->
 			

@@ -19,7 +19,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>가맹점 관리</title>
+    <title>가맹점 계약 관리</title>
 
     <meta name="description" content="" />
 
@@ -77,7 +77,7 @@
 		<c:import url="/WEB-INF/views/template/header.jsp"></c:import>
         
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
             <!-- Content -->
 
             <div class="container-xxl flex-grow-1 container-p-y">

@@ -74,21 +74,15 @@
       <c:import url="/WEB-INF/views/template/header.jsp"/>
 
       <!-- Content wrapper -->
-      <div class="content-wrapper">
+      <div class="content-wrapper d-flex flex-column">
 
         <!-- Content -->
         <div class="container-fluid flex-grow-1 container-p-y">
-
-          <div class="layout-wrapper layout-content-navbar">
-            <div class="layout-container">
-              <div class="layout-page">
-                <div class="content-wrapper">
-
                   <!-- ================= 제목 ================= -->
                   <div class="row mb-4">
                     <div class="col">
                       <h4 class="fw-bold">
-                        <span class="text-muted fw-light">발주 관리 /</span> 출고 처리
+                        <span class="text-muted fw-normal">발주 관리 /</span> 출고 처리
                       </h4>
                     </div>
                   </div>
@@ -235,12 +229,6 @@
                       </div>
                     </div>
                   </div>
-
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
         <!-- / Content -->
 

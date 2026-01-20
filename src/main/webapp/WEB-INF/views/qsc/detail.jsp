@@ -18,7 +18,7 @@
       content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
 
-    <title>QSC 등록</title>
+    <title>QSC</title>
 
     <meta name="description" content="" />
 
@@ -85,7 +85,7 @@
 
             <div class="container-xxl flex-grow-1 container-p-y">
               <div class="row">
-                <h4 class="fw-bold py-3 mb-3"><a href="/store/qsc/list" class="text-muted fw-normal">QSC /</a> 상세</h4>
+                <h4 class="fw-bold py-3 mb-3"><a href="/store/qsc/list" class="text-muted fw-normal">QSC /</a> 상세 내역</h4>
                 <div id="tab-content-area">
 					<div class="card shadow-none border bg-white">
                             <div class="row g-3 p-4">

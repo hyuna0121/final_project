@@ -76,7 +76,7 @@
         <div class="layout-page">
         <c:import url="/WEB-INF/views/template/header.jsp"></c:import>
           <!-- Content wrapper -->
-          <div class="content-wrapper">
+          <div class="content-wrapper d-flex flex-column">
             
             <!-- Content -->	
             <div class="container-xxl flex-grow-1 container-p-y">
@@ -86,7 +86,7 @@
 				  	<div class="row mb-4">
 					  <div class="col">
 					    <h4 class="fw-bold">
-					      <span class="text-muted fw-light">발주 관리 /</span> 발주 등록
+					      <span class="text-muted fw-normal">발주 관리 /</span> 발주 등록
 					    </h4>
 					  </div>
 					</div>
@@ -239,7 +239,6 @@
             <!-- / Footer -->
 
             <div class="content-backdrop fade"></div>
-          </div>
           <!-- Content wrapper -->
         </div>
         <!-- / Layout page -->
