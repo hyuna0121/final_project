@@ -19,25 +19,32 @@ import com.cafe.erp.item.ItemDTO;
 import com.cafe.erp.item.ItemService;
 import com.cafe.erp.member.MemberDTO;
 import com.cafe.erp.security.UserDTO;
+import com.cafe.erp.stock.StockDAO;
+import com.cafe.erp.stock.StockReleaseDTO;
+import com.cafe.erp.stock.StockService;
 import com.cafe.erp.store.StoreService;
 import com.cafe.erp.vendor.VendorService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Controller
 @RequestMapping("/order/*")
+@Slf4j
 public class OrderController {
 
     private final StoreService storeService;
-	
 	private final ItemService itemService;
 	private final VendorService vendorService;
+	private final StockService stockService;
 	
 	@Autowired
 	private OrderService orderService;
 	
-    public OrderController(ItemService itemService, VendorService vendorService, StoreService storeService) {
+    public OrderController(ItemService itemService, VendorService vendorService, StoreService storeService,StockService stockService) {
         this.itemService = itemService;
         this.vendorService = vendorService;
         this.storeService = storeService;
+        this.stockService = stockService;
     }
 	
 	// 본사 발주 등록 페이지 요청
@@ -126,30 +133,49 @@ public class OrderController {
 	    return "order/receive";
 	}
 	
+	
 	//출고 목록 요청
 	@GetMapping("release")
-	@Transactional
-	public String releaseList(Model model, @AuthenticationPrincipal UserDTO userDTO) {
+	public String releaseEntry(@AuthenticationPrincipal UserDTO userDTO) {
 
 	    MemberDTO member = userDTO.getMember();
 
-	    // 본사 유저
-	    if (String.valueOf(member.getMemberId()).charAt(0) == '1' ) {
-	        // 가맹 발주 중 출고 대상
-	        List<OrderDTO> storeReleaseList =
-	            orderService.getStoreReleaseTarget(List.of(330, 350), member);
-	        model.addAttribute("orderStoreList", storeReleaseList);
+	    // 본사
+	    if (String.valueOf(member.getMemberId()).charAt(0) == '1') {
+	        return "redirect:/order/releaseHq";
 	    }
 
-	    // 가맹 유저
+	    // 가맹
 	    if (String.valueOf(member.getMemberId()).charAt(0) == '2') {
-	        List<OrderDTO> storeReleaseReqList =
-	            orderService.getStoreReleaseRequests(List.of(450), member);
-	        model.addAttribute("orderStoreList", storeReleaseReqList);
+	        return "redirect:/order/releaseStore";
 	    }
+
+	    throw new IllegalStateException("잘못된 사용자 접근");
+	}
+	
+	@GetMapping("releaseHq")
+	public String releaseHq(Model model, @AuthenticationPrincipal UserDTO userDTO) {
+
+	    MemberDTO member = userDTO.getMember();
+	    List<OrderDTO> storeReleaseList =
+	        orderService.getStoreReleaseTarget(List.of(330, 350), member);
+	    model.addAttribute("orderStoreList", storeReleaseList);
 	    model.addAttribute("member", member);
 
-	    return "order/release";
+	    return "order/release"; // 📌 JSP
+	}
+	
+	//==============================
+	@GetMapping("releaseStore")
+	public String releaseStore(Model model, @AuthenticationPrincipal UserDTO userDTO) {
+
+	    MemberDTO member = userDTO.getMember();
+	    List<StockReleaseDTO> releaseList = stockService.getStoreReleaseList(member.getMemberId());
+	    
+	    model.addAttribute("releaseList", releaseList);
+	    model.addAttribute("member", member);
+
+	    return "order/releaseStore"; // 📌 JSP
 	}
 	
 	//발주 상세 목록 요청
@@ -227,7 +253,11 @@ public class OrderController {
 	// 본사출고완료
 	@PostMapping("updateReceiveStatusByStoreOrder")
 	@ResponseBody
+	@Transactional
 	public String updateReceiveStatusByStoreOrder(@RequestBody List<OrderRequestDTO> orderNos) {
+		for (OrderRequestDTO orderNo : orderNos) {
+			orderService.shipStoreOrder(orderNo.getOrderNo());	
+		}
 		orderService.updateReceiveStatusByStoreOrder(orderNos);
 		return "redirect:/order/receive";
 	}
@@ -247,13 +277,12 @@ public class OrderController {
 		orderService.inoutOrder(orderNos, "IN");
 		return "redirect:/order/receive";
 	}
-	// 가맹 출고 요청
+	// 가맹 재고사용 요청
 	@PostMapping("release")
 	@ResponseBody
 	public String release(@RequestBody List<OrderRequestDTO> orderNos) {
 		orderService.inoutOrder(orderNos, "OUT");
 		return "redirect:/order/release";
 	}
-	
 	
 }

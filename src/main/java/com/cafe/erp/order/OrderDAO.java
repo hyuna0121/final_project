@@ -25,7 +25,7 @@ public interface OrderDAO {
 	public void insertStoreOrderItemDetail(OrderDetailDTO orderDetailDTO);
 	
 	public List<OrderDTO> listHq(@Param("statuses") List<Integer> statuses,@Param("member") MemberDTO member);
-	public List<OrderDTO> listStore(@Param("statuses") List<Integer> statuses,@Param("member") MemberDTO member);
+	public List<OrderDTO> listStore(@Param("statuses") List<Integer> statuses,@Param("memberId") MemberDTO member);
 
 	public List<OrderDetailDTO> getHqOrderDetail(@Param("orderNo") String orderNo);
 	public List<OrderDetailDTO> getStoreOrderDetail(@Param("orderNo") String orderNo);
@@ -51,6 +51,7 @@ public interface OrderDAO {
 	public void deleteStockHistory(@Param("inputId") Integer inputId);
 	public void deleteInput(@Param("inputId") Integer inputId);
 	public void updateStockDelete(Integer itemId, Integer orderQty, Integer warehouseId);
+	public Integer decreaseStockForCancel(Integer itemId, Integer orderQty, Integer warehouseId);
 	
 	public OrderDTO isHqAlreadyReceived(@Param("orderNo") String orderNo);
 	public OrderDTO isStoreAlreadyReceived(@Param("orderNo") String orderNo);
@@ -60,10 +61,11 @@ public interface OrderDAO {
 	public void cancelApproveHqOrder(@Param("orderNo") String orderNo);
 	public void cancelApproveStoreOrder(@Param("orderNo") String orderNo);
 	
+	public Integer selectStockQty(@Param("itemId") Integer itemId);
 	public void updateReceiveStatusByStoreOrder(@Param("orderNo") String orderNo);
 	public void updateCancelReceiveStatusByStoreOrder(@Param("orderNo") String orderNo);
 
-	public void releaseByHq(List<OrderDetailDTO> releaseItemList);
+	public int releaseByHq(OrderDetailDTO releaseItem);
 	
 	// 입고 변경 시 order_hq_vendor 테이블에 insert 로직
 	void insertOrderHqVendorByDto(OrderHqVendorDTO dto);

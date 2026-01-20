@@ -1,0 +1,18 @@
+package com.cafe.erp.stock;
+
+import java.util.Date;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class StockReleaseDTO {
+
+    private Integer inputId;
+    private String releaseType;
+    private String releaseReason;
+    private Date releaseCreatedAt;
+}

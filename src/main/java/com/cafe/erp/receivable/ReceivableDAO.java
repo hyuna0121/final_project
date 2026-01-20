@@ -78,7 +78,7 @@ public interface ReceivableDAO {
     // 발주 공급가액 조회 (본사 - 가맹점)
     public Integer selectStoreOrderSupplyAmount(String storeOrderId);
     // 발주테이블 상태값이 400이면 채권생성
-    public void insertReceivableForStoreOrder(String storeOrderId, int supplyAmount );
+    public void insertReceivableForStoreOrder(String storeOrderId, Integer supplyAmount);
 
     
     // 거래처 코드
