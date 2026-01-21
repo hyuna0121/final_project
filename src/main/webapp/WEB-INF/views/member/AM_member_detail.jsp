@@ -700,10 +700,13 @@
 										
 										    <div class="d-flex align-items-center justify-content-between mb-2">
 											  <h6 class="fw-bold text-muted mb-0">사용 내역</h6>
+											<sec:authentication property="principal.member" var="loginUser"/>
+											  <c:if test="${loginUser.memberId == dto.memberId}">
+												  <button type="button" class="btn btn-primary" onclick="openVacApplyModal()">
+												    <i class="bx bx-plus me-1"></i> 휴가 신청
+												  </button>
+												</c:if>
 											
-											  <button type="button" class="btn btn-primary" onclick="openVacApplyModal()">
-											    <i class="bx bx-plus me-1"></i> 휴가 신청
-											  </button>
 											</div>
 										    <div class="card border-0 shadow-sm mt-3">
 										        <div class="table-responsive">
