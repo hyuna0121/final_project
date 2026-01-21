@@ -279,6 +279,15 @@ async function getContractDetail(contractId) {
         document.getElementById('detailRoyalty').innerText = formatCurrency(data.contractRoyalti);
         document.getElementById('detailDeposit').innerText = formatCurrency(data.contractDeposit);
 
+        const btnEdit = document.getElementById('btnEditMode');
+        if (btnEdit) {
+            if (data.contractStatus === 0) {
+                btnEdit.style.display = 'inline-block';
+            } else {
+                btnEdit.style.display = 'none';
+            }
+        }
+
         const statusArea = document.getElementById('detailStatusArea');
         let badgeHtml = '';
         switch (data.contractStatus) {
