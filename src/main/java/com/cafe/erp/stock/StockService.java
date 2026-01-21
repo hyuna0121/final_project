@@ -142,4 +142,14 @@ public class StockService {
     public List<StockReleaseItemDTO> getStoreReleaseDetail(Integer inputId) {
         return stockDAO.selectStoreReleaseDetail(inputId);
     }
+    
+    public Integer getStoreIdBymemberId(@Param("memberId") Integer memberId) {
+    	return stockDAO.getStoreIdBymemberId(memberId);
+    }
+    
+    public boolean addStoreWarehouse(StockDTO stockDTO) {
+    	return stockDAO.addStoreWarehouse(stockDTO);
+
+    }
 }
+

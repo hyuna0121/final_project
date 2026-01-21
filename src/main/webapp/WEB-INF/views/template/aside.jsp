@@ -52,12 +52,12 @@
       <ul class="menu-sub">
         <li class="menu-item">
           <a href="/item/list" class="menu-link">
-            <div data-i18n="Notifications">원재료검색</div>
+            <div data-i18n="Notifications">원재료</div>
           </a>
         </li>
         <li class="menu-item">
           <a href="/item/priceDetail" class="menu-link">
-            <div data-i18n="Notifications">단가조회</div>
+            <div data-i18n="Notifications">단가</div>
           </a>
         </li>
         <li class="menu-item">
@@ -149,10 +149,10 @@
         </li>
       </ul>
     </li>
-
+	
     <!-- 인사관리 -->
     <li class="menu-header small text-uppercase">
-	    <div data-i18n="Misc">사원</div>
+	    <span class="menu-header-text">사원</span>
     </li>
     <li class="menu-item">
       <a href="javascript:void(0)" class="menu-link menu-toggle">
@@ -176,7 +176,7 @@
     <!-- 관리자관리 -->
   	<sec:authorize access="hasAnyRole('MASTER')">
 	    <li class="menu-header small text-uppercase">
-		    <div data-i18n="Misc">사원</div>
+	    	<span class="menu-header-text">관리자</span>
 	    </li>
 	    <li class="menu-item">
 	      <a href="javascript:void(0)" class="menu-link menu-toggle">

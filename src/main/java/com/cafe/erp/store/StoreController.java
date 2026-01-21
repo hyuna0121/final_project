@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cafe.erp.member.MemberDTO;
+import com.cafe.erp.order.OrderService;
 import com.cafe.erp.security.UserDTO;
+import com.cafe.erp.stock.StockDTO;
+import com.cafe.erp.stock.StockService;
 import com.cafe.erp.store.voc.VocDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,12 +68,14 @@ public class StoreController {
 	@PreAuthorize("hasAnyRole('DEPT_SALES', 'EXEC', 'MASTER')")
 	@PostMapping("add") 
 	@ResponseBody
-	public Map<String, Object> addStore(@RequestBody StoreDTO storeDTO) throws Exception { 
+	public Map<String, Object> addStore(@RequestBody StoreDTO storeDTO) throws Exception { 		
+
 		int result = storeService.add(storeDTO);
 	 
 		Map<String, Object> response = new HashMap<>();
 	 
 		if (result > 0) {  
+			// 가맹점 등록 완료 후 창고 삽입 
 			response.put("message", "등록 완료"); 
 			response.put("status", "success");
 		} else {

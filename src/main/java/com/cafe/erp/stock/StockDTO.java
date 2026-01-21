@@ -16,4 +16,7 @@ public class StockDTO {
 	private Integer stockQuantity;
 	private Integer inputId;
 	private Date createdAt;
+	
+	private Integer storeId;
+	private String storeName;
 }
