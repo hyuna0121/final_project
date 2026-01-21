@@ -112,24 +112,27 @@ document.getElementById("btnReleaseStock").addEventListener("click", () => {
   form.method = "post";
   form.action = "/stock/storeStockUse";
 
-  selectedItems.forEach((item, index) => {
-	  // releaseType
-	  const typeInput = document.createElement("input");
-	  typeInput.type = "hidden";
-	  typeInput.name = "releaseType";
-	  typeInput.value = document.getElementById("releaseType").value;
-	  form.appendChild(typeInput);
+  
+  // releaseType
+  const typeInput = document.createElement("input");
+  typeInput.type = "hidden";
+  typeInput.name = "releaseType";
+  typeInput.value = document.getElementById("releaseType").value;
+  form.appendChild(typeInput);
 
-	  // releaseReason (faulty일 때만)
-	  const reasonValue = document.getElementById("releaseReason").value;
-	  if (typeInput.value === "faulty") {
-	    const reasonInput = document.createElement("input");
-	    reasonInput.type = "hidden";
-	    reasonInput.name = "releaseReason";
-	    reasonInput.value = reasonValue;
-	    form.appendChild(reasonInput);
-	  }
-	  
+  // releaseReason (faulty일 때만)
+  const reasonValue = document.getElementById("releaseReason").value;
+  if (typeInput.value === "faulty") {
+    const reasonInput = document.createElement("input");
+    reasonInput.type = "hidden";
+    reasonInput.name = "releaseReason";
+    reasonInput.value = reasonValue;
+    form.appendChild(reasonInput);
+  }
+  
+  
+  
+  selectedItems.forEach((item, index) => {
 	  // items 리스트
       const code = document.createElement("input");
       code.type = "hidden";
