@@ -55,7 +55,7 @@ public interface OrderDAO {
 	
 	public OrderDTO isHqAlreadyReceived(@Param("orderNo") String orderNo);
 	public OrderDTO isStoreAlreadyReceived(@Param("orderNo") String orderNo);
-	public int findByWarehouseId(@Param("storeId") int storeId);
+	public Integer findByWarehouseId(@Param("storeId") int storeId);
 	public void insertOrderInOut(StockInoutDTO stockInoutDTO);
 
 	public void cancelApproveHqOrder(@Param("orderNo") String orderNo);

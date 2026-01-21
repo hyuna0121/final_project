@@ -7,10 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cafe.erp.member.MemberDTO;
+import com.cafe.erp.stock.StockDTO;
+import com.cafe.erp.stock.StockService;
 import com.cafe.erp.util.Pager;
 
 @Service
 public class StoreService {
+	
+	@Autowired
+	private StockService stockService;
 	
 	@Autowired
 	private StoreDAO storeDAO;
@@ -65,8 +71,25 @@ public class StoreService {
 		
 		int storeId = Integer.parseInt(prefix + num);
 		storeDTO.setStoreId(storeId);
+		int result = 0;
 		
-		return storeDAO.add(storeDTO);
+		if(storeDAO.add(storeDTO) > 0) {
+			System.out.println(storeDTO.getMemberId());
+			int store2 = stockService.getStoreIdBymemberId(storeDTO.getMemberId());
+			System.out.println(store2);
+			StockDTO stockDTO = new StockDTO();
+			
+			stockDTO.setStoreId(store2);
+			stockDTO.setStoreName(storeDTO.getStoreName());
+			
+		 	boolean addStoreId = stockService.addStoreWarehouse(stockDTO);
+		 	
+		 	if(addStoreId) {
+		 		result = 1;
+		 	}
+		}
+		
+		return result;
 	}
 
 	public List<StoreDTO> searchStore(String keyword, String isManager, String memberId) throws Exception {

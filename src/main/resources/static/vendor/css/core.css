@@ -7941,7 +7941,7 @@ form select.selectpicker.is-invalid ~ .btn {
 }
 
 .modal .btn-close {
-  background-color: #fff;
+  
   border-radius: 0.5rem;
   opacity: 1;
   padding: 0.635rem;

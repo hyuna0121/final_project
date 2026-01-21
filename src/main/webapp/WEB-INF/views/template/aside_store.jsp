@@ -65,6 +65,12 @@
         <div data-i18n="Under Maintenance">출고</div>
       </a>
     </li>
+    <li class="menu-item">
+      <a href="/stock/stock" class="menu-link">
+      <i class="menu-icon tf-icons bx bxs-package"></i>
+        <div data-i18n="Under Maintenance">재고</div>
+      </a>
+    </li>
 
     <li class="menu-header small text-uppercase">
       <span class="menu-header-text">가맹점</span>

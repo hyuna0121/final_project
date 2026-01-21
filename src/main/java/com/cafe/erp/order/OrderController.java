@@ -96,6 +96,7 @@ public class OrderController {
 	    model.addAttribute("hasRequest", hasRequest);
 	    model.addAttribute("hasApproved", hasApproved);  
 	    model.addAttribute("viewType", viewType); // JSP에서 탭/버튼 제어에도 사용 가능
+	    model.addAttribute("admin", "admin"); // JSP에서 탭/버튼 제어에도 사용 가능
 
 	    return "order/approval"; // JSP 하나만 사용
 	}
@@ -115,7 +116,7 @@ public class OrderController {
 	    MemberDTO member = userDTO.getMember();
 
 	    // 본사 유저
-	    if (String.valueOf(member.getMemberId()).charAt(0) == '1' ) {
+	    if (String.valueOf(member.getMemberId()).charAt(0) == '1' || String.valueOf(member.getMemberId()).charAt(0) == '9') {
 	        // 가맹 발주 중 출고 대상
 	        List<OrderDTO> storeReleaseList =
 	            orderService.listHq(List.of(200, 400), member);
@@ -123,7 +124,7 @@ public class OrderController {
 	    }
 
 	    // 가맹 유저
-	    if (String.valueOf(member.getMemberId()).charAt(0) == '2') {
+	    if (String.valueOf(member.getMemberId()).charAt(0) == '2' || String.valueOf(member.getMemberId()).charAt(0) == '9') {
 	        List<OrderDTO> storeReleaseReqList =
 	            orderService.getStoreReleaseRequests(List.of(330, 350), member);
 	        model.addAttribute("orderStoreList", storeReleaseReqList);
@@ -140,12 +141,12 @@ public class OrderController {
 	    MemberDTO member = userDTO.getMember();
 
 	    // 본사
-	    if (String.valueOf(member.getMemberId()).charAt(0) == '1') {
+	    if (String.valueOf(member.getMemberId()).charAt(0) == '1' || String.valueOf(member.getMemberId()).charAt(0) == '9') {
 	        return "redirect:/order/releaseHq";
 	    }
 
 	    // 가맹
-	    if (String.valueOf(member.getMemberId()).charAt(0) == '2') {
+	    if (String.valueOf(member.getMemberId()).charAt(0) == '2' || String.valueOf(member.getMemberId()).charAt(0) == '9') {
 	        return "redirect:/order/releaseStore";
 	    }
 

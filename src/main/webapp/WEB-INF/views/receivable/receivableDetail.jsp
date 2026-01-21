@@ -324,7 +324,7 @@
     </div>
 
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
             <div class="modal-content" style="border-radius: 4px;">
                 <div class="modal-header bg-primary text-white py-3">
                     <h5 class="modal-title text-white" id="paymentModalLabel">수금 등록</h5>

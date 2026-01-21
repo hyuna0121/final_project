@@ -42,5 +42,6 @@ public interface StockDAO {
 	public List<StockReleaseItemDTO> selectStoreReleaseDetail(
             @Param("inputId") Integer inputId);
 	
+	public boolean addStoreWarehouse(StockDTO stockDTO);
 }
 

@@ -11,4 +11,5 @@ import lombok.ToString;
 @ToString
 public class StoreStockUseRequest {
     private List<StoreInventoryDTO> items;
+    
 }

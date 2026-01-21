@@ -287,7 +287,7 @@
 	
 	      <!-- 모달 헤더 -->
 	      <div class="modal-header">
-	        <h5 class="modal-title">원재료 등록</h5>
+	        <h5 class="modal-title">물품 등록</h5>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 	      </div>
 	

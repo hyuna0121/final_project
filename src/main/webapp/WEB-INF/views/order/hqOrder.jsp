@@ -86,7 +86,7 @@
 				  	<div class="row mb-4">
 					  <div class="col">
 					    <h4 class="fw-bold">
-					      <span class="text-muted fw-normal">발주 관리 /</span> 요청
+					      <span class="text-muted fw-normal">발주 관리 /</span> 발주 요청
 					    </h4>
 					  </div>
 					</div>

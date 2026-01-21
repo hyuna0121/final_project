@@ -182,7 +182,7 @@
 
 	
 <div class="modal fade" id="payModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content border-0 shadow-lg">
       <div class="modal-header bg-primary">
         <h5 class="modal-title text-white fw-bold"><i class="bx bx-wallet me-2"></i>미지급금 지급 등록</h5>

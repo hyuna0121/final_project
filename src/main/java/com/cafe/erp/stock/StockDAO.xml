@@ -119,4 +119,8 @@
 	          AND h.stock_in_out_type = 'OUT'
 	    </select>
 		
+		<insert id="addStoreWarehouse" parameterType="StockDTO" >
+			insert into order_warehouse(warehouse_id, warehouse_type, warehouse_name, warehouse_is_active, warehouse_created_at, store_id)
+			values (NULL, "store", #{storeName}, 1, NOW(), #{storeId})
+		</insert>
     </mapper>

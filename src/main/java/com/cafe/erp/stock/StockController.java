@@ -76,13 +76,18 @@ public class StockController {
 	@PostMapping("storeStockUse")
 	public String storeStockUse(
 	    StoreStockUseRequest request,
-	    @RequestParam String releaseType,
+	    String releaseType,
 	    @RequestParam(required = false) String releaseReason,
 	    @AuthenticationPrincipal UserDTO userDTO
 	) {
 		
 	    int memberId = userDTO.getMember().getMemberId();
-
+	    System.out.println("releaseType==========");
+	    System.out.println(releaseType);
+	    
+	    System.out.println("size=============="); 
+	    System.out.println(request.getItems().size()); 
+	   
 	    stockService.storeStockUse(
 	        request.getItems(),
 	        memberId,
