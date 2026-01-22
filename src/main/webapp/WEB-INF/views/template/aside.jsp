@@ -52,12 +52,12 @@
       <ul class="menu-sub">
         <li class="menu-item">
           <a href="/item/list" class="menu-link">
-            <div data-i18n="Notifications">원재료</div>
+            <div data-i18n="Notifications">원재료검색</div>
           </a>
         </li>
         <li class="menu-item">
           <a href="/item/priceDetail" class="menu-link">
-            <div data-i18n="Notifications">단가</div>
+            <div data-i18n="Notifications">단가조회</div>
           </a>
         </li>
         <li class="menu-item">
@@ -102,24 +102,6 @@
         </li>
       </ul>
     </li>
-    <li class="menu-item">
-      <a href="javascript:void(0)" class="menu-link menu-toggle">
-        <i class='menu-icon tf-icons bx bx-receipt'></i>
-        <div>채권</div>
-      </a>
-      <ul class="menu-sub">
-       <li class="menu-item">
-         <a href="/receivable/receivable" class="menu-link">
-           <div>미수금 목록</div>
-         </a>
-       </li>
-       <li class="menu-item">
-         <a href="/receivable/vendor" class="menu-link">
-           <div>미지급금 목록</div>
-         </a>
-       </li>
-      </ul>
-    </li>
     <!-- 가맹점 -->
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -149,55 +131,70 @@
         </li>
       </ul>
     </li>
-	
-    <!-- 인사관리 -->
-    <li class="menu-header small text-uppercase">
-	    <span class="menu-header-text">사원</span>
+    
+    <li class="menu-item">
+      <a href="javascript:void(0)" class="menu-link menu-toggle">
+        <i class='menu-icon tf-icons bx bx-receipt'></i>
+        <div>채권</div>
+      </a>
+      <ul class="menu-sub">
+       <li class="menu-item">
+         <a href="/receivable/receivable" class="menu-link">
+           <div>미수금</div>
+         </a>
+       </li>
+       <li class="menu-item">
+         <a href="/receivable/vendor" class="menu-link">
+           <div>미지급금</div>
+         </a>
+       </li>
+      </ul>
     </li>
+    
+    <!-- 인사관리 -->
+    <li class="menu-header small text-uppercase"><span class="menu-header-text">인사 / 총무</span></li>
+    <!-- Cards -->
     <li class="menu-item">
       <a href="javascript:void(0)" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-buildings"></i>
-        <div data-i18n="User interface">사원</div>
+        <div data-i18n="Basic">정보</div>
       </a>
       <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="/member/AM_group_chart" class="menu-link">
-             <div data-i18n="Text Divider">부서 목록</div>
-          </a>
-        </li>
-        <li class="menu-item">
+       <li class="menu-item">
+         <a href="/member/AM_group_chart" class="menu-link">
+           <div data-i18n="Text Divider">부서</div>
+         </a>
+       </li>
+       <li class="menu-item">
           <a href="/member/admin_holiday_list" class="menu-link">
-            <div data-i18n="Accordion">휴무일 목록</div>
+            <div data-i18n="Accordion">휴무일</div>
           </a>
         </li>
-       </ul>
+      </ul>
     </li>
+ 
     
-    <!-- 관리자관리 -->
-  	<sec:authorize access="hasAnyRole('MASTER')">
-	    <li class="menu-header small text-uppercase">
-	    	<span class="menu-header-text">관리자</span>
-	    </li>
+    <sec:authorize access="hasAnyRole('MASTER','DEPT_HR')">
+    <li class="menu-header small text-uppercase"><span class="menu-header-text">관리</span></li>
 	    <li class="menu-item">
 	      <a href="javascript:void(0)" class="menu-link menu-toggle">
 	        <i class="menu-icon tf-icons bx bx-user"></i>
-	        <div data-i18n="User interface">관리자</div>
+	        <div data-i18n="User interface">통합 관리</div>
 	      </a>
-		  <ul class="menu-sub">
-		       <li class="menu-item">
-		         <a href="/member/admin_member_list" class="menu-link">
-		           <div data-i18n="Perfect Scrollbar">사원 목록</div>
-		         </a>
-		       </li>
-	       
-		       <li class="menu-item">
-		         <a href="/member/admin_login_history" class="menu-link">
-		           <div data-i18n="Text Divider">로그인 이력 목록</div>
-		         </a>
-		       </li>
+	      <ul class="menu-sub">
+	        <li class="menu-item">
+	         <a href="/member/admin_member_list" class="menu-link">
+	           <div data-i18n="Perfect Scrollbar">사원</div>
+	         </a>
+	       </li>
+	       <li class="menu-item">
+	         <a href="/member/admin_login_history" class="menu-link">
+	           <div data-i18n="Text Divider">로그인 이력</div>
+	         </a>
+	       </li>
 	      </ul>
-	     </li>
-     </sec:authorize>
+	    </li>
+    </sec:authorize>
 
   </ul>
 </aside>
